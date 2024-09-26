@@ -1,5 +1,7 @@
 package compilador.lexer;
 
+import compilador.parser.Parser;
+
 import java.util.HashMap;
 
 public class TablaToken {
@@ -32,28 +34,28 @@ public class TablaToken {
     private static HashMap<String, Integer> createTablaTokens() {
         HashMap<String, Integer> tabla = new HashMap<String, Integer>();
 
-        tabla.put(IDENTIFICADOR, 17);
-        tabla.put(CONSTANTE_DECIMAL, 18);
-        tabla.put(CONSTANTE_OCTAL, 19);
-        tabla.put(CONSTANTE_SINGLE, 20);
-        tabla.put(SUMA, 21);
-        tabla.put(RESTA, 22);
-        tabla.put(MULTIPLICACION, 23);
-        tabla.put(DIVISION, 24);
-        tabla.put(ASIGNACION, 25);
-        tabla.put(MAYOR_O_IGUAL, 26);
-        tabla.put(MENOR_O_IGUAL, 27);
-        tabla.put(MAYOR, 28);
-        tabla.put(MENOR, 29);
-        tabla.put(IGUAL, 30);
-        tabla.put(DESIGUAL, 31);
-        tabla.put(PARENTESIS_L, 32);
-        tabla.put(PATENTESIS_R, 33);
-        tabla.put(COMA, 34);
-        tabla.put(PUNTO, 35);
-        tabla.put(PUNTO_Y_COMA, 36);
-        tabla.put(INLINE_STRING, 37);
-        tabla.put(ERROR, 38);
+        tabla.put(IDENTIFICADOR, (int) Parser.IDENTIFICADOR);
+        tabla.put(CONSTANTE_DECIMAL, (int) Parser.CONSTANTE_OCTAL);
+        tabla.put(CONSTANTE_OCTAL, (int) Parser.CONSTANTE_OCTAL);
+        tabla.put(CONSTANTE_SINGLE, (int) Parser.SINGLE);
+        tabla.put(SUMA, (int) Parser.SUMA);
+        tabla.put(RESTA, (int) Parser.RESTA);
+        tabla.put(MULTIPLICACION, (int) Parser.MULTIPLICACION);
+        tabla.put(DIVISION, (int) Parser.DIVISION);
+        tabla.put(ASIGNACION, (int) Parser.ASIGNACION);
+        tabla.put(MAYOR_O_IGUAL, (int) Parser.MAYOR_O_IGUAL);
+        tabla.put(MENOR_O_IGUAL, (int) Parser.MENOR_O_IGUAL);
+        tabla.put(MAYOR, (int) Parser.MAYOR);
+        tabla.put(MENOR, (int) Parser.MENOR);
+        tabla.put(IGUAL, (int) Parser.IGUAL);
+        tabla.put(DESIGUAL, (int) Parser.DESIGUAL);
+        tabla.put(PARENTESIS_L, (int) Parser.PARENTESIS_L);
+        tabla.put(PATENTESIS_R, (int) Parser.PATENTESIS_R);
+        tabla.put(COMA, (int) Parser.COMA);
+        tabla.put(PUNTO, (int) Parser.PUNTO);
+        tabla.put(PUNTO_Y_COMA, (int) Parser.PUNTO_Y_COMA);
+        tabla.put(INLINE_STRING, (int) Parser.INLINE_STRING);
+        tabla.put(ERROR, (int) Parser.ERROR);
         tabla.put(EOF, 0);
         return tabla;
     }

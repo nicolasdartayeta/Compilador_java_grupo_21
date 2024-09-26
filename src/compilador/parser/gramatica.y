@@ -1,4 +1,5 @@
 %{
+    package compilador.parser;
     import compilador.lexer.Lexer;
 %}
 
@@ -6,5 +7,24 @@
 
 %%
 
-programa    :   IDENTIFICADOR BEGIN END
+programa    :   IDENTIFICADOR BEGIN  END
             ;
+
+
+%%
+private static Lexer lex;
+
+public static void main(String[] args) {
+    Lexer lexer = new Lexer("hola begin end");
+    Parser.lex = lexer;
+    Parser parser = new Parser(true);
+    parser.run();
+    }
+
+private int yylex() {
+    return lex.yylex();
+}
+
+private void yyerror(String string) {
+  throw new UnsupportedOperationException("ERROR");
+}

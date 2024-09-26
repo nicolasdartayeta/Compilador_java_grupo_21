@@ -1,5 +1,7 @@
 package compilador.lexer;
 
+import compilador.parser.Parser;
+
 import java.util.HashMap;
 
 public class TablaSimbolos {
@@ -39,22 +41,22 @@ public class TablaSimbolos {
     private static HashMap<String, Integer> createTablaPalabrasReservadas() {
         HashMap<String, Integer> tabla = new HashMap<String, Integer>();
 
-        tabla.put(STRUCT, 1);
-        tabla.put(FOR, 2);
-        tabla.put(UP, 3);
-        tabla.put(DOWN, 4);
-        tabla.put(SINGLE, 5);
-        tabla.put(ULONGINT, 6);
-        tabla.put(IF, 7);
-        tabla.put(THEN, 8);
-        tabla.put(ELSE, 9);
-        tabla.put(BEGIN, 10);
-        tabla.put(END, 11);
-        tabla.put(END_IF, 12);
-        tabla.put(OUTF, 13);
-        tabla.put(TYPEDEF, 14);
-        tabla.put(FUN, 15);
-        tabla.put(RET, 16);
+        tabla.put(STRUCT, (int) Parser.STRUCT);
+        tabla.put(FOR, (int) Parser.FOR);
+        tabla.put(UP, (int) Parser.UP);
+        tabla.put(DOWN, (int) Parser.DOWN);
+        tabla.put(SINGLE, (int) Parser.SINGLE);
+        tabla.put(ULONGINT, (int) Parser.ULONGINT);
+        tabla.put(IF, (int) Parser.IF);
+        tabla.put(THEN, (int) Parser.THEN);
+        tabla.put(ELSE, (int) Parser.ELSE);
+        tabla.put(BEGIN, (int) Parser.BEGIN);
+        tabla.put(END, (int) Parser.END);
+        tabla.put(END_IF, (int) Parser.END_IF);
+        tabla.put(OUTF, (int) Parser.OUTF);
+        tabla.put(TYPEDEF, (int) Parser.TYPEDEF);
+        tabla.put(FUN, (int) Parser.FUN);
+        tabla.put(RET, (int) Parser.RET);
 
         return tabla;
     }
