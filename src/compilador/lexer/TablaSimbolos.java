@@ -28,7 +28,7 @@ public class TablaSimbolos {
 
         if (esPalabraReservada(palabraReservada)){
             return tablaPalabrasReservadas.get(palabraReservada);
-        };
+        }
         return null;
     }
 
@@ -58,4 +58,12 @@ public class TablaSimbolos {
 
         return tabla;
     }
+
+    public static void agregarLexema(String lexema, int token){
+        tablaSimbolos.put(lexema,token);
+    };
+
+    public static boolean existeLexema(String lexema){
+        return tablaSimbolos.containsKey(lexema);
+    };
 }

@@ -1,5 +1,6 @@
 package compilador.lexer.accionesSemanticas;
 
+import compilador.lexer.TablaSimbolos;
 import compilador.lexer.TablaToken;
 import compilador.lexer.Token;
 
@@ -9,9 +10,10 @@ public class AS3 implements AccionSemantica {
     @Override
     public Token ejecutar(StringCharacterIterator input, StringBuilder lexema) {
         if (input.current() == '}') {
-            return new Token(TablaToken.getTokenID(TablaToken.INLINE_STRING), lexema.toString());
+            int tokenComentario = TablaToken.getTokenID(TablaToken.INLINE_STRING);
+            TablaSimbolos.agregarLexema(lexema.toString(),tokenComentario);
+            return new Token(tokenComentario, lexema.toString());
         }
-
         return null;
     }
 }
