@@ -1,7 +1,7 @@
-package compilador;
+package compilador.lexer;
 
-import compilador.accionesSemanticas.*;
-import compilador.accionesSemanticas.AccionSemantica;
+import compilador.lexer.accionesSemanticas.*;
+import compilador.lexer.accionesSemanticas.AccionSemantica;
 
 import java.text.StringCharacterIterator;
 

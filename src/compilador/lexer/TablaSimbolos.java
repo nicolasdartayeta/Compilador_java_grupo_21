@@ -1,4 +1,4 @@
-package compilador;
+package compilador.lexer;
 
 import java.util.HashMap;
 

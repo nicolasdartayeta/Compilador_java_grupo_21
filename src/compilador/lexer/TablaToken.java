@@ -1,4 +1,4 @@
-package compilador;
+package compilador.lexer;
 
 import java.util.HashMap;
 
@@ -54,7 +54,7 @@ public class TablaToken {
         tabla.put(PUNTO_Y_COMA, 36);
         tabla.put(INLINE_STRING, 37);
         tabla.put(ERROR, 38);
-        tabla.put(EOF, 39);
+        tabla.put(EOF, 0);
         return tabla;
     }
 

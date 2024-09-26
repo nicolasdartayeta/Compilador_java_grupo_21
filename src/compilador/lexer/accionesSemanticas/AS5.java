@@ -1,12 +1,13 @@
-package compilador.accionesSemanticas;
+package compilador.lexer.accionesSemanticas;
 
-import compilador.Token;
+import compilador.lexer.Token;
 
 import java.text.StringCharacterIterator;
 
-public class ASE implements AccionSemantica {
+public class AS5 implements AccionSemantica {
     @Override
     public Token ejecutar(StringCharacterIterator input, StringBuilder lexema) {
+        lexema.append(input.current());
         return null;
     }
 }

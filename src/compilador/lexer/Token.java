@@ -1,4 +1,4 @@
-package compilador;
+package compilador.lexer;
 
 public class Token {
     private int tokenID;

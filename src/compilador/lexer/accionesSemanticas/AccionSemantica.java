@@ -1,6 +1,6 @@
-package compilador.accionesSemanticas;
+package compilador.lexer.accionesSemanticas;
 
-import compilador.Token;
+import compilador.lexer.Token;
 
 import java.text.StringCharacterIterator;
 
