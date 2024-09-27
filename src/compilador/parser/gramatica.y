@@ -34,7 +34,7 @@ lista_de_tipos          :   lista_de_tipos COMA tipo
 		                ;
 		                
 lista_de_identificadores:   lista_de_identificadores COMA IDENTIFICADOR
-		                |   ID
+		                |   IDENTIFICADOR
 		                ;
 		                
 funcion                 :   tipo FUN IDENTIFICADOR PARENTESIS_L parametro PARENTESIS_R BEGIN cuerpo_funcion END
@@ -81,25 +81,38 @@ sentencia_salida            :   OUTF PARENTESIS_L { INLINE_STRING } PARENTESIS_R
 		                    ;
 
 // REHACER
-sentencia_control >	->	FOR PARENTESIS_L ID ASIGNACION CONSTANTE PUNTO_Y_COMA < condicion > PUNTO_Y_COMA UP CONSTANTE (PUNTO_Y_COMA “(” < condicion >”)”)? PARENTESIS_R < bloque_de_sentencias_ejecutables >
+sentencia_control           :   FOR PARENTESIS_L ID ASIGNACION CONSTANTE PUNTO_Y_COMA < condicion > PUNTO_Y_COMA UP CONSTANTE (PUNTO_Y_COMA “(” < condicion >”)”)? PARENTESIS_R < bloque_de_sentencias_ejecutables >
 		FOR PARENTESIS_L ID ASIGNACION CONSTANTE PUNTO_Y_COMA < condicion > PUNTO_Y_COMA DOWN CONSTANTE (PUNTO_Y_COMA “(” < condicion >”)”)? PARENTESIS_R < bloque_de_sentencias_ejecutables >
 
-lista_de_expresiones >	->	< lista_de_expresiones > COMA < expresion >
-		< expresion >
-expresion >	->	TOS PARENTESIS_L < expresion_aritmetica > PARENTESIS_R
-		< expresion_aritmetica >
-expresion_aritmetica >	->	< expresion > + < termino >
-		< expresion > - < termino >
-		< termino >
-termino >	->	< termino > * < factor >
-		< termino> / < factor >
-		< factor >
-< factor >	->	ID
-		CONSTANTE
-		< invocacion_a_funcion >
-		< expresion >
-< invocacion_a_funcion >	->	ID PARENTESIS_L < parametro_real > ”)”
-< parametro_real >	->	< expresion >
+lista_de_expresiones        :   lista_de_expresiones COMA expresion
+		                    |   expresion
+		                    ;
+
+expresion                   :   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R
+		                    |   expresion_aritmetica
+		                    ;
+
+expresion_aritmetica        :   expresion SUMA termino
+		                    |   expresion RESTA termino
+		                    |   termino
+		                    ;
+
+termino                     :   termino MULTIPLICACION factor
+		                    |   termino DIVISION factor
+		                    |   factor
+		                    ;
+
+factor                      :   IDENTIFICADOR
+		                    |   CONSTANTE
+		                    |   invocacion_a_funcion
+		                    |   expresion
+		                    ;
+
+< invocacion_a_funcion      :   IDENTIFICADOR PARENTESIS_L parametro_real PARENTESIS_R
+                            ;
+
+parametro_real              :   expresion
+                            ;
 
 
 %%
