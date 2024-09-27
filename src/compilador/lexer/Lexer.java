@@ -131,7 +131,7 @@ public class Lexer {
             return 21;
         } else if (c == '}') {
             return 22;
-        } else if (c == '\n') {
+        } else if (c == '\n' || c == '\r') {
             return 23;
         } else if (c == '\t') {
             return 24;

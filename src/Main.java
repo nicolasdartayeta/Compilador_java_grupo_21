@@ -3,7 +3,7 @@ import compilador.parser.Parser;
 
 public class Main {
     public static void main(String[] args) {
-        Lexer lexer = new Lexer("C:/Users/santi/Downloads/programa1.txt");
+        Lexer lexer = new Lexer("C:/Users/nicod/IdeaProjects/Compilador_java/src/programa.txt");
        int token = -1;
 
        while (token != 0) {

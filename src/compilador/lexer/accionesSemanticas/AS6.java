@@ -5,7 +5,6 @@ import compilador.lexer.TablaToken;
 import compilador.lexer.Token;
 
 import java.text.StringCharacterIterator;
-import java.util.Map;
 
 public class AS6 implements AccionSemantica {
     @Override
@@ -17,7 +16,7 @@ public class AS6 implements AccionSemantica {
             return new Token(TablaSimbolos.getIDPalabraReservada(lexema.toString().toUpperCase()), lexemaAux);
         }
 
-        int tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR);
+        int tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR_GENERICO);
         if (TablaSimbolos.existeLexema(lexemaAux) == false){
             if (lexemaAux.length() > 15){
                 //INFORMAR WARNING

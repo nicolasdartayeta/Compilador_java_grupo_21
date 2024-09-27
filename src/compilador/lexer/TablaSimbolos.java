@@ -57,6 +57,7 @@ public class TablaSimbolos {
         tabla.put(TYPEDEF, (int) Parser.TYPEDEF);
         tabla.put(FUN, (int) Parser.FUN);
         tabla.put(RET, (int) Parser.RET);
+        tabla.put(TOS, (int) Parser.TOS);
 
         return tabla;
     }

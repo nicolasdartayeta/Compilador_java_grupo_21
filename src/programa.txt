@@ -1,0 +1,5 @@
+programa
+
+BEGIN
+    santi := 9;
+END

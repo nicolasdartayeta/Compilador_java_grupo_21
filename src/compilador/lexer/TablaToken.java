@@ -5,7 +5,10 @@ import compilador.parser.Parser;
 import java.util.HashMap;
 
 public class TablaToken {
-    public static final String IDENTIFICADOR = "IDENTIFICADOR";
+    public static final String IDENTIFICADOR_GENERICO = "IDENTIFICADOR";
+
+    public static final String IDENTIFICADOR_ULONGINT = "IDENTIFICADOR_ULONGINT";
+    public static final String IDENTIFICADOR_SINGLE = "IDENTIFICADOR_SINGLE";
     public static final String CONSTANTE_DECIMAL = "CONSTANTE_DECIMAL";
     public static final String CONSTANTE_OCTAL = "CONSTANTE_OCTAL";
     public static final String CONSTANTE_SINGLE = "CONSTANTE_SINGLE";
@@ -21,7 +24,7 @@ public class TablaToken {
     public static final String IGUAL = "IGUAL";
     public static final String DESIGUAL = "DESIGUAL";
     public static final String PARENTESIS_L = "PARENTESIS_L";
-    public static final String PATENTESIS_R = "PATENTESIS_R";
+    public static final String PARENTESIS_R = "PARENTESIS_R";
     public static final String COMA = "COMA";
     public static final String PUNTO = "PUNTO";
     public static final String PUNTO_Y_COMA = "PUNTO_Y_COMA";
@@ -34,10 +37,12 @@ public class TablaToken {
     private static HashMap<String, Integer> createTablaTokens() {
         HashMap<String, Integer> tabla = new HashMap<String, Integer>();
 
-        tabla.put(IDENTIFICADOR, (int) Parser.IDENTIFICADOR);
-        tabla.put(CONSTANTE_DECIMAL, (int) Parser.CONSTANTE_OCTAL);
+        tabla.put(IDENTIFICADOR_GENERICO, (int) Parser.IDENTIFICADOR_GENERICO);
+        tabla.put(IDENTIFICADOR_ULONGINT, (int) Parser.IDENTIFICADOR_ULONGINT);
+        tabla.put(IDENTIFICADOR_SINGLE, (int) Parser.IDENTIFICADOR_SINGLE);
+        tabla.put(CONSTANTE_DECIMAL, (int) Parser.CONSTANTE_DECIMAL);
         tabla.put(CONSTANTE_OCTAL, (int) Parser.CONSTANTE_OCTAL);
-        tabla.put(CONSTANTE_SINGLE, (int) Parser.SINGLE);
+        tabla.put(CONSTANTE_SINGLE, (int) Parser.CONSTANTE_SINGLE);
         tabla.put(SUMA, (int) Parser.SUMA);
         tabla.put(RESTA, (int) Parser.RESTA);
         tabla.put(MULTIPLICACION, (int) Parser.MULTIPLICACION);
@@ -50,7 +55,7 @@ public class TablaToken {
         tabla.put(IGUAL, (int) Parser.IGUAL);
         tabla.put(DESIGUAL, (int) Parser.DESIGUAL);
         tabla.put(PARENTESIS_L, (int) Parser.PARENTESIS_L);
-        tabla.put(PATENTESIS_R, (int) Parser.PATENTESIS_R);
+        tabla.put(PARENTESIS_R, (int) Parser.PARENTESIS_R);
         tabla.put(COMA, (int) Parser.COMA);
         tabla.put(PUNTO, (int) Parser.PUNTO);
         tabla.put(PUNTO_Y_COMA, (int) Parser.PUNTO_Y_COMA);
