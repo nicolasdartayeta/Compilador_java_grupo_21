@@ -106,7 +106,7 @@ termino >	->	< termino > * < factor >
 private static Lexer lex;
 
 public static void main(String[] args) {
-    Lexer lexer = new Lexer("hola begin end");
+    Lexer lexer = new Lexer("C:/Users/santi/Downloads/programa1.txt");
     Parser.lex = lexer;
     Parser parser = new Parser(true);
     parser.run();

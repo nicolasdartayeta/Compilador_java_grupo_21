@@ -2,7 +2,9 @@ package compilador.lexer;
 
 import compilador.lexer.accionesSemanticas.*;
 import compilador.lexer.accionesSemanticas.AccionSemantica;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.StringCharacterIterator;
 
 public class Lexer {
@@ -70,8 +72,16 @@ public class Lexer {
             {null,new AS9(),new ASE(),new AS6(),new ASE(),new ASE(),new AS2(),new ASE(),new AS12(),new AS11(),new ASE(),new ASE(),new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
     };
 
-    public Lexer(String input) {
-        this.input = new StringCharacterIterator(input);
+    public Lexer(String filePath) {
+        try {
+            // Lee el archivo .txt y convierte su contenido a String
+            String fileContent = new String(Files.readAllBytes(Paths.get(filePath)));
+
+            // Inicializa el input del lexer con el contenido del archivo
+            this.input = new StringCharacterIterator(fileContent);
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        }
     }
 
     private int getIndexFromChar(char c) {
