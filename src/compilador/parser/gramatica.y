@@ -88,11 +88,11 @@ comparador                  :   MAYOR
                             ;
 
 bloque_de_sent_ejecutables  :   BEGIN sentencias_ejecutables END
-			                |   sentencia_ejecutable
+			                |   sentencia_ejecutable PUNTO_Y_COMA
 			                ;
 
-sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable
-		                    |   sentencia_ejecutable
+sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable PUNTO_Y_COMA
+		                    |   sentencia_ejecutable PUNTO_Y_COMA
 		                    ;
 
 sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R

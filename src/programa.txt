@@ -1,5 +1,16 @@
 programa
 
 BEGIN
-    santi := 9;
+    ulongint santi;
+    single nico;
+
+    santi := 07;
+
+    if (santi >= 04) then
+        nico := 3.1s-6;
+    else
+        begin
+            nico := 5.0s9;
+        end
+    end_if;
 END
