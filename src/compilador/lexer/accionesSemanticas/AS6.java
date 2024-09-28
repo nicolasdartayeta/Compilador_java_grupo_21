@@ -16,7 +16,16 @@ public class AS6 implements AccionSemantica {
             return new Token(TablaSimbolos.getIDPalabraReservada(lexema.toString().toUpperCase()), lexemaAux);
         }
 
-        int tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR_GENERICO);
+        int tokenId;
+
+        if (lexemaAux.charAt(0) == 's'){
+            tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR_SINGLE);
+        } else if (lexemaAux.charAt(0) == 'u' || lexemaAux.charAt(0) == 'v' || lexemaAux.charAt(0) == 'w'){
+            tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR_ULONGINT);
+        } else{
+            tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR_GENERICO);
+        }
+
         if (TablaSimbolos.existeLexema(lexemaAux) == false){
             if (lexemaAux.length() > 15){
                 //INFORMAR WARNING

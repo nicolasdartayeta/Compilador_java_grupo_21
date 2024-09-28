@@ -16,16 +16,16 @@ sentencias                  : 	sentencias sentencia
                             |   sentencia
                             ;
 
-sentencia                   :   sentencia_declarativa PUNTO_Y_COMA
-                            |   sentencia_ejecutable PUNTO_Y_COMA
+sentencia                   :   sentencia_declarativa
+                            |   sentencia_ejecutable
                             ;
             
-sentencia_declarativa       :   tipo lista_de_identificadores
+sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA
 		                    |   funcion
-		                    |   struct
+		                    |   struct PUNTO_Y_COMA
 		                    ;
 		                
-struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR "{" lista_de_identificadores "}"
+struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR "{" lista_de_identificadores "}" IDENTIFICADOR_GENERICO
                             ;
                         
 tipo                        :   ULONGINT
@@ -50,16 +50,20 @@ funcion                     :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                             ;
                         
 parametro                   :   tipo identificador
-cuerpo_funcion              :   cuerpo_funcion sentencia
-		                    |   cuerpo_funcion return
-		                    ;
-		                
-return                      :   RET PARENTESIS_L expresion PARENTESIS_R
                             ;
 
-sentencia_ejecutable        :   sentencia_asignacion
-		                    |   sentencia_seleccion
-		                    |   sentencia_salida
+cuerpo_funcion              :   cuerpo_funcion sentencia
+		                    |   cuerpo_funcion return
+		                    |   sentencia
+		                    |   return
+		                    ;
+		                
+return                      :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
+                            ;
+
+sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA
+		                    |   sentencia_seleccion PUNTO_Y_COMA
+		                    |   sentencia_salida PUNTO_Y_COMA
 		                    |   sentencia_control
 		                    ;
 
@@ -87,29 +91,32 @@ comparador                  :   MAYOR
                             |   DESIGUAL
                             ;
 
-bloque_de_sent_ejecutables  :   BEGIN sentencias_ejecutables END
-			                |   sentencia_ejecutable PUNTO_Y_COMA
+bloque_de_sent_ejecutables  :   BEGIN sentencias_ejecutables END PUNTO_Y_COMA
+			                |   sentencia_ejecutable
 			                ;
 
-sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable PUNTO_Y_COMA
-		                    |   sentencia_ejecutable PUNTO_Y_COMA
+sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable
+		                    |   sentencia_ejecutable
 		                    ;
 
 sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R
 		                    |   OUTF PARENTESIS_L expresion PARENTESIS_R
 		                    ;
 
-sentencia_control           :   encabezado_for sentencia_asignacion
+sentencia_control           :   encabezado_for bloque_de_sent_ejecutables
                             ;
 
-encabezado_for              :   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion
+encabezado_for              :   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion PARENTESIS_R
                             ;
 
-asignacion_enteros          :   IDENTIFICADOR_ULONGINT ASIGNACION IDENTIFICADOR_ULONGINT
+asignacion_enteros          :   identificador ASIGNACION CONSTANTE_DECIMAL
+                            |   identificador ASIGNACION CONSTANTE_OCTAL
                             ;
 
-accion                      :   UP IDENTIFICADOR_ULONGINT
-                            |   DOWN IDENTIFICADOR_ULONGINT
+accion                      :   UP CONSTANTE_DECIMAL
+                            |   UP CONSTANTE_OCTAL
+                            |   DOWN CONSTANTE_OCTAL
+                            |   DOWN CONSTANTE_DECIMAL
                             ;
 
 lista_de_expresiones        :   lista_de_expresiones COMA expresion
@@ -148,7 +155,7 @@ parametro_real              :   expresion
 private static Lexer lex;
 
 public static void main(String[] args) {
-    Lexer lexer = new Lexer("C:/Users/nicod/IdeaProjects/Compilador_java/src/programa.txt");
+    Lexer lexer = new Lexer("C:/Users/santi/Downloads/programa1.txt");
     Parser.lex = lexer;
     Parser parser = new Parser(true);
     parser.run();

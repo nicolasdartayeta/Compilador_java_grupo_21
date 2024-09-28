@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 public class TablaToken {
     public static final String IDENTIFICADOR_GENERICO = "IDENTIFICADOR";
-
     public static final String IDENTIFICADOR_ULONGINT = "IDENTIFICADOR_ULONGINT";
     public static final String IDENTIFICADOR_SINGLE = "IDENTIFICADOR_SINGLE";
     public static final String CONSTANTE_DECIMAL = "CONSTANTE_DECIMAL";
