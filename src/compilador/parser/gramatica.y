@@ -46,15 +46,16 @@ identificador               :   IDENTIFICADOR_GENERICO
                             ;
 
 		                
-funcion                     :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R BEGIN cuerpo_funcion END
+funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END
                             ;
-                        
+
+encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R
+
 parametro                   :   tipo identificador
                             ;
 
 cuerpo_funcion              :   cuerpo_funcion sentencia
 		                    |   cuerpo_funcion return
-		                    |   sentencia
 		                    |   return
 		                    ;
 		                

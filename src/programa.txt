@@ -1,16 +1,12 @@
-programa
-
-BEGIN
-    ulongint santi;
-    single nico;
-
-    santi := 07;
-
-    if (santi >= 04) then
-        nico := 3.1s-6;
-    else
-        begin
-            nico := 5.0s9;
-        end
-    end_if;
-END
+hola
+begin
+    ulongint fun f1 (single s)
+    begin
+        ulongint v1;
+        v := 6;
+        if ( s = 10.0) then
+            v := s;
+        end_if
+        ret (s);
+    end
+end
