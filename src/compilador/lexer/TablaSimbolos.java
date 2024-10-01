@@ -27,11 +27,19 @@ public class TablaSimbolos {
     private static HashMap<String, Integer> tablaPalabrasReservadas = createTablaPalabrasReservadas();
 
     public static Integer getIDPalabraReservada(String palabraReservada) {
-
         if (esPalabraReservada(palabraReservada)){
             return tablaPalabrasReservadas.get(palabraReservada);
         }
         return null;
+    }
+
+    public static String getPalabraReservadaFromId(int id) {
+        for (String key: tablaPalabrasReservadas.keySet()) {
+            if (tablaPalabrasReservadas.get(key).equals(id)) {
+                return key;
+            }
+        }
+        throw new IllegalArgumentException("No hay una palabra reservada con ese id");
     }
 
     public static boolean esPalabraReservada(String palabraReservada) {

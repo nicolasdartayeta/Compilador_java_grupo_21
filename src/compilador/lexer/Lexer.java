@@ -1,7 +1,8 @@
 package compilador.lexer;
 
-import compilador.lexer.accionesSemanticas.*;
 import compilador.lexer.accionesSemanticas.AccionSemantica;
+import compilador.lexer.token.Token;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,67 +11,11 @@ import java.text.StringCharacterIterator;
 public class Lexer {
     public StringCharacterIterator input;
     private int current_index = 0;
+    private int numeroDeLinea = 0;
 
-    private final int[][] matrizTransicionEstado = {
-        {9,16,2,3,17,2,16,17,8,9,10,12,12,14,14,14,-1,-1},
-        {8,16,2,3,17,2,16,17,8,9,10,12,12,14,14,14,-1,-1},
-        {8,16,2,3,17,2,16,17,8,8,10,12,12,14,14,14,-1,-1},
-        {3,16,2,3,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {3,16,2,3,17,2,16,17,16,16,10,17,13,17,16,17,-1,-1},
-        {6,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {6,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {4,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,2,16,16,2,16,16,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,2,16,17,2,16,17,16,16,10,17,17,15,16,17,-1,-1},
-        {16,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,2,16,17,2,16,17,11,11,10,17,17,17,16,17,-1,-1},
-        {7,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {1,16,2,16,17,0,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {17,2,5,16,17,5,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {17,16,2,3,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {10,16,16,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {17,16,16,16,17,2,16,17,16,16,16,17,17,17,16,17,-1,-1},
-        {0,16,16,16,17,2,16,17,16,16,17,17,17,17,16,17,-1,-1},
-        {0,16,16,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {0,16,16,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {17,16,2,16,17,2,16,17,16,16,10,17,17,17,16,17,-1,-1},
-        {16,16,17,16,17,17,16,17,16,16,17,17,16,17,16,17,-1,-1},
-    };
-    private final AccionSemantica[][] matrizDeAccionesSemanticas = {
-            {new AS4(),new AS9(),null,new AS5(),new ASE(),null,new AS2(),null,new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS5(),new ASE(),null,new AS2(),null,new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS5(),new ASE(),null,new AS2(),null,new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new AS5(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS5(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),new ASE(),new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS5(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS5(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new AS10(),null,new AS2(),new AS10(),new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new AS5(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS8(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS5(),new AS5(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS4(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new ASE(),null,null,new AS6(),new ASE(),null,new AS2(),null,new AS7(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new ASE(),new AS9(),null,new AS5(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new AS1(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new ASE(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS3(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {null,new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new ASE(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {null,new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {null,new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),null,new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {new ASE(),new AS9(),null,new AS6(),new ASE(),null,new AS2(),null,new AS12(),new AS11(),new AS5(),new ASE(),new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-            {null,new AS9(),new ASE(),new AS6(),new ASE(),new ASE(),new AS2(),new ASE(),new AS12(),new AS11(),new ASE(),new ASE(),new AS7(),new ASE(),new AS7(),new ASE(),new ASE(),null},
-    };
+    private final int[][] matrizTransicionEstado = CSVAMatriz.leerMatrizDeTransicion("src/compilador/lexer/matrizTransicion.csv", 30, 18);
+
+    private final AccionSemantica[][] matrizDeAccionesSemanticas = CSVAMatriz.leerMatrizDeAccionesSemanticas("src/compilador/lexer/accionesSemanticas.csv", 30, 18);
 
     public Lexer(String filePath) {
         try {
@@ -103,44 +48,51 @@ public class Lexer {
             return 7;
         } else if (c == ';') {
             return 8;
-        } else if (c == '(') {
+        } else if (c == '[') {
             return 9;
-        } else if (c == ')') {
+        } else if (c == ']') {
             return 10;
-        } else if (c == '=') {
+        } else if (c == '(') {
             return 11;
-        } else if (c == '+') {
+        } else if (c == ')') {
             return 12;
-        } else if (c == '*') {
+        } else if (c == '=') {
             return 13;
-        } else if (c == '-') {
+        } else if (c == '+') {
             return 14;
-        } else if (c == ',') {
+        } else if (c == '*') {
             return 15;
-        } else if (c == '.') {
+        } else if (c == '-') {
             return 16;
-        } else if (c == '!') {
+        } else if (c == ',') {
             return 17;
-        } else if (c == '/') {
+        } else if (c == '.') {
             return 18;
-        } else if (c == '#') {
+        } else if (c == '!') {
             return 19;
-        } else if (c == '_') {
+        } else if (c == '/') {
             return 20;
-        } else if (c == '{') {
+        } else if (c == '#') {
             return 21;
-        } else if (c == '}') {
+        } else if (c == '_') {
             return 22;
-        } else if (c == '\n' || c == '\r') {
+        } else if (c == '{') {
             return 23;
-        } else if (c == '\t') {
+        } else if (c == '}') {
             return 24;
-        } else if (c == ' ') {
+        } else if (c == '\n') {
+            numeroDeLinea++;
             return 25;
-        } else if (c == StringCharacterIterator.DONE) {
-            return 27;
-        } else {
+        }else if (c == '\r') {
+            return 25;
+        } else if (c == '\t') {
             return 26;
+        } else if (c == ' ') {
+            return 27;
+        } else if (c == StringCharacterIterator.DONE) {
+            return 29;
+        } else {
+            return 28;
         }
     }
 
@@ -160,7 +112,7 @@ public class Lexer {
                 estadoActual = matrizTransicionEstado[fila][estadoActual];
 
                 if (accionSemantica != null) {
-                    token = accionSemantica.ejecutar(input, lexema);
+                    token = accionSemantica.ejecutar(input, lexema, numeroDeLinea);
                 }
 
                 charLeido = input.next();

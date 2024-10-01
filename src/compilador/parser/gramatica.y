@@ -3,10 +3,11 @@
     import compilador.lexer.Lexer;
 %}
 
-%token IDENTIFICADOR_GENERICO IDENTIFICADOR_ULONGINT IDENTIFICADOR_SINGLE CONSTANTE_DECIMAL CONSTANTE_OCTAL CONSTANTE_SINGLE SUMA RESTA MULTIPLICACION DIVISION ASIGNACION MAYOR_O_IGUAL MENOR_O_IGUAL MAYOR MENOR IGUAL DESIGUAL PARENTESIS_L PARENTESIS_R COMA PUNTO PUNTO_Y_COMA INLINE_STRING ERROR STRUCT FOR UP DOWN SINGLE ULONGINT IF THEN ELSE BEGIN END END_IF OUTF TYPEDEF FUN RET TOS
+%token IDENTIFICADOR_GENERICO IDENTIFICADOR_ULONGINT IDENTIFICADOR_SINGLE CONSTANTE_DECIMAL CONSTANTE_OCTAL CONSTANTE_SINGLE SUMA RESTA MULTIPLICACION DIVISION ASIGNACION MAYOR_O_IGUAL MENOR_O_IGUAL MAYOR MENOR IGUAL DESIGUAL CORCHETE_L CORCHETE_R PARENTESIS_L PARENTESIS_R COMA PUNTO PUNTO_Y_COMA INLINE_STRING ERROR STRUCT FOR UP DOWN SINGLE ULONGINT IF THEN ELSE BEGIN END END_IF OUTF TYPEDEF FUN RET TOS
 
 %left SUMA RESTA
 %left MULTIPLICACION DIVISION
+
 %%
 
 programa                    :   IDENTIFICADOR_GENERICO BEGIN sentencias END
@@ -25,7 +26,7 @@ sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA
 		                    |   struct PUNTO_Y_COMA
 		                    ;
 		                
-struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR "{" lista_de_identificadores "}" IDENTIFICADOR_GENERICO
+struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO
                             ;
                         
 tipo                        :   ULONGINT
@@ -40,11 +41,18 @@ lista_de_identificadores    :   lista_de_identificadores COMA identificador
 		                    |   identificador
 		                    ;
 
-identificador               :   IDENTIFICADOR_GENERICO
+identificador               :   identificador_simple
+                            |   identificador_compuesto
+                            ;
+
+identificador_simple        :   IDENTIFICADOR_GENERICO
                             |   IDENTIFICADOR_ULONGINT
                             |   IDENTIFICADOR_SINGLE
                             ;
 
+identificador_compuesto     :   identificador_simple PUNTO identificador_compuesto
+                            |   identificador_simple PUNTO identificador_simple
+                            ;
 		                
 funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END
                             ;
@@ -54,12 +62,12 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
 parametro                   :   tipo identificador
                             ;
 
-cuerpo_funcion              :   cuerpo_funcion sentencia
-		                    |   cuerpo_funcion return
-		                    |   return
-		                    ;
-		                
-return                      :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
+cuerpo_funcion              :   sentencias sentencia_retorno sentencias
+                            |   sentencias sentencia_retorno
+                            |   sentencia_retorno
+                            ;
+
+sentencia_retorno           :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
                             ;
 
 sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA
@@ -156,7 +164,7 @@ parametro_real              :   expresion
 private static Lexer lex;
 
 public static void main(String[] args) {
-    Lexer lexer = new Lexer("C:/Users/santi/Downloads/programa1.txt");
+    Lexer lexer = new Lexer("src/programa_sin_funciones.txt");
     Parser.lex = lexer;
     Parser parser = new Parser(true);
     parser.run();

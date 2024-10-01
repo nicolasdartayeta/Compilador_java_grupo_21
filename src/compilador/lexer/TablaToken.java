@@ -4,8 +4,10 @@ import compilador.parser.Parser;
 
 import java.util.HashMap;
 
+import static java.lang.System.in;
+
 public class TablaToken {
-    public static final String IDENTIFICADOR_GENERICO = "IDENTIFICADOR";
+    public static final String IDENTIFICADOR_GENERICO = "IDENTIFICADOR_GENERICO";
     public static final String IDENTIFICADOR_ULONGINT = "IDENTIFICADOR_ULONGINT";
     public static final String IDENTIFICADOR_SINGLE = "IDENTIFICADOR_SINGLE";
     public static final String CONSTANTE_DECIMAL = "CONSTANTE_DECIMAL";
@@ -22,6 +24,8 @@ public class TablaToken {
     public static final String MENOR = "MENOR";
     public static final String IGUAL = "IGUAL";
     public static final String DESIGUAL = "DESIGUAL";
+    public static final String CORCHETE_L = "CORCHETE_L";
+    public static final String CORCHETE_R = "CORCHETE_R";
     public static final String PARENTESIS_L = "PARENTESIS_L";
     public static final String PARENTESIS_R = "PARENTESIS_R";
     public static final String COMA = "COMA";
@@ -53,6 +57,8 @@ public class TablaToken {
         tabla.put(MENOR, (int) Parser.MENOR);
         tabla.put(IGUAL, (int) Parser.IGUAL);
         tabla.put(DESIGUAL, (int) Parser.DESIGUAL);
+        tabla.put(CORCHETE_L, (int) Parser.CORCHETE_L);
+        tabla.put(CORCHETE_R, (int) Parser.CORCHETE_R);
         tabla.put(PARENTESIS_L, (int) Parser.PARENTESIS_L);
         tabla.put(PARENTESIS_R, (int) Parser.PARENTESIS_R);
         tabla.put(COMA, (int) Parser.COMA);
@@ -66,5 +72,14 @@ public class TablaToken {
 
     public static int getTokenID(String token){
         return tablaTokens.get(token);
+    }
+
+    public static String getTokenNameFromId(int id) {
+        for (String key: tablaTokens.keySet()) {
+            if (tablaTokens.get(key).equals(id)) {
+                return key;
+            }
+        }
+        throw new IllegalArgumentException("No hay un token con ese id");
     }
 }

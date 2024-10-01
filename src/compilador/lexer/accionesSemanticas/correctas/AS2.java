@@ -1,14 +1,15 @@
-package compilador.lexer.accionesSemanticas;
+package compilador.lexer.accionesSemanticas.correctas;
 
 import compilador.lexer.TablaToken;
-import compilador.lexer.Token;
+import compilador.lexer.accionesSemanticas.AccionSemantica;
+import compilador.lexer.token.Token;
 
 import java.text.StringCharacterIterator;
 
 public class AS2 implements AccionSemantica {
 
     @Override
-    public Token ejecutar(StringCharacterIterator input, StringBuilder lexema) {
+    public Token ejecutar(StringCharacterIterator input, StringBuilder lexema, int numeroDeLinea) {
         if (input.current() == '='){
             lexema.append(input.current());
             if (lexema.toString().equals("<=")) {
