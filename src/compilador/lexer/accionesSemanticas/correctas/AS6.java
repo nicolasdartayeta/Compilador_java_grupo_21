@@ -14,7 +14,7 @@ public class AS6 implements AccionSemantica {
         String lexemaAux = lexema.toString();
 
         if (TablaSimbolos.esPalabraReservada(lexema.toString().toUpperCase())) {
-            return new Token(TablaSimbolos.getIDPalabraReservada(lexema.toString().toUpperCase()), lexemaAux);
+            return new Token(TablaSimbolos.getIDPalabraReservada(lexema.toString().toUpperCase()), lexemaAux, numeroDeLinea);
         }
 
         int tokenId;
@@ -34,6 +34,6 @@ public class AS6 implements AccionSemantica {
             }
             TablaSimbolos.agregarLexema(lexemaAux,tokenId);
         }
-        return new Token(tokenId, lexemaAux);
+        return new Token(tokenId, lexemaAux, numeroDeLinea);
     }
 }

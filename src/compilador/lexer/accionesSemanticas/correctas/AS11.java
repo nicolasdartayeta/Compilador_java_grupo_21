@@ -21,7 +21,7 @@ public class AS11 implements AccionSemantica {
                 TablaSimbolos.agregarLexema(lexema.toString(),tokenOctal);
             }
 
-            return new Token(tokenOctal, lexema.toString());
+            return new Token(tokenOctal, lexema.toString(), numeroDeLinea);
         } catch (NumberFormatException e) {
             return new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, "La constante se pasa de rango");
         }

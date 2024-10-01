@@ -11,7 +11,7 @@ import java.text.StringCharacterIterator;
 public class Lexer {
     public StringCharacterIterator input;
     private int current_index = 0;
-    private int numeroDeLinea = 0;
+    private int numeroDeLinea = 1;
 
     private final int[][] matrizTransicionEstado = CSVAMatriz.leerMatrizDeTransicion("src/compilador/lexer/matrizTransicion.csv", 30, 18);
 
@@ -96,7 +96,7 @@ public class Lexer {
         }
     }
 
-    public int yylex() {
+    public Token getNextToken() {
         Token token = null;
         boolean tokenFound = false;
         int estadoActual = 0;
@@ -123,10 +123,10 @@ public class Lexer {
             }
         } else {
             tokenFound = true;
-            token = new Token(TablaToken.getTokenID(TablaToken.EOF), TablaToken.EOF);
+            token = new Token(TablaToken.getTokenID(TablaToken.EOF), TablaToken.EOF, numeroDeLinea);
         }
 
         System.out.println(token);
-        return token.getTokenID();
+        return token;
     }
 }

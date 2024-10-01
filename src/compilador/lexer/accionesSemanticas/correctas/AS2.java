@@ -13,16 +13,16 @@ public class AS2 implements AccionSemantica {
         if (input.current() == '='){
             lexema.append(input.current());
             if (lexema.toString().equals("<=")) {
-                return new Token(TablaToken.getTokenID(TablaToken.MENOR_O_IGUAL), lexema.toString());
+                return new Token(TablaToken.getTokenID(TablaToken.MENOR_O_IGUAL), lexema.toString(), numeroDeLinea);
             } else if (lexema.toString().equals(">=")) {
-                return new Token(TablaToken.getTokenID(TablaToken.MAYOR_O_IGUAL), lexema.toString());
+                return new Token(TablaToken.getTokenID(TablaToken.MAYOR_O_IGUAL), lexema.toString(), numeroDeLinea);
             }
         } else {
             input.previous();
             if (lexema.toString().equals("<")) {
-                return new Token(TablaToken.getTokenID(TablaToken.MENOR), lexema.toString());
+                return new Token(TablaToken.getTokenID(TablaToken.MENOR), lexema.toString(), numeroDeLinea);
             } else if (lexema.toString().equals(">")) {
-                return new Token(TablaToken.getTokenID(TablaToken.MAYOR), lexema.toString());
+                return new Token(TablaToken.getTokenID(TablaToken.MAYOR), lexema.toString(), numeroDeLinea);
             }
         }
         return null;

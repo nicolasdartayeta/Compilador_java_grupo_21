@@ -1,12 +1,11 @@
 package compilador.lexer.token;
 
 public class TokenError extends Token {
-    private int numeroDeLinea;
+
     private String descripcionError;
 
     public TokenError(int token, String lexema, int numeroDeLinea, String descripcionError) {
-        super(token, lexema);
-        this.numeroDeLinea = numeroDeLinea;
+        super(token, lexema, numeroDeLinea);
         this.descripcionError = descripcionError;
     }
 
@@ -17,10 +16,6 @@ public class TokenError extends Token {
 
     public String getDescripcionError() {
         return descripcionError;
-    }
-
-    public int getNumeroDeLinea() {
-        return numeroDeLinea;
     }
 
     @Override

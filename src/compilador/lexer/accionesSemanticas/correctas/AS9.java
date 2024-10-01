@@ -10,6 +10,6 @@ public class AS9 implements AccionSemantica {
     @Override
     public Token ejecutar(StringCharacterIterator input, StringBuilder lexema, int numeroDeLinea) {
         input.previous();
-        return new Token(TablaToken.getTokenID(TablaToken.DIVISION), lexema.toString());
+        return new Token(TablaToken.getTokenID(TablaToken.DIVISION), lexema.toString(), numeroDeLinea);
     }
 }

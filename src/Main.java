@@ -7,7 +7,7 @@ public class Main {
        int token = -1;
 
        while (token != 0) {
-           token = lexer.yylex();
+           token = lexer.getNextToken().getTokenID();
        }
     }
 }

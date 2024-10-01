@@ -22,7 +22,7 @@ public class AS12 implements AccionSemantica {
                 TablaSimbolos.agregarLexema(lexema.toString(), tokenDecimal);
             }
 
-            return new Token(tokenDecimal, lexema.toString());
+            return new Token(tokenDecimal, lexema.toString(), numeroDeLinea);
         } catch (NumberFormatException e) {
             return new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, "La constante se pasa de rango");
         }

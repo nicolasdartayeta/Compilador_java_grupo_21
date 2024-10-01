@@ -47,7 +47,7 @@ public class AS7 implements AccionSemantica {
                     TablaSimbolos.agregarLexema(posibleFloat, tokenSingle);
                 }
 
-                return new Token(tokenSingle, posibleFloat);
+                return new Token(tokenSingle, posibleFloat, numeroDeLinea);
             }
         } catch (NumberFormatException e) {
             return new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, "La constante se pasa de rango");

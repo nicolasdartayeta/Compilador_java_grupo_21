@@ -13,7 +13,7 @@ public class AS3 implements AccionSemantica {
         if (input.current() == '}') {
             int tokenComentario = TablaToken.getTokenID(TablaToken.INLINE_STRING);
             TablaSimbolos.agregarLexema(lexema.toString(),tokenComentario);
-            return new Token(tokenComentario, lexema.toString());
+            return new Token(tokenComentario, lexema.toString(), numeroDeLinea);
         }
         return null;
     }

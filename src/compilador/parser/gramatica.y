@@ -1,6 +1,7 @@
 %{
     package compilador.parser;
     import compilador.lexer.Lexer;
+    import compilador.lexer.token.*;
 %}
 
 %token IDENTIFICADOR_GENERICO IDENTIFICADOR_ULONGINT IDENTIFICADOR_SINGLE CONSTANTE_DECIMAL CONSTANTE_OCTAL CONSTANTE_SINGLE SUMA RESTA MULTIPLICACION DIVISION ASIGNACION MAYOR_O_IGUAL MENOR_O_IGUAL MAYOR MENOR IGUAL DESIGUAL CORCHETE_L CORCHETE_R PARENTESIS_L PARENTESIS_R COMA PUNTO PUNTO_Y_COMA INLINE_STRING ERROR STRUCT FOR UP DOWN SINGLE ULONGINT IF THEN ELSE BEGIN END END_IF OUTF TYPEDEF FUN RET TOS
@@ -20,40 +21,40 @@ sentencias                  : 	sentencias sentencia
 sentencia                   :   sentencia_declarativa
                             |   sentencia_ejecutable
                             ;
-            
-sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA
-		                    |   funcion
-		                    |   struct PUNTO_Y_COMA
+
+sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { System.out.println("Declaracion de VARIABLES detectada"); }
+		                    |   funcion   { System.out.println("Declaracion de FUNCION detectada"); }
+		                    |   struct PUNTO_Y_COMA   { System.out.println("Declaracion de STRUCT detectada"); }
 		                    ;
-		                
+
 struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO
                             ;
-                        
+
 tipo                        :   ULONGINT
 		                    |   SINGLE
 		                    ;
-		                
+
 lista_de_tipos              :   lista_de_tipos COMA tipo
 		                    |   tipo
 		                    ;
-		                
+
 lista_de_identificadores    :   lista_de_identificadores COMA identificador
-		                    |   identificador
+		                    |   identificador { $$.ival = $1.ival; }
 		                    ;
 
-identificador               :   identificador_simple
-                            |   identificador_compuesto
+identificador               :   identificador_simple { $$.ival = $1.ival; }
+                            |   identificador_compuesto { $$.ival = $1.ival; }
                             ;
 
-identificador_simple        :   IDENTIFICADOR_GENERICO
-                            |   IDENTIFICADOR_ULONGINT
-                            |   IDENTIFICADOR_SINGLE
+identificador_simple        :   IDENTIFICADOR_GENERICO { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+                            |   IDENTIFICADOR_ULONGINT { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+                            |   IDENTIFICADOR_SINGLE { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
                             ;
 
-identificador_compuesto     :   identificador_simple PUNTO identificador_compuesto
-                            |   identificador_simple PUNTO identificador_simple
+identificador_compuesto     :   identificador_simple PUNTO identificador_compuesto { $$.ival = $1.ival; }
+                            |   identificador_simple PUNTO identificador_simple { $$.ival = $1.ival; }
                             ;
-		                
+
 funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END
                             ;
 
@@ -70,13 +71,13 @@ cuerpo_funcion              :   sentencias sentencia_retorno sentencias
 sentencia_retorno           :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
                             ;
 
-sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA
-		                    |   sentencia_seleccion PUNTO_Y_COMA
+sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "ASIGNACION detectada"); }
+		                    |   sentencia_seleccion PUNTO_Y_COMA { System.out.println("Sentencia IF detectada"); }
 		                    |   sentencia_salida PUNTO_Y_COMA
-		                    |   sentencia_control
+		                    |   sentencia_control { System.out.println("Sentencia FOR detectada"); }
 		                    ;
 
-sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones
+sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones { $$.ival = $1.ival; }
                             ;
 
 sentencia_seleccion         :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF
@@ -147,11 +148,14 @@ termino                     :   termino MULTIPLICACION factor
 		                    ;
 
 factor                      :   identificador
-		                    |   CONSTANTE_DECIMAL
-		                    |   CONSTANTE_OCTAL
-		                    |   CONSTANTE_SINGLE
+                            |   constante { System.out.println($1.sval); }
 		                    |   invocacion_a_funcion
 		                    ;
+
+constante                   :   CONSTANTE_DECIMAL { $$.sval = ((Token) $1.obj).getLexema(); }
+                            |   CONSTANTE_OCTAL { $$.sval = ((Token) $1.obj).getLexema(); }
+                            |   CONSTANTE_SINGLE { $$.sval = ((Token) $1.obj).getLexema(); }
+                            ;
 
 invocacion_a_funcion      :   IDENTIFICADOR_GENERICO PARENTESIS_L parametro_real PARENTESIS_R
                             ;
@@ -171,7 +175,9 @@ public static void main(String[] args) {
     }
 
 private int yylex() {
-    return lex.yylex();
+    Token tok = lex.getNextToken();
+    yylval = new ParserVal(tok);
+    return tok.getTokenID();
 }
 
 private void yyerror(String string) {

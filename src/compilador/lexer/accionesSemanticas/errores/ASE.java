@@ -10,7 +10,7 @@ import java.text.StringCharacterIterator;
 public abstract class ASE implements AccionSemantica {
     @Override
     public Token ejecutar(StringCharacterIterator input, StringBuilder lexema, int numeroDeLinea) {
-        TokenError error = new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, this.getDescripcionError(input, lexema));
+        TokenError error = new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, "Linea " + numeroDeLinea + ": " + this.getDescripcionError(input, lexema));
         input.previous();
         return error;
     }
