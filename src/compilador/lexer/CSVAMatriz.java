@@ -2,10 +2,7 @@ package compilador.lexer;
 
 import compilador.lexer.accionesSemanticas.*;
 import compilador.lexer.accionesSemanticas.correctas.*;
-import compilador.lexer.accionesSemanticas.errores.ASEAsignacion;
-import compilador.lexer.accionesSemanticas.errores.ASECaracterNoPermitido;
-import compilador.lexer.accionesSemanticas.errores.ASEDesigualdad;
-import compilador.lexer.accionesSemanticas.errores.ASEGenerica;
+import compilador.lexer.accionesSemanticas.errores.*;
 
 import java.io.*;
 
@@ -102,6 +99,7 @@ public class CSVAMatriz {
             case "ASDesigualdad": return new ASEDesigualdad();
             case "ASECaracterNoPermitido": return new ASECaracterNoPermitido();
             case "ASEAsignacion": return new ASEAsignacion();
+            case "ASEDigitoEsperado": return new ASEDigitoEsperado();
             case "Null": return null;
             default: throw new IllegalArgumentException("Error: Accion semantica no reconocida: " + accionSemantica + ". Fijarse de agregarla a el archivo 'CSVMatriz'");
         }

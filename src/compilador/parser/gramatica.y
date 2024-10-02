@@ -72,15 +72,15 @@ sentencia_retorno           :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_
                             ;
 
 sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "ASIGNACION detectada"); }
-		                    |   sentencia_seleccion PUNTO_Y_COMA { System.out.println("Sentencia IF detectada"); }
-		                    |   sentencia_salida PUNTO_Y_COMA
-		                    |   sentencia_control { System.out.println("Sentencia FOR detectada"); }
+		                    |   sentencia_seleccion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia IF detectada"); }
+		                    |   sentencia_salida PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia de SALIDA detectada"); }
+		                    |   sentencia_control { System.out.println("Linea " + $1.ival + ": " + "Sentencia FOR detectada"); }
 		                    ;
 
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones { $$.ival = $1.ival; }
                             ;
 
-sentencia_seleccion         :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF
+sentencia_seleccion         :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
                             ;
 
 cuerpo_if                   :   bloque_de_sent_ejecutables bloque_else
@@ -109,14 +109,14 @@ sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable
 		                    |   sentencia_ejecutable
 		                    ;
 
-sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R
-		                    |   OUTF PARENTESIS_L expresion PARENTESIS_R
+sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+		                    |   OUTF PARENTESIS_L expresion PARENTESIS_R { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
 		                    ;
 
-sentencia_control           :   encabezado_for bloque_de_sent_ejecutables
+sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { $$.ival = $1.ival; }
                             ;
 
-encabezado_for              :   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion PARENTESIS_R
+encabezado_for              :   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion PARENTESIS_R { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
                             ;
 
 asignacion_enteros          :   identificador ASIGNACION CONSTANTE_DECIMAL
@@ -149,6 +149,7 @@ termino                     :   termino MULTIPLICACION factor
 
 factor                      :   identificador
                             |   constante { System.out.println($1.sval); }
+                            |   RESTA constante
 		                    |   invocacion_a_funcion
 		                    ;
 
