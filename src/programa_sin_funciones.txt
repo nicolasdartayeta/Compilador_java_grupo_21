@@ -1,24 +1,17 @@
 programa_sin_funciones
 
 begin
-    ulongint nico, santi, compu;
-    nico, compu := 10, 43+9;
-    nico := 3.1s9;
-    santi := 5.3;
-
-    for(x := 10; j > 0; down 2)
-        outf ( { HOLA } );
-
-    for(x := 10; j > 0; down 2)
+    ulongint FUN f1 (single x)
     begin
-        outf ( { HOLA } );
-    end;
+        ulongint z;
+        z:=1;
+        if ( z = 0) then
+            ret (x);
+        end_if;
+        ret (z);
+    end
 
-    typedef struct <ulongint, single> [
-        a,
-        b,
-        c
-    ] truct1;
-
-    as.b.j := 5;
+    if ( x = 100) then
+        ret(8);
+    end_if;
 end

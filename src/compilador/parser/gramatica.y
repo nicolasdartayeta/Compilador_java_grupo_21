@@ -63,13 +63,42 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
 parametro                   :   tipo identificador
                             ;
 
-cuerpo_funcion              :   sentencias sentencia_retorno sentencias
-                            |   sentencias sentencia_retorno
-                            |   sentencia_retorno
+cuerpo_funcion              :   cuerpo_funcion sentencia_ejecutable_en_funcion
+                            |   cuerpo_funcion sentencia_declarativa
+                            |   sentencia_ejecutable_en_funcion
+                            |   sentencia_declarativa
                             ;
+
+sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "ASIGNACION detectada"); }
+                                        |   sentencia_seleccion_en_funcion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia IF detectada"); }
+                                        |   sentencia_salida PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia de SALIDA detectada"); }
+                                        |   sentencia_control_en_funcion { System.out.println("Linea " + $1.ival + ": " + "Sentencia FOR detectada"); }
+                                        |   sentencia_retorno
+                                        ;
+
+sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion { $$.ival = $1.ival; }
+                                       ;
 
 sentencia_retorno           :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
                             ;
+
+sentencia_seleccion_en_funcion  :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+                                ;
+
+cuerpo_if_en_funcion        :   bloque_de_sent_ejecutables_en_funcion bloque_else_en_funcion
+		                    |   bloque_de_sent_ejecutables_en_funcion
+		                    ;
+
+bloque_else_en_funcion      :   ELSE bloque_de_sent_ejecutables_en_funcion
+                            ;
+
+bloque_de_sent_ejecutables_en_funcion   :   BEGIN sentencias_ejecutable_en_funcion END PUNTO_Y_COMA
+                                        |   sentencia_ejecutable_en_funcion
+                                        ;
+
+sentencias_ejecutable_en_funcion        :   sentencias_ejecutable_en_funcion sentencia_ejecutable_en_funcion
+                                        |   sentencia_ejecutable_en_funcion
+                                        ;
 
 sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "ASIGNACION detectada"); }
 		                    |   sentencia_seleccion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia IF detectada"); }
