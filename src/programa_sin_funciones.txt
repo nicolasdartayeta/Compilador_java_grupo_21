@@ -1,16 +1,7 @@
 programa_sin_funciones
 
 begin
-    ulongint FUN f1 (single x)
-    begin
-        ulongint z;
-        z := 1.0s38;
-        u := -1;
-        if ( z = 0) then
-            ret (x);
-        end_if;
-        ret (z);
-    end
+
 
     a := f1(2);
 /#
@@ -25,4 +16,14 @@ begin
     ] myStruct;
 
     myStruct abc;
+
+    myStruct FUN f1 (x)
+        begin
+            ulongint z;
+            z := 1.0s38;
+            u := -1;
+            if ( z = 0) then
+                u := 1;
+            end_if;
+        end
 end

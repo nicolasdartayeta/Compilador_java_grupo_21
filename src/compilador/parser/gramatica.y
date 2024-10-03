@@ -59,6 +59,7 @@ lista_de_tipos              :   lista_de_tipos COMA tipo
 		                    ;
 
 lista_de_identificadores    :   lista_de_identificadores COMA identificador
+                            //|   lista_de_identificadores identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ',' entre las variables"); }
 		                    |   identificador { $$.ival = $1.ival; }
 		                    ;
 
@@ -75,7 +76,13 @@ identificador_compuesto     :   identificador_simple PUNTO identificador_compues
                             |   identificador_simple PUNTO identificador_simple { $$.ival = $1.ival; }
                             ;
 
-funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END { $$.ival = $1.ival; }
+funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
+                                                                                $$.ival = $1.ival;
+                                                                                if (!returnEncontrado) {
+                                                                                    agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un return en la funcion");
+                                                                                }
+                                                                                returnEncontrado = false;
+                                                                             }
                             ;
 
 encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R {
@@ -90,6 +97,8 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                             ;
 
 parametro                   :   tipo identificador
+                            |   identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el tipo del parametro de la funcion"); }
+                            |   tipo { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador del parametro de la funcion"); }
                             ;
 
 cuerpo_funcion              :   cuerpo_funcion sentencia_ejecutable_en_funcion
@@ -102,7 +111,7 @@ sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { 
                                         |   sentencia_seleccion_en_funcion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
                                         |   sentencia_salida PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
                                         |   sentencia_control_en_funcion { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
-                                        |   sentencia_retorno { Parser.agregarEstructuraDetectadas($1.ival, "RET"); }
+                                        |   sentencia_retorno { Parser.agregarEstructuraDetectadas($1.ival, "RET"); returnEncontrado = true; }
                                         ;
 
 sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion { $$.ival = $1.ival; }
@@ -130,6 +139,10 @@ sentencias_ejecutable_en_funcion        :   sentencias_ejecutable_en_funcion sen
                                         ;
 
 sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "ASIGNACION"); }
+                            |   sentencia_asignacion {
+                                                        Parser.agregarEstructuraDetectadas($1.ival, "ASIGNACION");
+                                                        agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia");
+                                                    }
 		                    |   sentencia_seleccion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
 		                    |   sentencia_salida PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "SALIDA"); }
 		                    |   sentencia_control { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
@@ -275,6 +288,7 @@ public static final String RESET = "\033[0m";
 // Flags
 public static boolean parsingConErrores = false;
 public static boolean lexingConErrores = false;
+private static boolean returnEncontrado = false;
 
 // Lista de estructuras detectadas
 public static final List<String> estructurasDetectadas = new ArrayList<>();
