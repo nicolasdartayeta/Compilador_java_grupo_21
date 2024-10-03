@@ -1,10 +1,11 @@
 %{
-    package compilador.parser;
     import compilador.lexer.Lexer;
     import compilador.lexer.token.*;
     import compilador.lexer.TablaSimbolos;
     import compilador.lexer.CampoTablaSimbolos;
     import compilador.lexer.TablaToken;
+    import java.util.ArrayList;
+    import java.util.List;
 
 %}
 
@@ -15,7 +16,11 @@
 
 %%
 
-programa                    :   IDENTIFICADOR_GENERICO BEGIN sentencias END
+programa                    :   IDENTIFICADOR_GENERICO BEGIN sentencias END { Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "PROGRAMA"); }
+                            |   BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea 1: Falta identificador de programa"); }
+                            |   IDENTIFICADOR_GENERICO sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + (((Token) $1.obj).getNumeroDeLinea()+1) + ": Falta un BEGIN despues del identificador del programa"); }
+                            |   IDENTIFICADOR_GENERICO BEGIN sentencias { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Ultima linea: Falta un END al final del programa"); }
+                            |   IDENTIFICADOR_GENERICO sentencias { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Falta un BEGIN despues del identificador del programa y falta un END al final del programa"); }
                             ;
 
 sentencias                  : 	sentencias sentencia
@@ -24,18 +29,24 @@ sentencias                  : 	sentencias sentencia
 
 sentencia                   :   sentencia_declarativa
                             |   sentencia_ejecutable
+                            // Cualquier error que no se haya agarrado antes se captura aca de manera generica hasta que aparezca un caracter de sincornizacion (';')
+                            |   error PUNTO_Y_COMA
                             ;
 
-sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { System.out.println("Declaracion de VARIABLES detectada"); }
-		                    |   funcion { System.out.println("Linea " + $1.ival + ": " + "Declaracion de FUNCION detectada"); }
-		                    |   struct   { System.out.println("Linea " + $1.ival + ": " + "Declaracion de STRUCT detectada"); }
+sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S"); }
+                            |   tipo lista_de_identificadores { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
+		                    |   funcion { Parser.agregarEstructuraDetectadas($1.ival, "FUNCION"); }
+		                    |   struct PUNTO_Y_COMA
+		                    |   struct { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
 		                    ;
 
-struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA {
-                                                                                                                                                                $$.ival = ((Token) $1.obj).getNumeroDeLinea();
-                                                                                                                                                                String lexema = ((Token) $9.obj).getLexema().toString();
-                                                                                                                                                                TablaSimbolos.convertirATipo(lexema, TablaSimbolos.STRUCT);
-                                                                                                                                                                }
+struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO {
+                                                                                                                                                    $$.ival = ((Token) $1.obj).getNumeroDeLinea();
+                                                                                                                                                    Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "STRUCT");
+                                                                                                                                                    String lexema = ((Token) $9.obj).getLexema().toString();
+                                                                                                                                                    TablaSimbolos.convertirATipo(lexema, TablaSimbolos.STRUCT);
+                                                                                                                                                }
+
                             ;
 
 tipo                        :   ULONGINT { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
@@ -71,7 +82,12 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         $$.ival = $1.ival;
                                                                                                         String lexema = ((Token) $3.obj).getLexema().toString();
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
-                                                                                                        }
+                                                                                                    }
+                            |   tipo FUN PARENTESIS_L parametro PARENTESIS_R {
+                                                                                $$.ival = $1.ival;
+                                                                                agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador de la funcion");
+                                                                            }
+                            ;
 
 parametro                   :   tipo identificador
                             ;
@@ -82,17 +98,17 @@ cuerpo_funcion              :   cuerpo_funcion sentencia_ejecutable_en_funcion
                             |   sentencia_declarativa
                             ;
 
-sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "ASIGNACION detectada"); }
-                                        |   sentencia_seleccion_en_funcion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia IF detectada"); }
-                                        |   sentencia_salida PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia de SALIDA detectada"); }
-                                        |   sentencia_control_en_funcion { System.out.println("Linea " + $1.ival + ": " + "Sentencia FOR detectada"); }
-                                        |   sentencia_retorno
+sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "ASIGNACION"); }
+                                        |   sentencia_seleccion_en_funcion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
+                                        |   sentencia_salida PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
+                                        |   sentencia_control_en_funcion { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
+                                        |   sentencia_retorno { Parser.agregarEstructuraDetectadas($1.ival, "RET"); }
                                         ;
 
 sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion { $$.ival = $1.ival; }
                                        ;
 
-sentencia_retorno           :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
+sentencia_retorno           :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
                             ;
 
 sentencia_seleccion_en_funcion  :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
@@ -113,10 +129,10 @@ sentencias_ejecutable_en_funcion        :   sentencias_ejecutable_en_funcion sen
                                         |   sentencia_ejecutable_en_funcion
                                         ;
 
-sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "ASIGNACION detectada"); }
-		                    |   sentencia_seleccion PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia IF detectada"); }
-		                    |   sentencia_salida PUNTO_Y_COMA { System.out.println("Linea " + $1.ival + ": " + "Sentencia de SALIDA detectada"); }
-		                    |   sentencia_control { System.out.println("Linea " + $1.ival + ": " + "Sentencia FOR detectada"); }
+sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "ASIGNACION"); }
+		                    |   sentencia_seleccion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
+		                    |   sentencia_salida PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "SALIDA"); }
+		                    |   sentencia_control { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
 		                    ;
 
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones { $$.ival = $1.ival; }
@@ -247,20 +263,84 @@ parametro_real              :   expresion
 %%
 private static Lexer lex;
 
+// Tipo de mensajes
+public static final String ERROR_LEXICO = "ERROR_LEXICO";
+public static final String ERROR_SINTACTICO = "ERROR_SINTACTICO";
+
+// Código ANSI para texto rojo
+public static final String ROJO = "\033[31m";
+public static final String VERDE = "\033[32m";
+public static final String RESET = "\033[0m";
+
+// Flags
+public static boolean parsingConErrores = false;
+public static boolean lexingConErrores = false;
+
+// Lista de estructuras detectadas
+public static final List<String> estructurasDetectadas = new ArrayList<>();
+
+// Listas de errores
+public static final List<String> erroresLexicos = new ArrayList<>();
+public static final List<String> erroresSintacticos = new ArrayList<>();
+
+// Agregar error a la lista de errores
+public static void agregarEstructuraDetectadas(int numeroLinea, String estructura) {
+    estructurasDetectadas.add("Linea " + numeroLinea + ": " + "Declaracion de " + estructura + " detectada");
+}
+
+// Agregar error a la lista de errores
+public static void agregarError(List<String> listaErrores, String tipo, String error) {
+    if (tipo.equals(Parser.ERROR_SINTACTICO)) {
+        parsingConErrores = true;
+    } else if (tipo.equals(Parser.ERROR_LEXICO)) {
+        lexingConErrores = true;
+    }
+
+    listaErrores.add(String.format("%-20s", tipo) + "| "+ error);
+}
+
+public static void imprimirLista(List<String> lista) {
+    for (String elemento : lista) {
+        System.out.println(elemento);
+    }
+}
+
 public static void main(String[] args) {
     Lexer lexer = new Lexer("src/programa_sin_funciones.txt");
     Parser.lex = lexer;
     Parser parser = new Parser(true);
     parser.run();
+
+    if (Parser.lexingConErrores){
+        System.out.println(Parser.ROJO + "SE ENCONTRARON ERRORES LEXICOS" + Parser.RESET);
+        Parser.imprimirLista(erroresLexicos);
+    } else {
+        System.out.println(Parser.VERDE + "NO SE ENCONTRARON ERRORES LEXICOS" + Parser.RESET);
+    }
+
+    if (Parser.parsingConErrores){
+        System.out.println(Parser.ROJO + "SE ENCONTRARON ERRORES SINTACTICOS" + Parser.RESET);
+        Parser.imprimirLista(erroresSintacticos);
+    } else {
+        System.out.println(Parser.VERDE + "NO SE ENCONTRARON ERRORES SINTACTICOS" + Parser.RESET);
+    }
+
+    Parser.imprimirLista(estructurasDetectadas);
+
     TablaSimbolos.imprimirTabla();
 }
 
 private int yylex() {
     Token tok = lex.getNextToken();
+
+    if (tok.isError()) {
+        agregarError(erroresLexicos, ERROR_LEXICO, ((TokenError) tok).getDescripcionError());
+    }
+
     yylval = new ParserVal(tok);
     return tok.getTokenID();
 }
 
 private void yyerror(String string) {
-  throw new UnsupportedOperationException("ERROR");
+  System.out.println("Error: " + string );
 }

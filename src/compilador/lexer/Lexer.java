@@ -126,7 +126,7 @@ public class Lexer {
             token = new Token(TablaToken.getTokenID(TablaToken.EOF), TablaToken.EOF, numeroDeLinea);
         }
 
-        System.out.println(token);
+//        System.out.println(token);
         return token;
     }
 }

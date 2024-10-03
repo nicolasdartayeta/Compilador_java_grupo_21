@@ -4,8 +4,8 @@ begin
     ulongint FUN f1 (single x)
     begin
         ulongint z;
-        z := -1.0s-80;
-        z := -1;
+        z := 1.0s38;
+        u := -1;
         if ( z = 0) then
             ret (x);
         end_if;
