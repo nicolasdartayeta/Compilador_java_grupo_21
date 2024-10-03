@@ -1,4 +1,5 @@
 import compilador.lexer.Lexer;
+import compilador.lexer.TablaSimbolos;
 import compilador.parser.Parser;
 
 public class Main {
@@ -9,5 +10,7 @@ public class Main {
        while (token != 0) {
            token = lexer.getNextToken().getTokenID();
        }
+
+       TablaSimbolos.imprimirTabla();
     }
 }

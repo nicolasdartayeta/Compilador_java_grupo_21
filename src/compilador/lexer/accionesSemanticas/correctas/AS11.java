@@ -1,5 +1,6 @@
 package compilador.lexer.accionesSemanticas.correctas;
 
+import compilador.lexer.CampoTablaSimbolos;
 import compilador.lexer.TablaSimbolos;
 import compilador.lexer.TablaToken;
 import compilador.lexer.accionesSemanticas.AccionSemantica;
@@ -18,7 +19,9 @@ public class AS11 implements AccionSemantica {
             int tokenOctal = TablaToken.getTokenID(TablaToken.CONSTANTE_OCTAL);
 
             if (TablaSimbolos.existeLexema(lexema.toString()) == false){
-                TablaSimbolos.agregarLexema(lexema.toString(),tokenOctal);
+                TablaSimbolos.agregarLexema(lexema.toString(), new CampoTablaSimbolos(false, TablaSimbolos.ULONGINT));
+            } else {
+                TablaSimbolos.aumentarUso(lexema.toString());
             }
 
             return new Token(tokenOctal, lexema.toString(), numeroDeLinea);

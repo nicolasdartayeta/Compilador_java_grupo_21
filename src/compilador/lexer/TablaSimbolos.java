@@ -3,8 +3,10 @@ package compilador.lexer;
 import compilador.parser.Parser;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TablaSimbolos {
+
     public static final String STRUCT = "STRUCT";
     public static final String FOR = "FOR";
     public static final String UP = "UP";
@@ -23,8 +25,8 @@ public class TablaSimbolos {
     public static final String RET = "RET";
     public static final String TOS = "TOS";
 
-    private static HashMap<String, Integer> tablaSimbolos = new HashMap<String, Integer>();
-    private static HashMap<String, Integer> tablaPalabrasReservadas = createTablaPalabrasReservadas();
+    private static final HashMap<String, CampoTablaSimbolos> tablaSimbolos = new HashMap<String, CampoTablaSimbolos>();
+    private static final HashMap<String, Integer> tablaPalabrasReservadas = createTablaPalabrasReservadas();
 
     public static Integer getIDPalabraReservada(String palabraReservada) {
         if (esPalabraReservada(palabraReservada)){
@@ -70,11 +72,118 @@ public class TablaSimbolos {
         return tabla;
     }
 
-    public static void agregarLexema(String lexema, int token){
-        tablaSimbolos.put(lexema,token);
+    public static void agregarLexema(String lexema, CampoTablaSimbolos campoTablaSimbolos){
+        tablaSimbolos.put(lexema, campoTablaSimbolos);
     };
+
+    public static void eliminarLexema(String lexema){
+        tablaSimbolos.remove(lexema);
+    };
+
+    public static void imprimirTabla() {
+        // Encabezado
+        System.out.println("---------------------------------------------");
+        System.out.printf("%-15s %-10s %-10s %-10s\n", "Simbolo", "Es Tipo", "Tipo", "Usos");
+        System.out.println("---------------------------------------------");
+
+        // Iterar sobre la tabla e imprimir cada entrada
+        for (Map.Entry<String, CampoTablaSimbolos> entry : tablaSimbolos.entrySet()) {
+            String simbolo = entry.getKey();
+            CampoTablaSimbolos campos = entry.getValue();
+
+            System.out.printf("%-15s %-10s %-10s %-10d\n",
+                    simbolo,
+                    campos.esTipo(),
+                    campos.getTipo(),
+                    campos.getUsos()
+            );
+        }
+
+        System.out.println("---------------------------------------------");
+    }
+
+    public void cambiarValor(String lexema){}
 
     public static boolean existeLexema(String lexema){
         return tablaSimbolos.containsKey(lexema);
     };
+
+    public static int getCantidadDeUsos(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No se puede aumentar el lexema " + lexema);
+        }
+
+        return campoTablaSimbolos.getUsos();
+    }
+
+    public static void aumentarUso(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No se puede aumentar el lexema " + lexema);
+        }
+
+        campoTablaSimbolos.aumentarUso();
+    }
+
+    public static void decrementarUso(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No se puede aumentar el lexema " + lexema);
+        }
+
+        campoTablaSimbolos.decrementarUso();
+    }
+
+    public static boolean esUnTipo(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos != null) {
+            return campoTablaSimbolos.esTipo();
+        }
+
+        return false;
+    }
+
+    public static boolean esTipo(String lexema, String tipo) {
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos != null && campoTablaSimbolos.getTipo() != null) {
+            return campoTablaSimbolos.getTipo().equals(tipo);
+        }
+
+        return false;
+    }
+
+    public static String getTipo(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos != null) {
+            return campoTablaSimbolos.getTipo();
+        }
+
+        throw new IllegalArgumentException("No existe el lexema " + lexema);
+    }
+
+    public static void convertirATipo(String lexema, String tipo) {
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+        if (campoTablaSimbolos != null) {
+            campoTablaSimbolos.setTipo(tipo);
+            campoTablaSimbolos.setEsTipo(true);
+        } else {
+        throw new IllegalArgumentException("No se encuentra el lexema " + lexema + "en la tabla de simbolos");
+        }
+    }
+
+    public static void cambiarTipo(String lexema, String tipo) {
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+        if (campoTablaSimbolos != null) {
+            campoTablaSimbolos.setTipo(tipo);
+        } else {
+            throw new IllegalArgumentException("No se encuentra el lexema " + lexema + "en la tabla de simbolos");
+        }
+    }
 }

@@ -8,6 +8,8 @@ import static java.lang.System.in;
 
 public class TablaToken {
     public static final String IDENTIFICADOR_GENERICO = "IDENTIFICADOR_GENERICO";
+    public static final String IDENTIFICADOR_FUN = "IDENTIFICADOR_FUN";
+    public static final String IDENTIFICADOR_TIPO = "IDENTIFICADOR_TIPO";
     public static final String IDENTIFICADOR_ULONGINT = "IDENTIFICADOR_ULONGINT";
     public static final String IDENTIFICADOR_SINGLE = "IDENTIFICADOR_SINGLE";
     public static final String CONSTANTE_DECIMAL = "CONSTANTE_DECIMAL";
@@ -41,6 +43,8 @@ public class TablaToken {
         HashMap<String, Integer> tabla = new HashMap<String, Integer>();
 
         tabla.put(IDENTIFICADOR_GENERICO, (int) Parser.IDENTIFICADOR_GENERICO);
+        tabla.put(IDENTIFICADOR_FUN, (int) Parser.IDENTIFICADOR_FUN);
+        tabla.put(IDENTIFICADOR_TIPO, (int) Parser.IDENTIFICADOR_TIPO);
         tabla.put(IDENTIFICADOR_ULONGINT, (int) Parser.IDENTIFICADOR_ULONGINT);
         tabla.put(IDENTIFICADOR_SINGLE, (int) Parser.IDENTIFICADOR_SINGLE);
         tabla.put(CONSTANTE_DECIMAL, (int) Parser.CONSTANTE_DECIMAL);

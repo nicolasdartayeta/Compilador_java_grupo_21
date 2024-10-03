@@ -4,14 +4,25 @@ begin
     ulongint FUN f1 (single x)
     begin
         ulongint z;
-        z:=1;
+        z := -1.0s-80;
+        z := -1;
         if ( z = 0) then
             ret (x);
         end_if;
         ret (z);
     end
 
-    if ( x = 100) then
+    a := f1(2);
+/#
+    if ( x =  ) then
         ret(8);
     end_if;
+#/
+
+    TYPEDEF STRUCT  < ulongint > [
+        a,
+        b
+    ] myStruct;
+
+    myStruct abc;
 end

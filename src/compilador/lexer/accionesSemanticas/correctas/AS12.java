@@ -1,5 +1,6 @@
 package compilador.lexer.accionesSemanticas.correctas;
 
+import compilador.lexer.CampoTablaSimbolos;
 import compilador.lexer.TablaSimbolos;
 import compilador.lexer.TablaToken;
 import compilador.lexer.accionesSemanticas.AccionSemantica;
@@ -19,7 +20,9 @@ public class AS12 implements AccionSemantica {
             int tokenDecimal = TablaToken.getTokenID(TablaToken.CONSTANTE_DECIMAL);
 
             if (TablaSimbolos.existeLexema(lexema.toString()) == false) {
-                TablaSimbolos.agregarLexema(lexema.toString(), tokenDecimal);
+                TablaSimbolos.agregarLexema(lexema.toString(), new CampoTablaSimbolos(false, TablaSimbolos.ULONGINT));
+            } else {
+                TablaSimbolos.aumentarUso(lexema.toString());
             }
 
             return new Token(tokenDecimal, lexema.toString(), numeroDeLinea);

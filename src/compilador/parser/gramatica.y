@@ -2,9 +2,13 @@
     package compilador.parser;
     import compilador.lexer.Lexer;
     import compilador.lexer.token.*;
+    import compilador.lexer.TablaSimbolos;
+    import compilador.lexer.CampoTablaSimbolos;
+    import compilador.lexer.TablaToken;
+
 %}
 
-%token IDENTIFICADOR_GENERICO IDENTIFICADOR_ULONGINT IDENTIFICADOR_SINGLE CONSTANTE_DECIMAL CONSTANTE_OCTAL CONSTANTE_SINGLE SUMA RESTA MULTIPLICACION DIVISION ASIGNACION MAYOR_O_IGUAL MENOR_O_IGUAL MAYOR MENOR IGUAL DESIGUAL CORCHETE_L CORCHETE_R PARENTESIS_L PARENTESIS_R COMA PUNTO PUNTO_Y_COMA INLINE_STRING ERROR STRUCT FOR UP DOWN SINGLE ULONGINT IF THEN ELSE BEGIN END END_IF OUTF TYPEDEF FUN RET TOS
+%token IDENTIFICADOR_GENERICO IDENTIFICADOR_FUN IDENTIFICADOR_TIPO IDENTIFICADOR_ULONGINT IDENTIFICADOR_SINGLE CONSTANTE_DECIMAL CONSTANTE_OCTAL CONSTANTE_SINGLE SUMA RESTA MULTIPLICACION DIVISION ASIGNACION MAYOR_O_IGUAL MENOR_O_IGUAL MAYOR MENOR IGUAL DESIGUAL CORCHETE_L CORCHETE_R PARENTESIS_L PARENTESIS_R COMA PUNTO PUNTO_Y_COMA INLINE_STRING ERROR STRUCT FOR UP DOWN SINGLE ULONGINT IF THEN ELSE BEGIN END END_IF OUTF TYPEDEF FUN RET TOS
 
 %left SUMA RESTA
 %left MULTIPLICACION DIVISION
@@ -23,15 +27,20 @@ sentencia                   :   sentencia_declarativa
                             ;
 
 sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { System.out.println("Declaracion de VARIABLES detectada"); }
-		                    |   funcion   { System.out.println("Declaracion de FUNCION detectada"); }
-		                    |   struct PUNTO_Y_COMA   { System.out.println("Declaracion de STRUCT detectada"); }
+		                    |   funcion { System.out.println("Linea " + $1.ival + ": " + "Declaracion de FUNCION detectada"); }
+		                    |   struct   { System.out.println("Linea " + $1.ival + ": " + "Declaracion de STRUCT detectada"); }
 		                    ;
 
-struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO
+struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA {
+                                                                                                                                                                $$.ival = ((Token) $1.obj).getNumeroDeLinea();
+                                                                                                                                                                String lexema = ((Token) $9.obj).getLexema().toString();
+                                                                                                                                                                TablaSimbolos.convertirATipo(lexema, TablaSimbolos.STRUCT);
+                                                                                                                                                                }
                             ;
 
-tipo                        :   ULONGINT
-		                    |   SINGLE
+tipo                        :   ULONGINT { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+		                    |   SINGLE { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+		                    |   IDENTIFICADOR_TIPO { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
 		                    ;
 
 lista_de_tipos              :   lista_de_tipos COMA tipo
@@ -55,10 +64,14 @@ identificador_compuesto     :   identificador_simple PUNTO identificador_compues
                             |   identificador_simple PUNTO identificador_simple { $$.ival = $1.ival; }
                             ;
 
-funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END
+funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END { $$.ival = $1.ival; }
                             ;
 
-encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R
+encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R {
+                                                                                                        $$.ival = $1.ival;
+                                                                                                        String lexema = ((Token) $3.obj).getLexema().toString();
+                                                                                                        TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
+                                                                                                        }
 
 parametro                   :   tipo identificador
                             ;
@@ -177,17 +190,54 @@ termino                     :   termino MULTIPLICACION factor
 		                    ;
 
 factor                      :   identificador
-                            |   constante { System.out.println($1.sval); }
-                            |   RESTA constante
+                            |   constante
+                            |   RESTA constante {
+                                                    String lexema = ((Token) $2.obj).getLexema();
+                                                    String tipoConstante = ((Token) $2.obj).getTokenName();
+
+                                                    int cantidadDeUsos = TablaSimbolos.getCantidadDeUsos(lexema);
+                                                    String tipoLexemaOriginal = TablaSimbolos.getTipo(lexema);
+
+                                                    if (cantidadDeUsos > 1) {
+                                                        // Bajar la cantidad de usos en 1
+                                                        TablaSimbolos.decrementarUso(lexema);
+                                                    } else {
+                                                        // Eliminar la entrada
+                                                        TablaSimbolos.eliminarLexema(lexema);
+                                                    }
+
+                                                    String lexemaNegativo = "-" + lexema;
+
+                                                    // Chequear rango
+                                                    if (TablaToken.CONSTANTE_DECIMAL.equals(tipoConstante)) {
+                                                        // long numero = Long.parseUnsignedLong(lexemaNegativo);
+                                                    } else if (TablaToken.CONSTANTE_OCTAL.equals(tipoConstante)) {
+                                                        // long numero = Long.parseUnsignedLong(lexemaNegativo,8);
+                                                    } else if (TablaToken.CONSTANTE_SINGLE.equals(tipoConstante)) {
+                                                        float numero = Float.parseFloat(lexemaNegativo.replace('s','e'));
+                                                        if (numero == Float.POSITIVE_INFINITY || numero == Float.NEGATIVE_INFINITY || numero == -0.0f) {
+                                                            System.out.println(numero);
+                                                            throw new NumberFormatException("Linea " + ((Token) $2.obj).getNumeroDeLinea() + ": la constante se va de rango");
+                                                        }
+                                                    }
+
+                                                    // Hay que fijarse si ya esta la negativa en la tabla, sino agregarla como negativa.
+                                                    if (TablaSimbolos.existeLexema(lexemaNegativo)) {
+                                                        TablaSimbolos.aumentarUso(lexemaNegativo);
+                                                    } else {
+                                                        TablaSimbolos.agregarLexema(lexemaNegativo, new CampoTablaSimbolos(false, tipoLexemaOriginal));
+                                                        TablaSimbolos.aumentarUso(lexemaNegativo);
+                                                    }
+                                                }
 		                    |   invocacion_a_funcion
 		                    ;
 
-constante                   :   CONSTANTE_DECIMAL { $$.sval = ((Token) $1.obj).getLexema(); }
-                            |   CONSTANTE_OCTAL { $$.sval = ((Token) $1.obj).getLexema(); }
-                            |   CONSTANTE_SINGLE { $$.sval = ((Token) $1.obj).getLexema(); }
+constante                   :   CONSTANTE_DECIMAL { $$.obj = ((Token) $1.obj); }
+                            |   CONSTANTE_OCTAL { $$.obj = ((Token) $1.obj); }
+                            |   CONSTANTE_SINGLE { $$.obj = ((Token) $1.obj); }
                             ;
 
-invocacion_a_funcion      :   IDENTIFICADOR_GENERICO PARENTESIS_L parametro_real PARENTESIS_R
+invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L parametro_real PARENTESIS_R
                             ;
 
 parametro_real              :   expresion
@@ -202,7 +252,8 @@ public static void main(String[] args) {
     Parser.lex = lexer;
     Parser parser = new Parser(true);
     parser.run();
-    }
+    TablaSimbolos.imprimirTabla();
+}
 
 private int yylex() {
     Token tok = lex.getNextToken();

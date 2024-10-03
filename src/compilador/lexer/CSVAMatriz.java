@@ -95,6 +95,7 @@ public class CSVAMatriz {
             case "AS10": return new AS10();
             case "AS11": return new AS11();
             case "AS12": return new AS12();
+            case "ASEOF": return new ASEOF();
             case "ASEGenerica": return new ASEGenerica();
             case "ASDesigualdad": return new ASEDesigualdad();
             case "ASECaracterNoPermitido": return new ASECaracterNoPermitido();
