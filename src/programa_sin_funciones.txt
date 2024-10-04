@@ -3,16 +3,6 @@ programa_sin_funciones
 begin
     ulongint f;
 
-    if (x = 2) then
-    begin
-        x := 1;
-        z := 2;
-    end
-
-    z:=3;
-    ulongint y;
-
-    if ( y = 2) then
-        y:=3;
-    end_if;
+    for (i := 1 i < 10 up 1
+        i := 2;
 end
