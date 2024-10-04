@@ -1,29 +1,18 @@
 programa_sin_funciones
 
 begin
+    ulongint f;
 
+    if (x = 2) then
+    begin
+        x := 1;
+        z := 2;
+    end
 
-    a := f1(2);
-/#
-    if ( x =  ) then
-        ret(8);
+    z:=3;
+    ulongint y;
+
+    if ( y = 2) then
+        y:=3;
     end_if;
-#/
-
-    TYPEDEF STRUCT  < ulongint > [
-        a,
-        b
-    ] myStruct;
-
-    myStruct abc;
-
-    myStruct FUN f1 (x)
-        begin
-            ulongint z;
-            z := 1.0s38;
-            u := -1;
-            if ( z = 0) then
-                u := 1;
-            end_if;
-        end
 end

@@ -115,12 +115,18 @@ sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { 
                                         ;
 
 sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion { $$.ival = $1.ival; }
+                                       |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                                        ;
 
 sentencia_retorno           :   RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
                             ;
 
 sentencia_seleccion_en_funcion  :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+                                |   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el END_IF en la sentencia de selección"); }
+                                |   IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis derecho en la condición"); }
+                                |   IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis izquierdo en la condición"); }
+                                |   IF condicion THEN cuerpo_if_en_funcion END_IF { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan ambos parentesis en la condición"); }
+                                |   IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF  { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo de la sentencia de seleccion"); }
                                 ;
 
 cuerpo_if_en_funcion        :   bloque_de_sent_ejecutables_en_funcion bloque_else_en_funcion
@@ -128,6 +134,7 @@ cuerpo_if_en_funcion        :   bloque_de_sent_ejecutables_en_funcion bloque_els
 		                    ;
 
 bloque_else_en_funcion      :   ELSE bloque_de_sent_ejecutables_en_funcion
+                            |   ELSE { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo deL ELSE de la sentencia de seleccion"); }
                             ;
 
 bloque_de_sent_ejecutables_en_funcion   :   BEGIN sentencias_ejecutable_en_funcion END PUNTO_Y_COMA
@@ -152,6 +159,11 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                             ;
 
 sentencia_seleccion         :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+                            |   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el END_IF en la sentencia de selección"); }
+                            |   IF PARENTESIS_L condicion THEN cuerpo_if END_IF { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis derecho en la condición"); }
+                            |   IF condicion PARENTESIS_R THEN cuerpo_if END_IF { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis izquierdo en la condición"); }
+                            |   IF condicion THEN cuerpo_if END_IF { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan ambos parentesis en la condición"); }
+                            |   IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF  { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo de la sentencia de seleccion"); }
                             ;
 
 cuerpo_if                   :   bloque_de_sent_ejecutables bloque_else
@@ -159,6 +171,7 @@ cuerpo_if                   :   bloque_de_sent_ejecutables bloque_else
 		                    ;
 
 bloque_else                 :   ELSE bloque_de_sent_ejecutables
+                            |   ELSE { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo deL ELSE de la sentencia de seleccion"); }
                             ;
 
 condicion                   :   expresion comparador expresion
@@ -182,12 +195,20 @@ sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable
 
 sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
 		                    |   OUTF PARENTESIS_L expresion PARENTESIS_R { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+		                    |   OUTF PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parametro de la sentencia de salida"); }
 		                    ;
 
 sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { $$.ival = $1.ival; }
+                            |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                             ;
 
 encabezado_for              :   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion PARENTESIS_R { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+                            |   FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis derecho en el encabezado del FOR"); }
+                            |   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis izquierdo en el encabezado del FOR"); }
+                            |   FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan ambos parentesis en el encabezado del FOR"); }
+                            |   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la acción en el encabezado del FOR"); }
+                            |   FOR PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta un ';' en el encabezado del FOR"); }
+                            |   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta un ';' en el encabezado del FOR"); }
                             ;
 
 asignacion_enteros          :   identificador ASIGNACION CONSTANTE_DECIMAL
