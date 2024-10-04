@@ -3,7 +3,18 @@ programa_sin_funciones
 begin
     ulongint f;
 
-    if (z < 10) then
-        ñ:= 5;
+/#
+   TYPEDEF STRUCT  < ulongint > [
+        a,
+        b
+    ] myStruct;
+#/
 
+/# if (k <10) then
+    k := 2;
+#/
+
+    outf(tos());
+
+    ulongint x;
 end

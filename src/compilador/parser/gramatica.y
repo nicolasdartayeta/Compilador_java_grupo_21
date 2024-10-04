@@ -30,7 +30,7 @@ sentencias                  : 	sentencias sentencia
 sentencia                   :   sentencia_declarativa
                             |   sentencia_ejecutable
                             // Cualquier error que no se haya agarrado antes se captura aca de manera generica hasta que aparezca un caracter de sincornizacion (';')
-                            |   error PUNTO_Y_COMA {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token)$2.obj).getNumeroDeLinea());}
+                            |   error PUNTO_Y_COMA {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token)$2.obj).getNumeroDeLinea() + ": Syntax Error");}
                             ;
 
 sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S"); }
@@ -150,11 +150,9 @@ sentencias_ejecutable_en_funcion        :   sentencias_ejecutable_en_funcion sen
                                         ;
 
 sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "ASIGNACION"); }
-                            |   sentencia_asignacion {
-                                                        Parser.agregarEstructuraDetectadas($1.ival, "ASIGNACION");
-                                                        agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia");
-                                                    }
+                            |   sentencia_asignacion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia");}
 		                    |   sentencia_seleccion PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
+		                    |   sentencia_seleccion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia");}
 		                    |   sentencia_salida PUNTO_Y_COMA { Parser.agregarEstructuraDetectadas($1.ival, "SALIDA"); }
 		                    |   sentencia_control { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
 		                    ;
@@ -237,6 +235,7 @@ lista_de_expresiones        :   lista_de_expresiones COMA expresion
 		                    ;
 
 expresion                   :   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R
+                            |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   expresion_aritmetica
 		                    ;
 
