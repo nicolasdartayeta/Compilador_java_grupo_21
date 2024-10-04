@@ -36,16 +36,20 @@ sentencia                   :   sentencia_declarativa
 sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S"); }
                             |   tipo lista_de_identificadores { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
 		                    |   funcion { Parser.agregarEstructuraDetectadas($1.ival, "FUNCION"); }
-		                    |   struct PUNTO_Y_COMA
-		                    |   struct { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
+		                    |   struct
 		                    ;
 
-struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO {
+struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA {
                                                                                                                                                     $$.ival = ((Token) $1.obj).getNumeroDeLinea();
                                                                                                                                                     Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "STRUCT");
                                                                                                                                                     String lexema = ((Token) $9.obj).getLexema().toString();
                                                                                                                                                     TablaSimbolos.convertirATipo(lexema, TablaSimbolos.STRUCT);
                                                                                                                                                 }
+                            |   TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra STRUCT en la declaración del STRUCT"); }
+                            |   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' en la declaración del STRUCT"); }
+                            |   TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta simbolo '<' en la declaración del STRUCT");}
+                            |   TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta simbolo '>' en la declaración del STRUCT");}
+                            |   TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R PUNTO_Y_COMA{ agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta identificador al final de la declaración del STRUCT");}
 
                             ;
 

@@ -3,6 +3,7 @@ programa_sin_funciones
 begin
     ulongint f;
 
-    for (i := 1 i < 10 up 1
-        i := 2;
+    if (z < 10) then
+        ñ:= 5;
+
 end
