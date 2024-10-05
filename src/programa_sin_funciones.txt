@@ -8,8 +8,9 @@ begin
         x := x+1;
         ret(x);
     end
+    ulongint x;
 
-    z := f1();
+    z := f1(4);
 /#
    TYPEDEF STRUCT  < ulongint > [
         a,

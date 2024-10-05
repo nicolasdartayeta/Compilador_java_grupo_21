@@ -70,7 +70,7 @@ lista_de_tipos              :   lista_de_tipos COMA tipo
 		                    ;
 
 lista_de_identificadores    :   lista_de_identificadores COMA identificador
-                            //|   lista_de_identificadores identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ',' entre las variables"); }
+                            |   lista_de_identificadores identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ',' entre las variables"); }
 		                    |   identificador { $$.ival = $1.ival; }
 		                    ;
 

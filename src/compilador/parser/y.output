@@ -40,178 +40,179 @@
   32                 | tipo
 
   33  lista_de_identificadores : lista_de_identificadores COMA identificador
-  34                           | identificador
+  34                           | lista_de_identificadores identificador
+  35                           | identificador
 
-  35  identificador : identificador_simple
-  36                | identificador_compuesto
+  36  identificador : identificador_simple
+  37                | identificador_compuesto
 
-  37  identificador_simple : IDENTIFICADOR_GENERICO
-  38                       | IDENTIFICADOR_ULONGINT
-  39                       | IDENTIFICADOR_SINGLE
+  38  identificador_simple : IDENTIFICADOR_GENERICO
+  39                       | IDENTIFICADOR_ULONGINT
+  40                       | IDENTIFICADOR_SINGLE
 
-  40  identificador_compuesto : identificador_simple PUNTO identificador_compuesto
-  41                          | identificador_simple PUNTO identificador_simple
+  41  identificador_compuesto : identificador_simple PUNTO identificador_compuesto
+  42                          | identificador_simple PUNTO identificador_simple
 
-  42  funcion : encabezado_funcion BEGIN cuerpo_funcion END
+  43  funcion : encabezado_funcion BEGIN cuerpo_funcion END
 
-  43  encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R
-  44                     | tipo FUN PARENTESIS_L parametro PARENTESIS_R
+  44  encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R
+  45                     | tipo FUN PARENTESIS_L parametro PARENTESIS_R
 
-  45  parametro : tipo identificador
-  46            | identificador
-  47            | tipo
-  48            | tipo identificador error
-  49            | error
+  46  parametro : tipo identificador
+  47            | identificador
+  48            | tipo
+  49            | tipo identificador error
+  50            | error
 
-  50  cuerpo_funcion : cuerpo_funcion sentencia_ejecutable_en_funcion
-  51                 | cuerpo_funcion sentencia_declarativa
-  52                 | sentencia_ejecutable_en_funcion
-  53                 | sentencia_declarativa
+  51  cuerpo_funcion : cuerpo_funcion sentencia_ejecutable_en_funcion
+  52                 | cuerpo_funcion sentencia_declarativa
+  53                 | sentencia_ejecutable_en_funcion
+  54                 | sentencia_declarativa
 
-  54  sentencia_ejecutable_en_funcion : sentencia_asignacion PUNTO_Y_COMA
-  55                                  | sentencia_asignacion error PUNTO_Y_COMA
-  56                                  | sentencia_asignacion error END
-  57                                  | sentencia_seleccion_en_funcion
-  58                                  | sentencia_salida
-  59                                  | sentencia_control_en_funcion
-  60                                  | sentencia_retorno
+  55  sentencia_ejecutable_en_funcion : sentencia_asignacion PUNTO_Y_COMA
+  56                                  | sentencia_asignacion error PUNTO_Y_COMA
+  57                                  | sentencia_asignacion error END
+  58                                  | sentencia_seleccion_en_funcion
+  59                                  | sentencia_salida
+  60                                  | sentencia_control_en_funcion
+  61                                  | sentencia_retorno
 
-  61  sentencia_control_en_funcion : encabezado_for bloque_de_sent_ejecutables_en_funcion
-  62                               | encabezado_for error
+  62  sentencia_control_en_funcion : encabezado_for bloque_de_sent_ejecutables_en_funcion
+  63                               | encabezado_for error
 
-  63  sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
-  64                    | RET PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA
-  65                    | RET PARENTESIS_L expresion PARENTESIS_R error END
+  64  sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
+  65                    | RET PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA
+  66                    | RET PARENTESIS_L expresion PARENTESIS_R error END
 
-  66  sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA
-  67                                 | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA
-  68                                 | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END
-  69                                 | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA
-  70                                 | IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA
-  71                                 | IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA
-  72                                 | IF condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA
-  73                                 | IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA
+  67  sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA
+  68                                 | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA
+  69                                 | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END
+  70                                 | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA
+  71                                 | IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA
+  72                                 | IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA
+  73                                 | IF condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA
+  74                                 | IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA
 
-  74  cuerpo_if_en_funcion : bloque_de_sent_ejecutables_en_funcion bloque_else_en_funcion
-  75                       | bloque_de_sent_ejecutables_en_funcion
+  75  cuerpo_if_en_funcion : bloque_de_sent_ejecutables_en_funcion bloque_else_en_funcion
+  76                       | bloque_de_sent_ejecutables_en_funcion
 
-  76  bloque_else_en_funcion : ELSE bloque_de_sent_ejecutables_en_funcion
-  77                         | ELSE
+  77  bloque_else_en_funcion : ELSE bloque_de_sent_ejecutables_en_funcion
+  78                         | ELSE
 
-  78  bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END PUNTO_Y_COMA
-  79                                        | BEGIN sentencias_ejecutable_en_funcion END error PUNTO_Y_COMA
-  80                                        | BEGIN sentencias_ejecutable_en_funcion END error END
-  81                                        | sentencia_ejecutable_en_funcion
+  79  bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END PUNTO_Y_COMA
+  80                                        | BEGIN sentencias_ejecutable_en_funcion END error PUNTO_Y_COMA
+  81                                        | BEGIN sentencias_ejecutable_en_funcion END error END
+  82                                        | sentencia_ejecutable_en_funcion
 
-  82  sentencias_ejecutable_en_funcion : sentencias_ejecutable_en_funcion sentencia_ejecutable_en_funcion
-  83                                   | sentencia_ejecutable_en_funcion
+  83  sentencias_ejecutable_en_funcion : sentencias_ejecutable_en_funcion sentencia_ejecutable_en_funcion
+  84                                   | sentencia_ejecutable_en_funcion
 
-  84  sentencia_ejecutable : sentencia_asignacion PUNTO_Y_COMA
-  85                       | sentencia_asignacion error PUNTO_Y_COMA
-  86                       | sentencia_asignacion error END
-  87                       | sentencia_seleccion
-  88                       | sentencia_salida
-  89                       | sentencia_control
+  85  sentencia_ejecutable : sentencia_asignacion PUNTO_Y_COMA
+  86                       | sentencia_asignacion error PUNTO_Y_COMA
+  87                       | sentencia_asignacion error END
+  88                       | sentencia_seleccion
+  89                       | sentencia_salida
+  90                       | sentencia_control
 
-  90  sentencia_asignacion : lista_de_identificadores ASIGNACION lista_de_expresiones
+  91  sentencia_asignacion : lista_de_identificadores ASIGNACION lista_de_expresiones
 
-  91  sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA
-  92                      | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA
-  93                      | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error END
-  94                      | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA
-  95                      | IF PARENTESIS_L condicion THEN cuerpo_if END_IF PUNTO_Y_COMA
-  96                      | IF condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA
-  97                      | IF condicion THEN cuerpo_if END_IF PUNTO_Y_COMA
-  98                      | IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA
+  92  sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA
+  93                      | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA
+  94                      | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error END
+  95                      | IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA
+  96                      | IF PARENTESIS_L condicion THEN cuerpo_if END_IF PUNTO_Y_COMA
+  97                      | IF condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA
+  98                      | IF condicion THEN cuerpo_if END_IF PUNTO_Y_COMA
+  99                      | IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA
 
-  99  cuerpo_if : bloque_de_sent_ejecutables bloque_else
- 100            | bloque_de_sent_ejecutables
+ 100  cuerpo_if : bloque_de_sent_ejecutables bloque_else
+ 101            | bloque_de_sent_ejecutables
 
- 101  bloque_else : ELSE bloque_de_sent_ejecutables
- 102              | ELSE
+ 102  bloque_else : ELSE bloque_de_sent_ejecutables
+ 103              | ELSE
 
- 103  condicion : expresion comparador expresion
- 104            | error
+ 104  condicion : expresion comparador expresion
+ 105            | error
 
- 105  comparador : MAYOR
- 106             | MENOR
- 107             | MAYOR_O_IGUAL
- 108             | MENOR_O_IGUAL
- 109             | IGUAL
- 110             | DESIGUAL
+ 106  comparador : MAYOR
+ 107             | MENOR
+ 108             | MAYOR_O_IGUAL
+ 109             | MENOR_O_IGUAL
+ 110             | IGUAL
+ 111             | DESIGUAL
 
- 111  bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END PUNTO_Y_COMA
- 112                             | BEGIN sentencias_ejecutables END error PUNTO_Y_COMA
- 113                             | BEGIN sentencias_ejecutables END error END
- 114                             | sentencia_ejecutable
+ 112  bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END PUNTO_Y_COMA
+ 113                             | BEGIN sentencias_ejecutables END error PUNTO_Y_COMA
+ 114                             | BEGIN sentencias_ejecutables END error END
+ 115                             | sentencia_ejecutable
 
- 115  sentencias_ejecutables : sentencias_ejecutables sentencia_ejecutable
- 116                         | sentencia_ejecutable
+ 116  sentencias_ejecutables : sentencias_ejecutables sentencia_ejecutable
+ 117                         | sentencia_ejecutable
 
- 117  sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA
- 118                   | OUTF PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
- 119                   | OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA
- 120                   | OUTF PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA
- 121                   | OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error END
- 122                   | OUTF PARENTESIS_L expresion PARENTESIS_R error END
- 123                   | OUTF PARENTESIS_L PARENTESIS_R PUNTO_Y_COMA
- 124                   | OUTF PARENTESIS_L error PUNTO_Y_COMA
+ 118  sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA
+ 119                   | OUTF PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA
+ 120                   | OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA
+ 121                   | OUTF PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA
+ 122                   | OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error END
+ 123                   | OUTF PARENTESIS_L expresion PARENTESIS_R error END
+ 124                   | OUTF PARENTESIS_L PARENTESIS_R PUNTO_Y_COMA
+ 125                   | OUTF PARENTESIS_L error PUNTO_Y_COMA
 
- 125  sentencia_control : encabezado_for bloque_de_sent_ejecutables
- 126                    | encabezado_for error
+ 126  sentencia_control : encabezado_for bloque_de_sent_ejecutables
+ 127                    | encabezado_for error
 
- 127  encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R
- 128                 | encabezado_for_obligatorio PARENTESIS_R
- 129                 | encabezado_for_obligatorio
- 130                 | encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R
- 131                 | encabezado_for_obligatorio PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R
- 132                 | encabezado_for_obligatorio PUNTO_Y_COMA condicion PARENTESIS_R PARENTESIS_R
- 133                 | encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion
+ 128  encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R
+ 129                 | encabezado_for_obligatorio PARENTESIS_R
+ 130                 | encabezado_for_obligatorio
+ 131                 | encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R
+ 132                 | encabezado_for_obligatorio PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R
+ 133                 | encabezado_for_obligatorio PUNTO_Y_COMA condicion PARENTESIS_R PARENTESIS_R
+ 134                 | encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion
 
- 134  encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion
- 135                             | FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion
- 136                             | FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA
- 137                             | FOR PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion
- 138                             | FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion
+ 135  encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion
+ 136                             | FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion
+ 137                             | FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA
+ 138                             | FOR PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion
+ 139                             | FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion
 
- 139  asignacion_enteros : identificador ASIGNACION CONSTANTE_DECIMAL
- 140                     | identificador ASIGNACION CONSTANTE_OCTAL
+ 140  asignacion_enteros : identificador ASIGNACION CONSTANTE_DECIMAL
+ 141                     | identificador ASIGNACION CONSTANTE_OCTAL
 
- 141  accion : UP CONSTANTE_DECIMAL
- 142         | UP CONSTANTE_OCTAL
- 143         | DOWN CONSTANTE_OCTAL
- 144         | DOWN CONSTANTE_DECIMAL
+ 142  accion : UP CONSTANTE_DECIMAL
+ 143         | UP CONSTANTE_OCTAL
+ 144         | DOWN CONSTANTE_OCTAL
+ 145         | DOWN CONSTANTE_DECIMAL
 
- 145  lista_de_expresiones : lista_de_expresiones COMA expresion
- 146                       | expresion
+ 146  lista_de_expresiones : lista_de_expresiones COMA expresion
+ 147                       | expresion
 
- 147  expresion : TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R
- 148            | TOS PARENTESIS_L PARENTESIS_R
- 149            | expresion_aritmetica
+ 148  expresion : TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R
+ 149            | TOS PARENTESIS_L PARENTESIS_R
+ 150            | expresion_aritmetica
 
- 150  expresion_aritmetica : expresion_aritmetica SUMA termino
- 151                       | expresion_aritmetica RESTA termino
- 152                       | termino
- 153                       | error
+ 151  expresion_aritmetica : expresion_aritmetica SUMA termino
+ 152                       | expresion_aritmetica RESTA termino
+ 153                       | termino
+ 154                       | error
 
- 154  termino : termino MULTIPLICACION factor
- 155          | termino DIVISION factor
- 156          | factor
+ 155  termino : termino MULTIPLICACION factor
+ 156          | termino DIVISION factor
+ 157          | factor
 
- 157  factor : identificador
- 158         | constante
- 159         | RESTA constante
- 160         | invocacion_a_funcion
+ 158  factor : identificador
+ 159         | constante
+ 160         | RESTA constante
+ 161         | invocacion_a_funcion
 
- 161  constante : CONSTANTE_DECIMAL
- 162            | CONSTANTE_OCTAL
- 163            | CONSTANTE_SINGLE
+ 162  constante : CONSTANTE_DECIMAL
+ 163            | CONSTANTE_OCTAL
+ 164            | CONSTANTE_SINGLE
 
- 164  invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real PARENTESIS_R
- 165                       | IDENTIFICADOR_FUN PARENTESIS_L PARENTESIS_R
- 166                       | IDENTIFICADOR_FUN PARENTESIS_L parametro_real error PARENTESIS_R
+ 165  invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real PARENTESIS_R
+ 166                       | IDENTIFICADOR_FUN PARENTESIS_L PARENTESIS_R
+ 167                       | IDENTIFICADOR_FUN PARENTESIS_L parametro_real error PARENTESIS_R
 
- 167  parametro_real : expresion
+ 168  parametro_real : expresion
 
 state 0
 	$accept : . programa $end  (0)
@@ -318,9 +319,9 @@ state 4
 
 
 state 5
-	identificador_simple : IDENTIFICADOR_GENERICO .  (37)
+	identificador_simple : IDENTIFICADOR_GENERICO .  (38)
 
-	.  reduce 37
+	.  reduce 38
 
 
 state 6
@@ -330,23 +331,23 @@ state 6
 
 
 state 7
-	identificador_simple : IDENTIFICADOR_ULONGINT .  (38)
-
-	.  reduce 38
-
-
-state 8
-	identificador_simple : IDENTIFICADOR_SINGLE .  (39)
+	identificador_simple : IDENTIFICADOR_ULONGINT .  (39)
 
 	.  reduce 39
 
 
+state 8
+	identificador_simple : IDENTIFICADOR_SINGLE .  (40)
+
+	.  reduce 40
+
+
 state 9
-	encabezado_for_obligatorio : FOR . PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (134)
-	encabezado_for_obligatorio : FOR . asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (135)
-	encabezado_for_obligatorio : FOR . PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA  (136)
-	encabezado_for_obligatorio : FOR . PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion  (137)
-	encabezado_for_obligatorio : FOR . PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion  (138)
+	encabezado_for_obligatorio : FOR . PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (135)
+	encabezado_for_obligatorio : FOR . asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (136)
+	encabezado_for_obligatorio : FOR . PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA  (137)
+	encabezado_for_obligatorio : FOR . PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion  (138)
+	encabezado_for_obligatorio : FOR . PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion  (139)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -373,14 +374,14 @@ state 11
 
 
 state 12
-	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (91)
-	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA  (92)
-	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error END  (93)
-	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA  (94)
-	sentencia_seleccion : IF . PARENTESIS_L condicion THEN cuerpo_if END_IF PUNTO_Y_COMA  (95)
-	sentencia_seleccion : IF . condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (96)
-	sentencia_seleccion : IF . condicion THEN cuerpo_if END_IF PUNTO_Y_COMA  (97)
-	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (98)
+	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (92)
+	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA  (93)
+	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error END  (94)
+	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA  (95)
+	sentencia_seleccion : IF . PARENTESIS_L condicion THEN cuerpo_if END_IF PUNTO_Y_COMA  (96)
+	sentencia_seleccion : IF . condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (97)
+	sentencia_seleccion : IF . condicion THEN cuerpo_if END_IF PUNTO_Y_COMA  (98)
+	sentencia_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (99)
 
 	error  shift 39
 	IDENTIFICADOR_GENERICO  shift 5
@@ -450,14 +451,14 @@ state 13
 
 
 state 14
-	sentencia_salida : OUTF . PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA  (117)
-	sentencia_salida : OUTF . PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA  (118)
-	sentencia_salida : OUTF . PARENTESIS_L INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA  (119)
-	sentencia_salida : OUTF . PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA  (120)
-	sentencia_salida : OUTF . PARENTESIS_L INLINE_STRING PARENTESIS_R error END  (121)
-	sentencia_salida : OUTF . PARENTESIS_L expresion PARENTESIS_R error END  (122)
-	sentencia_salida : OUTF . PARENTESIS_L PARENTESIS_R PUNTO_Y_COMA  (123)
-	sentencia_salida : OUTF . PARENTESIS_L error PUNTO_Y_COMA  (124)
+	sentencia_salida : OUTF . PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA  (118)
+	sentencia_salida : OUTF . PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA  (119)
+	sentencia_salida : OUTF . PARENTESIS_L INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA  (120)
+	sentencia_salida : OUTF . PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA  (121)
+	sentencia_salida : OUTF . PARENTESIS_L INLINE_STRING PARENTESIS_R error END  (122)
+	sentencia_salida : OUTF . PARENTESIS_L expresion PARENTESIS_R error END  (123)
+	sentencia_salida : OUTF . PARENTESIS_L PARENTESIS_R PUNTO_Y_COMA  (124)
+	sentencia_salida : OUTF . PARENTESIS_L error PUNTO_Y_COMA  (125)
 
 	PARENTESIS_L  shift 57
 	.  error
@@ -537,8 +538,8 @@ state 20
 	sentencia_declarativa : tipo . lista_de_identificadores PUNTO_Y_COMA  (16)
 	sentencia_declarativa : tipo . lista_de_identificadores error PUNTO_Y_COMA  (17)
 	sentencia_declarativa : tipo . lista_de_identificadores error END  (18)
-	encabezado_funcion : tipo . FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R  (43)
-	encabezado_funcion : tipo . FUN PARENTESIS_L parametro PARENTESIS_R  (44)
+	encabezado_funcion : tipo . FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R  (44)
+	encabezado_funcion : tipo . FUN PARENTESIS_L parametro PARENTESIS_R  (45)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -554,11 +555,19 @@ state 20
 
 state 21
 	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
-	sentencia_asignacion : lista_de_identificadores . ASIGNACION lista_de_expresiones  (90)
+	lista_de_identificadores : lista_de_identificadores . identificador  (34)
+	sentencia_asignacion : lista_de_identificadores . ASIGNACION lista_de_expresiones  (91)
 
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
 	ASIGNACION  shift 64
 	COMA  shift 65
 	.  error
+
+	identificador  goto 66
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
 
 
 state 22
@@ -574,90 +583,90 @@ state 23
 
 
 state 24
-	lista_de_identificadores : identificador .  (34)
+	lista_de_identificadores : identificador .  (35)
 
-	.  reduce 34
+	.  reduce 35
 
 
 state 25
-	identificador : identificador_simple .  (35)
-	identificador_compuesto : identificador_simple . PUNTO identificador_compuesto  (40)
-	identificador_compuesto : identificador_simple . PUNTO identificador_simple  (41)
+	identificador : identificador_simple .  (36)
+	identificador_compuesto : identificador_simple . PUNTO identificador_compuesto  (41)
+	identificador_compuesto : identificador_simple . PUNTO identificador_simple  (42)
 
-	PUNTO  shift 66
-	error  reduce 35
-	IDENTIFICADOR_GENERICO  reduce 35
-	IDENTIFICADOR_ULONGINT  reduce 35
-	IDENTIFICADOR_SINGLE  reduce 35
-	SUMA  reduce 35
-	RESTA  reduce 35
-	MULTIPLICACION  reduce 35
-	DIVISION  reduce 35
-	ASIGNACION  reduce 35
-	MAYOR_O_IGUAL  reduce 35
-	MENOR_O_IGUAL  reduce 35
-	MAYOR  reduce 35
-	MENOR  reduce 35
-	IGUAL  reduce 35
-	DESIGUAL  reduce 35
-	CORCHETE_R  reduce 35
-	PARENTESIS_R  reduce 35
-	COMA  reduce 35
-	PUNTO_Y_COMA  reduce 35
-	FOR  reduce 35
-	UP  reduce 35
-	DOWN  reduce 35
-	IF  reduce 35
-	THEN  reduce 35
-	BEGIN  reduce 35
-	OUTF  reduce 35
-	RET  reduce 35
+	PUNTO  shift 67
+	error  reduce 36
+	IDENTIFICADOR_GENERICO  reduce 36
+	IDENTIFICADOR_ULONGINT  reduce 36
+	IDENTIFICADOR_SINGLE  reduce 36
+	SUMA  reduce 36
+	RESTA  reduce 36
+	MULTIPLICACION  reduce 36
+	DIVISION  reduce 36
+	ASIGNACION  reduce 36
+	MAYOR_O_IGUAL  reduce 36
+	MENOR_O_IGUAL  reduce 36
+	MAYOR  reduce 36
+	MENOR  reduce 36
+	IGUAL  reduce 36
+	DESIGUAL  reduce 36
+	CORCHETE_R  reduce 36
+	PARENTESIS_R  reduce 36
+	COMA  reduce 36
+	PUNTO_Y_COMA  reduce 36
+	FOR  reduce 36
+	UP  reduce 36
+	DOWN  reduce 36
+	IF  reduce 36
+	THEN  reduce 36
+	BEGIN  reduce 36
+	OUTF  reduce 36
+	RET  reduce 36
 
 
 state 26
-	identificador : identificador_compuesto .  (36)
+	identificador : identificador_compuesto .  (37)
 
-	.  reduce 36
+	.  reduce 37
 
 
 state 27
-	funcion : encabezado_funcion . BEGIN cuerpo_funcion END  (42)
+	funcion : encabezado_funcion . BEGIN cuerpo_funcion END  (43)
 
-	BEGIN  shift 67
+	BEGIN  shift 68
 	.  error
 
 
 state 28
-	sentencia_ejecutable : sentencia_asignacion . PUNTO_Y_COMA  (84)
-	sentencia_ejecutable : sentencia_asignacion . error PUNTO_Y_COMA  (85)
-	sentencia_ejecutable : sentencia_asignacion . error END  (86)
+	sentencia_ejecutable : sentencia_asignacion . PUNTO_Y_COMA  (85)
+	sentencia_ejecutable : sentencia_asignacion . error PUNTO_Y_COMA  (86)
+	sentencia_ejecutable : sentencia_asignacion . error END  (87)
 
-	error  shift 68
-	PUNTO_Y_COMA  shift 69
+	error  shift 69
+	PUNTO_Y_COMA  shift 70
 	.  error
 
 
 state 29
-	sentencia_ejecutable : sentencia_salida .  (88)
+	sentencia_ejecutable : sentencia_salida .  (89)
 
-	.  reduce 88
+	.  reduce 89
 
 
 state 30
-	sentencia_control : encabezado_for . bloque_de_sent_ejecutables  (125)
-	sentencia_control : encabezado_for . error  (126)
+	sentencia_control : encabezado_for . bloque_de_sent_ejecutables  (126)
+	sentencia_control : encabezado_for . error  (127)
 
-	error  shift 70
+	error  shift 71
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
 	IF  shift 12
-	BEGIN  shift 71
+	BEGIN  shift 72
 	OUTF  shift 14
 	.  error
 
-	sentencia_ejecutable  goto 72
+	sentencia_ejecutable  goto 73
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
@@ -667,43 +676,43 @@ state 30
 	encabezado_for  goto 30
 	sentencia_seleccion  goto 31
 	sentencia_control  goto 32
-	bloque_de_sent_ejecutables  goto 73
+	bloque_de_sent_ejecutables  goto 74
 	encabezado_for_obligatorio  goto 33
 
 
 state 31
-	sentencia_ejecutable : sentencia_seleccion .  (87)
+	sentencia_ejecutable : sentencia_seleccion .  (88)
 
-	.  reduce 87
+	.  reduce 88
 
 
 state 32
-	sentencia_ejecutable : sentencia_control .  (89)
+	sentencia_ejecutable : sentencia_control .  (90)
 
-	.  reduce 89
+	.  reduce 90
 
 
 state 33
-	encabezado_for : encabezado_for_obligatorio . PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R  (127)
-	encabezado_for : encabezado_for_obligatorio . PARENTESIS_R  (128)
-	encabezado_for : encabezado_for_obligatorio .  (129)
-	encabezado_for : encabezado_for_obligatorio . PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R  (130)
-	encabezado_for : encabezado_for_obligatorio . PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R  (131)
-	encabezado_for : encabezado_for_obligatorio . PUNTO_Y_COMA condicion PARENTESIS_R PARENTESIS_R  (132)
-	encabezado_for : encabezado_for_obligatorio . PUNTO_Y_COMA PARENTESIS_L condicion  (133)
+	encabezado_for : encabezado_for_obligatorio . PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R  (128)
+	encabezado_for : encabezado_for_obligatorio . PARENTESIS_R  (129)
+	encabezado_for : encabezado_for_obligatorio .  (130)
+	encabezado_for : encabezado_for_obligatorio . PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R  (131)
+	encabezado_for : encabezado_for_obligatorio . PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R  (132)
+	encabezado_for : encabezado_for_obligatorio . PUNTO_Y_COMA condicion PARENTESIS_R PARENTESIS_R  (133)
+	encabezado_for : encabezado_for_obligatorio . PUNTO_Y_COMA PARENTESIS_L condicion  (134)
 
-	PARENTESIS_L  shift 74
-	PARENTESIS_R  shift 75
-	PUNTO_Y_COMA  shift 76
-	error  reduce 129
-	IDENTIFICADOR_GENERICO  reduce 129
-	IDENTIFICADOR_ULONGINT  reduce 129
-	IDENTIFICADOR_SINGLE  reduce 129
-	FOR  reduce 129
-	IF  reduce 129
-	BEGIN  reduce 129
-	OUTF  reduce 129
-	RET  reduce 129
+	PARENTESIS_L  shift 75
+	PARENTESIS_R  shift 76
+	PUNTO_Y_COMA  shift 77
+	error  reduce 130
+	IDENTIFICADOR_GENERICO  reduce 130
+	IDENTIFICADOR_ULONGINT  reduce 130
+	IDENTIFICADOR_SINGLE  reduce 130
+	FOR  reduce 130
+	IF  reduce 130
+	BEGIN  reduce 130
+	OUTF  reduce 130
+	RET  reduce 130
 
 
 state 34
@@ -719,7 +728,7 @@ state 34
 	SINGLE  shift 10
 	ULONGINT  shift 11
 	IF  shift 12
-	END  shift 77
+	END  shift 78
 	OUTF  shift 14
 	TYPEDEF  shift 15
 	.  error
@@ -750,10 +759,10 @@ state 35
 
 
 state 36
-	encabezado_for_obligatorio : FOR PARENTESIS_L . asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (134)
-	encabezado_for_obligatorio : FOR PARENTESIS_L . asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA  (136)
-	encabezado_for_obligatorio : FOR PARENTESIS_L . asignacion_enteros condicion PUNTO_Y_COMA accion  (137)
-	encabezado_for_obligatorio : FOR PARENTESIS_L . asignacion_enteros PUNTO_Y_COMA condicion accion  (138)
+	encabezado_for_obligatorio : FOR PARENTESIS_L . asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (135)
+	encabezado_for_obligatorio : FOR PARENTESIS_L . asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA  (137)
+	encabezado_for_obligatorio : FOR PARENTESIS_L . asignacion_enteros condicion PUNTO_Y_COMA accion  (138)
+	encabezado_for_obligatorio : FOR PARENTESIS_L . asignacion_enteros PUNTO_Y_COMA condicion accion  (139)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -763,97 +772,97 @@ state 36
 	identificador  goto 37
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	asignacion_enteros  goto 78
+	asignacion_enteros  goto 79
 
 
 state 37
-	asignacion_enteros : identificador . ASIGNACION CONSTANTE_DECIMAL  (139)
-	asignacion_enteros : identificador . ASIGNACION CONSTANTE_OCTAL  (140)
+	asignacion_enteros : identificador . ASIGNACION CONSTANTE_DECIMAL  (140)
+	asignacion_enteros : identificador . ASIGNACION CONSTANTE_OCTAL  (141)
 
-	ASIGNACION  shift 79
+	ASIGNACION  shift 80
 	.  error
 
 
 state 38
-	encabezado_for_obligatorio : FOR asignacion_enteros . PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (135)
+	encabezado_for_obligatorio : FOR asignacion_enteros . PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (136)
 
-	PUNTO_Y_COMA  shift 80
+	PUNTO_Y_COMA  shift 81
 	.  error
 
 
 state 39
-	condicion : error .  (104)
-	expresion_aritmetica : error .  (153)
+	condicion : error .  (105)
+	expresion_aritmetica : error .  (154)
 
-	error  reduce 104
-	IDENTIFICADOR_GENERICO  reduce 104
-	IDENTIFICADOR_ULONGINT  reduce 104
-	IDENTIFICADOR_SINGLE  reduce 104
-	SUMA  reduce 153
-	RESTA  reduce 153
-	MAYOR_O_IGUAL  reduce 153
-	MENOR_O_IGUAL  reduce 153
-	MAYOR  reduce 153
-	MENOR  reduce 153
-	IGUAL  reduce 153
-	DESIGUAL  reduce 153
-	PARENTESIS_R  reduce 104
-	PUNTO_Y_COMA  reduce 104
-	FOR  reduce 104
-	UP  reduce 104
-	DOWN  reduce 104
-	IF  reduce 104
-	THEN  reduce 104
-	BEGIN  reduce 104
-	OUTF  reduce 104
-	RET  reduce 104
+	error  reduce 105
+	IDENTIFICADOR_GENERICO  reduce 105
+	IDENTIFICADOR_ULONGINT  reduce 105
+	IDENTIFICADOR_SINGLE  reduce 105
+	SUMA  reduce 154
+	RESTA  reduce 154
+	MAYOR_O_IGUAL  reduce 154
+	MENOR_O_IGUAL  reduce 154
+	MAYOR  reduce 154
+	MENOR  reduce 154
+	IGUAL  reduce 154
+	DESIGUAL  reduce 154
+	PARENTESIS_R  reduce 105
+	PUNTO_Y_COMA  reduce 105
+	FOR  reduce 105
+	UP  reduce 105
+	DOWN  reduce 105
+	IF  reduce 105
+	THEN  reduce 105
+	BEGIN  reduce 105
+	OUTF  reduce 105
+	RET  reduce 105
 
 
 state 40
-	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L parametro_real PARENTESIS_R  (164)
-	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L PARENTESIS_R  (165)
-	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L parametro_real error PARENTESIS_R  (166)
+	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L parametro_real PARENTESIS_R  (165)
+	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L PARENTESIS_R  (166)
+	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L parametro_real error PARENTESIS_R  (167)
 
-	PARENTESIS_L  shift 81
+	PARENTESIS_L  shift 82
 	.  error
 
 
 state 41
-	constante : CONSTANTE_DECIMAL .  (161)
-
-	.  reduce 161
-
-
-state 42
-	constante : CONSTANTE_OCTAL .  (162)
+	constante : CONSTANTE_DECIMAL .  (162)
 
 	.  reduce 162
 
 
-state 43
-	constante : CONSTANTE_SINGLE .  (163)
+state 42
+	constante : CONSTANTE_OCTAL .  (163)
 
 	.  reduce 163
 
 
+state 43
+	constante : CONSTANTE_SINGLE .  (164)
+
+	.  reduce 164
+
+
 state 44
-	factor : RESTA . constante  (159)
+	factor : RESTA . constante  (160)
 
 	CONSTANTE_DECIMAL  shift 41
 	CONSTANTE_OCTAL  shift 42
 	CONSTANTE_SINGLE  shift 43
 	.  error
 
-	constante  goto 82
+	constante  goto 83
 
 
 state 45
-	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (91)
-	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA  (92)
-	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if END_IF error END  (93)
-	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA  (94)
-	sentencia_seleccion : IF PARENTESIS_L . condicion THEN cuerpo_if END_IF PUNTO_Y_COMA  (95)
-	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (98)
+	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (92)
+	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA  (93)
+	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if END_IF error END  (94)
+	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA  (95)
+	sentencia_seleccion : IF PARENTESIS_L . condicion THEN cuerpo_if END_IF PUNTO_Y_COMA  (96)
+	sentencia_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (99)
 
 	error  shift 39
 	IDENTIFICADOR_GENERICO  shift 5
@@ -871,7 +880,7 @@ state 45
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	expresion  goto 48
-	condicion  goto 83
+	condicion  goto 84
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -880,120 +889,120 @@ state 45
 
 
 state 46
-	expresion : TOS . PARENTESIS_L expresion_aritmetica PARENTESIS_R  (147)
-	expresion : TOS . PARENTESIS_L PARENTESIS_R  (148)
+	expresion : TOS . PARENTESIS_L expresion_aritmetica PARENTESIS_R  (148)
+	expresion : TOS . PARENTESIS_L PARENTESIS_R  (149)
 
-	PARENTESIS_L  shift 84
+	PARENTESIS_L  shift 85
 	.  error
 
 
 state 47
-	factor : identificador .  (157)
-
-	.  reduce 157
-
-
-state 48
-	condicion : expresion . comparador expresion  (103)
-
-	MAYOR_O_IGUAL  shift 85
-	MENOR_O_IGUAL  shift 86
-	MAYOR  shift 87
-	MENOR  shift 88
-	IGUAL  shift 89
-	DESIGUAL  shift 90
-	.  error
-
-	comparador  goto 91
-
-
-state 49
-	sentencia_seleccion : IF condicion . PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (96)
-	sentencia_seleccion : IF condicion . THEN cuerpo_if END_IF PUNTO_Y_COMA  (97)
-
-	PARENTESIS_R  shift 92
-	THEN  shift 93
-	.  error
-
-
-state 50
-	expresion : expresion_aritmetica .  (149)
-	expresion_aritmetica : expresion_aritmetica . SUMA termino  (150)
-	expresion_aritmetica : expresion_aritmetica . RESTA termino  (151)
-
-	SUMA  shift 94
-	RESTA  shift 95
-	error  reduce 149
-	IDENTIFICADOR_GENERICO  reduce 149
-	IDENTIFICADOR_ULONGINT  reduce 149
-	IDENTIFICADOR_SINGLE  reduce 149
-	MAYOR_O_IGUAL  reduce 149
-	MENOR_O_IGUAL  reduce 149
-	MAYOR  reduce 149
-	MENOR  reduce 149
-	IGUAL  reduce 149
-	DESIGUAL  reduce 149
-	PARENTESIS_R  reduce 149
-	COMA  reduce 149
-	PUNTO_Y_COMA  reduce 149
-	FOR  reduce 149
-	UP  reduce 149
-	DOWN  reduce 149
-	IF  reduce 149
-	THEN  reduce 149
-	BEGIN  reduce 149
-	OUTF  reduce 149
-	RET  reduce 149
-
-
-state 51
-	expresion_aritmetica : termino .  (152)
-	termino : termino . MULTIPLICACION factor  (154)
-	termino : termino . DIVISION factor  (155)
-
-	MULTIPLICACION  shift 96
-	DIVISION  shift 97
-	error  reduce 152
-	IDENTIFICADOR_GENERICO  reduce 152
-	IDENTIFICADOR_ULONGINT  reduce 152
-	IDENTIFICADOR_SINGLE  reduce 152
-	SUMA  reduce 152
-	RESTA  reduce 152
-	MAYOR_O_IGUAL  reduce 152
-	MENOR_O_IGUAL  reduce 152
-	MAYOR  reduce 152
-	MENOR  reduce 152
-	IGUAL  reduce 152
-	DESIGUAL  reduce 152
-	PARENTESIS_R  reduce 152
-	COMA  reduce 152
-	PUNTO_Y_COMA  reduce 152
-	FOR  reduce 152
-	UP  reduce 152
-	DOWN  reduce 152
-	IF  reduce 152
-	THEN  reduce 152
-	BEGIN  reduce 152
-	OUTF  reduce 152
-	RET  reduce 152
-
-
-state 52
-	termino : factor .  (156)
-
-	.  reduce 156
-
-
-state 53
-	factor : constante .  (158)
+	factor : identificador .  (158)
 
 	.  reduce 158
 
 
-state 54
-	factor : invocacion_a_funcion .  (160)
+state 48
+	condicion : expresion . comparador expresion  (104)
 
-	.  reduce 160
+	MAYOR_O_IGUAL  shift 86
+	MENOR_O_IGUAL  shift 87
+	MAYOR  shift 88
+	MENOR  shift 89
+	IGUAL  shift 90
+	DESIGUAL  shift 91
+	.  error
+
+	comparador  goto 92
+
+
+state 49
+	sentencia_seleccion : IF condicion . PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (97)
+	sentencia_seleccion : IF condicion . THEN cuerpo_if END_IF PUNTO_Y_COMA  (98)
+
+	PARENTESIS_R  shift 93
+	THEN  shift 94
+	.  error
+
+
+state 50
+	expresion : expresion_aritmetica .  (150)
+	expresion_aritmetica : expresion_aritmetica . SUMA termino  (151)
+	expresion_aritmetica : expresion_aritmetica . RESTA termino  (152)
+
+	SUMA  shift 95
+	RESTA  shift 96
+	error  reduce 150
+	IDENTIFICADOR_GENERICO  reduce 150
+	IDENTIFICADOR_ULONGINT  reduce 150
+	IDENTIFICADOR_SINGLE  reduce 150
+	MAYOR_O_IGUAL  reduce 150
+	MENOR_O_IGUAL  reduce 150
+	MAYOR  reduce 150
+	MENOR  reduce 150
+	IGUAL  reduce 150
+	DESIGUAL  reduce 150
+	PARENTESIS_R  reduce 150
+	COMA  reduce 150
+	PUNTO_Y_COMA  reduce 150
+	FOR  reduce 150
+	UP  reduce 150
+	DOWN  reduce 150
+	IF  reduce 150
+	THEN  reduce 150
+	BEGIN  reduce 150
+	OUTF  reduce 150
+	RET  reduce 150
+
+
+state 51
+	expresion_aritmetica : termino .  (153)
+	termino : termino . MULTIPLICACION factor  (155)
+	termino : termino . DIVISION factor  (156)
+
+	MULTIPLICACION  shift 97
+	DIVISION  shift 98
+	error  reduce 153
+	IDENTIFICADOR_GENERICO  reduce 153
+	IDENTIFICADOR_ULONGINT  reduce 153
+	IDENTIFICADOR_SINGLE  reduce 153
+	SUMA  reduce 153
+	RESTA  reduce 153
+	MAYOR_O_IGUAL  reduce 153
+	MENOR_O_IGUAL  reduce 153
+	MAYOR  reduce 153
+	MENOR  reduce 153
+	IGUAL  reduce 153
+	DESIGUAL  reduce 153
+	PARENTESIS_R  reduce 153
+	COMA  reduce 153
+	PUNTO_Y_COMA  reduce 153
+	FOR  reduce 153
+	UP  reduce 153
+	DOWN  reduce 153
+	IF  reduce 153
+	THEN  reduce 153
+	BEGIN  reduce 153
+	OUTF  reduce 153
+	RET  reduce 153
+
+
+state 52
+	termino : factor .  (157)
+
+	.  reduce 157
+
+
+state 53
+	factor : constante .  (159)
+
+	.  reduce 159
+
+
+state 54
+	factor : invocacion_a_funcion .  (161)
+
+	.  reduce 161
 
 
 state 55
@@ -1002,7 +1011,7 @@ state 55
 	sentencia : error . PUNTO_Y_COMA  (15)
 
 	PUNTO_Y_COMA  shift 35
-	END  shift 98
+	END  shift 99
 	$end  reduce 10
 
 
@@ -1014,7 +1023,7 @@ state 56
 	programa : IDENTIFICADOR_GENERICO BEGIN sentencias . error  (9)
 	sentencias : sentencias . sentencia  (11)
 
-	error  shift 99
+	error  shift 100
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_TIPO  shift 6
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -1023,7 +1032,7 @@ state 56
 	SINGLE  shift 10
 	ULONGINT  shift 11
 	IF  shift 12
-	END  shift 100
+	END  shift 101
 	OUTF  shift 14
 	TYPEDEF  shift 15
 	$end  reduce 5
@@ -1048,16 +1057,16 @@ state 56
 
 
 state 57
-	sentencia_salida : OUTF PARENTESIS_L . INLINE_STRING PARENTESIS_R PUNTO_Y_COMA  (117)
-	sentencia_salida : OUTF PARENTESIS_L . expresion PARENTESIS_R PUNTO_Y_COMA  (118)
-	sentencia_salida : OUTF PARENTESIS_L . INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA  (119)
-	sentencia_salida : OUTF PARENTESIS_L . expresion PARENTESIS_R error PUNTO_Y_COMA  (120)
-	sentencia_salida : OUTF PARENTESIS_L . INLINE_STRING PARENTESIS_R error END  (121)
-	sentencia_salida : OUTF PARENTESIS_L . expresion PARENTESIS_R error END  (122)
-	sentencia_salida : OUTF PARENTESIS_L . PARENTESIS_R PUNTO_Y_COMA  (123)
-	sentencia_salida : OUTF PARENTESIS_L . error PUNTO_Y_COMA  (124)
+	sentencia_salida : OUTF PARENTESIS_L . INLINE_STRING PARENTESIS_R PUNTO_Y_COMA  (118)
+	sentencia_salida : OUTF PARENTESIS_L . expresion PARENTESIS_R PUNTO_Y_COMA  (119)
+	sentencia_salida : OUTF PARENTESIS_L . INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA  (120)
+	sentencia_salida : OUTF PARENTESIS_L . expresion PARENTESIS_R error PUNTO_Y_COMA  (121)
+	sentencia_salida : OUTF PARENTESIS_L . INLINE_STRING PARENTESIS_R error END  (122)
+	sentencia_salida : OUTF PARENTESIS_L . expresion PARENTESIS_R error END  (123)
+	sentencia_salida : OUTF PARENTESIS_L . PARENTESIS_R PUNTO_Y_COMA  (124)
+	sentencia_salida : OUTF PARENTESIS_L . error PUNTO_Y_COMA  (125)
 
-	error  shift 101
+	error  shift 102
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -1066,15 +1075,15 @@ state 57
 	CONSTANTE_OCTAL  shift 42
 	CONSTANTE_SINGLE  shift 43
 	RESTA  shift 44
-	PARENTESIS_R  shift 102
-	INLINE_STRING  shift 103
+	PARENTESIS_R  shift 103
+	INLINE_STRING  shift 104
 	TOS  shift 46
 	.  error
 
 	identificador  goto 47
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	expresion  goto 104
+	expresion  goto 105
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -1088,13 +1097,13 @@ state 58
 	struct : TYPEDEF MENOR . STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R PUNTO_Y_COMA  (27)
 
 	IDENTIFICADOR_TIPO  shift 6
-	STRUCT  shift 105
+	STRUCT  shift 106
 	SINGLE  shift 10
 	ULONGINT  shift 11
 	.  error
 
-	tipo  goto 106
-	lista_de_tipos  goto 107
+	tipo  goto 107
+	lista_de_tipos  goto 108
 
 
 state 59
@@ -1104,13 +1113,13 @@ state 59
 	struct : TYPEDEF STRUCT . lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
 
 	IDENTIFICADOR_TIPO  shift 6
-	MENOR  shift 108
+	MENOR  shift 109
 	SINGLE  shift 10
 	ULONGINT  shift 11
 	.  error
 
-	tipo  goto 106
-	lista_de_tipos  goto 109
+	tipo  goto 107
+	lista_de_tipos  goto 110
 
 
 state 60
@@ -1126,11 +1135,11 @@ state 61
 
 
 state 62
-	encabezado_funcion : tipo FUN . IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R  (43)
-	encabezado_funcion : tipo FUN . PARENTESIS_L parametro PARENTESIS_R  (44)
+	encabezado_funcion : tipo FUN . IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R  (44)
+	encabezado_funcion : tipo FUN . PARENTESIS_L parametro PARENTESIS_R  (45)
 
-	IDENTIFICADOR_GENERICO  shift 110
-	PARENTESIS_L  shift 111
+	IDENTIFICADOR_GENERICO  shift 111
+	PARENTESIS_L  shift 112
 	.  error
 
 
@@ -1139,17 +1148,25 @@ state 63
 	sentencia_declarativa : tipo lista_de_identificadores . error PUNTO_Y_COMA  (17)
 	sentencia_declarativa : tipo lista_de_identificadores . error END  (18)
 	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
+	lista_de_identificadores : lista_de_identificadores . identificador  (34)
 
-	error  shift 112
+	error  shift 113
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
 	COMA  shift 65
-	PUNTO_Y_COMA  shift 113
+	PUNTO_Y_COMA  shift 114
 	.  error
+
+	identificador  goto 66
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
 
 
 state 64
-	sentencia_asignacion : lista_de_identificadores ASIGNACION . lista_de_expresiones  (90)
+	sentencia_asignacion : lista_de_identificadores ASIGNACION . lista_de_expresiones  (91)
 
-	error  shift 114
+	error  shift 115
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -1164,8 +1181,8 @@ state 64
 	identificador  goto 47
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	expresion  goto 115
-	lista_de_expresiones  goto 116
+	expresion  goto 116
+	lista_de_expresiones  goto 117
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -1181,26 +1198,32 @@ state 65
 	IDENTIFICADOR_SINGLE  shift 8
 	.  error
 
-	identificador  goto 117
+	identificador  goto 118
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 
 
 state 66
-	identificador_compuesto : identificador_simple PUNTO . identificador_compuesto  (40)
-	identificador_compuesto : identificador_simple PUNTO . identificador_simple  (41)
+	lista_de_identificadores : lista_de_identificadores identificador .  (34)
+
+	.  reduce 34
+
+
+state 67
+	identificador_compuesto : identificador_simple PUNTO . identificador_compuesto  (41)
+	identificador_compuesto : identificador_simple PUNTO . identificador_simple  (42)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	.  error
 
-	identificador_simple  goto 118
-	identificador_compuesto  goto 119
+	identificador_simple  goto 119
+	identificador_compuesto  goto 120
 
 
-state 67
-	funcion : encabezado_funcion BEGIN . cuerpo_funcion END  (42)
+state 68
+	funcion : encabezado_funcion BEGIN . cuerpo_funcion END  (43)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_TIPO  shift 6
@@ -1209,13 +1232,13 @@ state 67
 	FOR  shift 9
 	SINGLE  shift 10
 	ULONGINT  shift 11
-	IF  shift 120
+	IF  shift 121
 	OUTF  shift 14
 	TYPEDEF  shift 15
-	RET  shift 121
+	RET  shift 122
 	.  error
 
-	sentencia_declarativa  goto 122
+	sentencia_declarativa  goto 123
 	tipo  goto 20
 	lista_de_identificadores  goto 21
 	funcion  goto 22
@@ -1224,42 +1247,42 @@ state 67
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	encabezado_funcion  goto 27
-	cuerpo_funcion  goto 123
-	sentencia_ejecutable_en_funcion  goto 124
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
+	cuerpo_funcion  goto 124
+	sentencia_ejecutable_en_funcion  goto 125
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
 	encabezado_for_obligatorio  goto 33
 
 
-state 68
-	sentencia_ejecutable : sentencia_asignacion error . PUNTO_Y_COMA  (85)
-	sentencia_ejecutable : sentencia_asignacion error . END  (86)
+state 69
+	sentencia_ejecutable : sentencia_asignacion error . PUNTO_Y_COMA  (86)
+	sentencia_ejecutable : sentencia_asignacion error . END  (87)
 
-	PUNTO_Y_COMA  shift 131
-	END  shift 132
+	PUNTO_Y_COMA  shift 132
+	END  shift 133
 	.  error
 
 
-state 69
-	sentencia_ejecutable : sentencia_asignacion PUNTO_Y_COMA .  (84)
-
-	.  reduce 84
-
-
 state 70
-	sentencia_control : encabezado_for error .  (126)
+	sentencia_ejecutable : sentencia_asignacion PUNTO_Y_COMA .  (85)
 
-	.  reduce 126
+	.  reduce 85
 
 
 state 71
-	bloque_de_sent_ejecutables : BEGIN . sentencias_ejecutables END PUNTO_Y_COMA  (111)
-	bloque_de_sent_ejecutables : BEGIN . sentencias_ejecutables END error PUNTO_Y_COMA  (112)
-	bloque_de_sent_ejecutables : BEGIN . sentencias_ejecutables END error END  (113)
+	sentencia_control : encabezado_for error .  (127)
+
+	.  reduce 127
+
+
+state 72
+	bloque_de_sent_ejecutables : BEGIN . sentencias_ejecutables END PUNTO_Y_COMA  (112)
+	bloque_de_sent_ejecutables : BEGIN . sentencias_ejecutables END error PUNTO_Y_COMA  (113)
+	bloque_de_sent_ejecutables : BEGIN . sentencias_ejecutables END error END  (114)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -1269,7 +1292,7 @@ state 71
 	OUTF  shift 14
 	.  error
 
-	sentencia_ejecutable  goto 133
+	sentencia_ejecutable  goto 134
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
@@ -1279,60 +1302,24 @@ state 71
 	encabezado_for  goto 30
 	sentencia_seleccion  goto 31
 	sentencia_control  goto 32
-	sentencias_ejecutables  goto 134
+	sentencias_ejecutables  goto 135
 	encabezado_for_obligatorio  goto 33
 
 
-state 72
-	bloque_de_sent_ejecutables : sentencia_ejecutable .  (114)
-
-	.  reduce 114
-
-
 state 73
-	sentencia_control : encabezado_for bloque_de_sent_ejecutables .  (125)
+	bloque_de_sent_ejecutables : sentencia_ejecutable .  (115)
 
-	.  reduce 125
+	.  reduce 115
 
 
 state 74
-	encabezado_for : encabezado_for_obligatorio PARENTESIS_L . condicion PARENTESIS_R PARENTESIS_R  (131)
+	sentencia_control : encabezado_for bloque_de_sent_ejecutables .  (126)
 
-	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 5
-	IDENTIFICADOR_FUN  shift 40
-	IDENTIFICADOR_ULONGINT  shift 7
-	IDENTIFICADOR_SINGLE  shift 8
-	CONSTANTE_DECIMAL  shift 41
-	CONSTANTE_OCTAL  shift 42
-	CONSTANTE_SINGLE  shift 43
-	RESTA  shift 44
-	TOS  shift 46
-	.  error
-
-	identificador  goto 47
-	identificador_simple  goto 25
-	identificador_compuesto  goto 26
-	expresion  goto 48
-	condicion  goto 135
-	expresion_aritmetica  goto 50
-	termino  goto 51
-	factor  goto 52
-	constante  goto 53
-	invocacion_a_funcion  goto 54
+	.  reduce 126
 
 
 state 75
-	encabezado_for : encabezado_for_obligatorio PARENTESIS_R .  (128)
-
-	.  reduce 128
-
-
-state 76
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R  (127)
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . PARENTESIS_L condicion PARENTESIS_R  (130)
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . condicion PARENTESIS_R PARENTESIS_R  (132)
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . PARENTESIS_L condicion  (133)
+	encabezado_for : encabezado_for_obligatorio PARENTESIS_L . condicion PARENTESIS_R PARENTESIS_R  (132)
 
 	error  shift 39
 	IDENTIFICADOR_GENERICO  shift 5
@@ -1343,7 +1330,6 @@ state 76
 	CONSTANTE_OCTAL  shift 42
 	CONSTANTE_SINGLE  shift 43
 	RESTA  shift 44
-	PARENTESIS_L  shift 136
 	TOS  shift 46
 	.  error
 
@@ -1351,7 +1337,7 @@ state 76
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	expresion  goto 48
-	condicion  goto 137
+	condicion  goto 136
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -1359,17 +1345,54 @@ state 76
 	invocacion_a_funcion  goto 54
 
 
+state 76
+	encabezado_for : encabezado_for_obligatorio PARENTESIS_R .  (129)
+
+	.  reduce 129
+
+
 state 77
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R  (128)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . PARENTESIS_L condicion PARENTESIS_R  (131)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . condicion PARENTESIS_R PARENTESIS_R  (133)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . PARENTESIS_L condicion  (134)
+
+	error  shift 39
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	CONSTANTE_DECIMAL  shift 41
+	CONSTANTE_OCTAL  shift 42
+	CONSTANTE_SINGLE  shift 43
+	RESTA  shift 44
+	PARENTESIS_L  shift 137
+	TOS  shift 46
+	.  error
+
+	identificador  goto 47
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+	expresion  goto 48
+	condicion  goto 138
+	expresion_aritmetica  goto 50
+	termino  goto 51
+	factor  goto 52
+	constante  goto 53
+	invocacion_a_funcion  goto 54
+
+
+state 78
 	programa : BEGIN sentencias END .  (3)
 
 	.  reduce 3
 
 
-state 78
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros . PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (134)
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros . PUNTO_Y_COMA condicion PUNTO_Y_COMA  (136)
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros . condicion PUNTO_Y_COMA accion  (137)
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros . PUNTO_Y_COMA condicion accion  (138)
+state 79
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros . PUNTO_Y_COMA condicion PUNTO_Y_COMA accion  (135)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros . PUNTO_Y_COMA condicion PUNTO_Y_COMA  (137)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros . condicion PUNTO_Y_COMA accion  (138)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros . PUNTO_Y_COMA condicion accion  (139)
 
 	error  shift 39
 	IDENTIFICADOR_GENERICO  shift 5
@@ -1380,7 +1403,7 @@ state 78
 	CONSTANTE_OCTAL  shift 42
 	CONSTANTE_SINGLE  shift 43
 	RESTA  shift 44
-	PUNTO_Y_COMA  shift 138
+	PUNTO_Y_COMA  shift 139
 	TOS  shift 46
 	.  error
 
@@ -1388,25 +1411,25 @@ state 78
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	expresion  goto 48
-	condicion  goto 139
+	condicion  goto 140
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
 	constante  goto 53
 	invocacion_a_funcion  goto 54
-
-
-state 79
-	asignacion_enteros : identificador ASIGNACION . CONSTANTE_DECIMAL  (139)
-	asignacion_enteros : identificador ASIGNACION . CONSTANTE_OCTAL  (140)
-
-	CONSTANTE_DECIMAL  shift 140
-	CONSTANTE_OCTAL  shift 141
-	.  error
 
 
 state 80
-	encabezado_for_obligatorio : FOR asignacion_enteros PUNTO_Y_COMA . condicion PUNTO_Y_COMA accion  (135)
+	asignacion_enteros : identificador ASIGNACION . CONSTANTE_DECIMAL  (140)
+	asignacion_enteros : identificador ASIGNACION . CONSTANTE_OCTAL  (141)
+
+	CONSTANTE_DECIMAL  shift 141
+	CONSTANTE_OCTAL  shift 142
+	.  error
+
+
+state 81
+	encabezado_for_obligatorio : FOR asignacion_enteros PUNTO_Y_COMA . condicion PUNTO_Y_COMA accion  (136)
 
 	error  shift 39
 	IDENTIFICADOR_GENERICO  shift 5
@@ -1424,7 +1447,7 @@ state 80
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	expresion  goto 48
-	condicion  goto 142
+	condicion  goto 143
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -1432,12 +1455,12 @@ state 80
 	invocacion_a_funcion  goto 54
 
 
-state 81
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . parametro_real PARENTESIS_R  (164)
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . PARENTESIS_R  (165)
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . parametro_real error PARENTESIS_R  (166)
+state 82
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . parametro_real PARENTESIS_R  (165)
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . PARENTESIS_R  (166)
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . parametro_real error PARENTESIS_R  (167)
 
-	error  shift 114
+	error  shift 115
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -1446,46 +1469,46 @@ state 81
 	CONSTANTE_OCTAL  shift 42
 	CONSTANTE_SINGLE  shift 43
 	RESTA  shift 44
-	PARENTESIS_R  shift 143
+	PARENTESIS_R  shift 144
 	TOS  shift 46
 	.  error
 
 	identificador  goto 47
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	expresion  goto 144
+	expresion  goto 145
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
 	constante  goto 53
 	invocacion_a_funcion  goto 54
-	parametro_real  goto 145
-
-
-state 82
-	factor : RESTA constante .  (159)
-
-	.  reduce 159
+	parametro_real  goto 146
 
 
 state 83
-	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (91)
-	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA  (92)
-	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if END_IF error END  (93)
-	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA  (94)
-	sentencia_seleccion : IF PARENTESIS_L condicion . THEN cuerpo_if END_IF PUNTO_Y_COMA  (95)
-	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (98)
+	factor : RESTA constante .  (160)
 
-	PARENTESIS_R  shift 146
-	THEN  shift 147
-	.  error
+	.  reduce 160
 
 
 state 84
-	expresion : TOS PARENTESIS_L . expresion_aritmetica PARENTESIS_R  (147)
-	expresion : TOS PARENTESIS_L . PARENTESIS_R  (148)
+	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA  (92)
+	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA  (93)
+	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if END_IF error END  (94)
+	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA  (95)
+	sentencia_seleccion : IF PARENTESIS_L condicion . THEN cuerpo_if END_IF PUNTO_Y_COMA  (96)
+	sentencia_seleccion : IF PARENTESIS_L condicion . PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (99)
 
-	error  shift 114
+	PARENTESIS_R  shift 147
+	THEN  shift 148
+	.  error
+
+
+state 85
+	expresion : TOS PARENTESIS_L . expresion_aritmetica PARENTESIS_R  (148)
+	expresion : TOS PARENTESIS_L . PARENTESIS_R  (149)
+
+	error  shift 115
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -1494,59 +1517,59 @@ state 84
 	CONSTANTE_OCTAL  shift 42
 	CONSTANTE_SINGLE  shift 43
 	RESTA  shift 44
-	PARENTESIS_R  shift 148
+	PARENTESIS_R  shift 149
 	.  error
 
 	identificador  goto 47
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	expresion_aritmetica  goto 149
+	expresion_aritmetica  goto 150
 	termino  goto 51
 	factor  goto 52
 	constante  goto 53
 	invocacion_a_funcion  goto 54
 
 
-state 85
-	comparador : MAYOR_O_IGUAL .  (107)
-
-	.  reduce 107
-
-
 state 86
-	comparador : MENOR_O_IGUAL .  (108)
+	comparador : MAYOR_O_IGUAL .  (108)
 
 	.  reduce 108
 
 
 state 87
-	comparador : MAYOR .  (105)
+	comparador : MENOR_O_IGUAL .  (109)
 
-	.  reduce 105
+	.  reduce 109
 
 
 state 88
-	comparador : MENOR .  (106)
+	comparador : MAYOR .  (106)
 
 	.  reduce 106
 
 
 state 89
-	comparador : IGUAL .  (109)
+	comparador : MENOR .  (107)
 
-	.  reduce 109
+	.  reduce 107
 
 
 state 90
-	comparador : DESIGUAL .  (110)
+	comparador : IGUAL .  (110)
 
 	.  reduce 110
 
 
 state 91
-	condicion : expresion comparador . expresion  (103)
+	comparador : DESIGUAL .  (111)
 
-	error  shift 114
+	.  reduce 111
+
+
+state 92
+	condicion : expresion comparador . expresion  (104)
+
+	error  shift 115
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -1561,7 +1584,7 @@ state 91
 	identificador  goto 47
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	expresion  goto 150
+	expresion  goto 151
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -1569,26 +1592,26 @@ state 91
 	invocacion_a_funcion  goto 54
 
 
-state 92
-	sentencia_seleccion : IF condicion PARENTESIS_R . THEN cuerpo_if END_IF PUNTO_Y_COMA  (96)
+state 93
+	sentencia_seleccion : IF condicion PARENTESIS_R . THEN cuerpo_if END_IF PUNTO_Y_COMA  (97)
 
-	THEN  shift 151
+	THEN  shift 152
 	.  error
 
 
-state 93
-	sentencia_seleccion : IF condicion THEN . cuerpo_if END_IF PUNTO_Y_COMA  (97)
+state 94
+	sentencia_seleccion : IF condicion THEN . cuerpo_if END_IF PUNTO_Y_COMA  (98)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
 	IF  shift 12
-	BEGIN  shift 71
+	BEGIN  shift 72
 	OUTF  shift 14
 	.  error
 
-	sentencia_ejecutable  goto 72
+	sentencia_ejecutable  goto 73
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
@@ -1598,35 +1621,13 @@ state 93
 	encabezado_for  goto 30
 	sentencia_seleccion  goto 31
 	sentencia_control  goto 32
-	cuerpo_if  goto 152
-	bloque_de_sent_ejecutables  goto 153
+	cuerpo_if  goto 153
+	bloque_de_sent_ejecutables  goto 154
 	encabezado_for_obligatorio  goto 33
 
 
-state 94
-	expresion_aritmetica : expresion_aritmetica SUMA . termino  (150)
-
-	IDENTIFICADOR_GENERICO  shift 5
-	IDENTIFICADOR_FUN  shift 40
-	IDENTIFICADOR_ULONGINT  shift 7
-	IDENTIFICADOR_SINGLE  shift 8
-	CONSTANTE_DECIMAL  shift 41
-	CONSTANTE_OCTAL  shift 42
-	CONSTANTE_SINGLE  shift 43
-	RESTA  shift 44
-	.  error
-
-	identificador  goto 47
-	identificador_simple  goto 25
-	identificador_compuesto  goto 26
-	termino  goto 154
-	factor  goto 52
-	constante  goto 53
-	invocacion_a_funcion  goto 54
-
-
 state 95
-	expresion_aritmetica : expresion_aritmetica RESTA . termino  (151)
+	expresion_aritmetica : expresion_aritmetica SUMA . termino  (151)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
@@ -1648,7 +1649,7 @@ state 95
 
 
 state 96
-	termino : termino MULTIPLICACION . factor  (154)
+	expresion_aritmetica : expresion_aritmetica RESTA . termino  (152)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
@@ -1663,13 +1664,14 @@ state 96
 	identificador  goto 47
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	factor  goto 156
+	termino  goto 156
+	factor  goto 52
 	constante  goto 53
 	invocacion_a_funcion  goto 54
 
 
 state 97
-	termino : termino DIVISION . factor  (155)
+	termino : termino MULTIPLICACION . factor  (155)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
@@ -1690,65 +1692,86 @@ state 97
 
 
 state 98
+	termino : termino DIVISION . factor  (156)
+
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	CONSTANTE_DECIMAL  shift 41
+	CONSTANTE_OCTAL  shift 42
+	CONSTANTE_SINGLE  shift 43
+	RESTA  shift 44
+	.  error
+
+	identificador  goto 47
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+	factor  goto 158
+	constante  goto 53
+	invocacion_a_funcion  goto 54
+
+
+state 99
 	programa : IDENTIFICADOR_GENERICO BEGIN error END .  (8)
 
 	.  reduce 8
 
 
-state 99
+state 100
 	programa : IDENTIFICADOR_GENERICO BEGIN sentencias error . END  (7)
 	programa : IDENTIFICADOR_GENERICO BEGIN sentencias error .  (9)
 	sentencia : error . PUNTO_Y_COMA  (15)
 
 	PUNTO_Y_COMA  shift 35
-	END  shift 158
+	END  shift 159
 	$end  reduce 9
 
 
-state 100
+state 101
 	programa : IDENTIFICADOR_GENERICO BEGIN sentencias END .  (1)
 	programa : IDENTIFICADOR_GENERICO BEGIN sentencias END . error  (2)
 
-	error  shift 159
+	error  shift 160
 	$end  reduce 1
 
 
-state 101
-	sentencia_salida : OUTF PARENTESIS_L error . PUNTO_Y_COMA  (124)
-	expresion_aritmetica : error .  (153)
-
-	PUNTO_Y_COMA  shift 160
-	SUMA  reduce 153
-	RESTA  reduce 153
-	PARENTESIS_R  reduce 153
-
-
 state 102
-	sentencia_salida : OUTF PARENTESIS_L PARENTESIS_R . PUNTO_Y_COMA  (123)
+	sentencia_salida : OUTF PARENTESIS_L error . PUNTO_Y_COMA  (125)
+	expresion_aritmetica : error .  (154)
 
 	PUNTO_Y_COMA  shift 161
-	.  error
+	SUMA  reduce 154
+	RESTA  reduce 154
+	PARENTESIS_R  reduce 154
 
 
 state 103
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING . PARENTESIS_R PUNTO_Y_COMA  (117)
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING . PARENTESIS_R error PUNTO_Y_COMA  (119)
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING . PARENTESIS_R error END  (121)
+	sentencia_salida : OUTF PARENTESIS_L PARENTESIS_R . PUNTO_Y_COMA  (124)
 
-	PARENTESIS_R  shift 162
+	PUNTO_Y_COMA  shift 162
 	.  error
 
 
 state 104
-	sentencia_salida : OUTF PARENTESIS_L expresion . PARENTESIS_R PUNTO_Y_COMA  (118)
-	sentencia_salida : OUTF PARENTESIS_L expresion . PARENTESIS_R error PUNTO_Y_COMA  (120)
-	sentencia_salida : OUTF PARENTESIS_L expresion . PARENTESIS_R error END  (122)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING . PARENTESIS_R PUNTO_Y_COMA  (118)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING . PARENTESIS_R error PUNTO_Y_COMA  (120)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING . PARENTESIS_R error END  (122)
 
 	PARENTESIS_R  shift 163
 	.  error
 
 
 state 105
+	sentencia_salida : OUTF PARENTESIS_L expresion . PARENTESIS_R PUNTO_Y_COMA  (119)
+	sentencia_salida : OUTF PARENTESIS_L expresion . PARENTESIS_R error PUNTO_Y_COMA  (121)
+	sentencia_salida : OUTF PARENTESIS_L expresion . PARENTESIS_R error END  (123)
+
+	PARENTESIS_R  shift 164
+	.  error
+
+
+state 106
 	struct : TYPEDEF MENOR STRUCT . lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
 	struct : TYPEDEF MENOR STRUCT . lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R PUNTO_Y_COMA  (27)
 
@@ -1757,26 +1780,26 @@ state 105
 	ULONGINT  shift 11
 	.  error
 
-	tipo  goto 106
-	lista_de_tipos  goto 164
+	tipo  goto 107
+	lista_de_tipos  goto 165
 
 
-state 106
+state 107
 	lista_de_tipos : tipo .  (32)
 
 	.  reduce 32
 
 
-state 107
+state 108
 	struct : TYPEDEF MENOR lista_de_tipos . MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
 	lista_de_tipos : lista_de_tipos . COMA tipo  (31)
 
-	MAYOR  shift 165
-	COMA  shift 166
+	MAYOR  shift 166
+	COMA  shift 167
 	.  error
 
 
-state 108
+state 109
 	struct : TYPEDEF STRUCT MENOR . lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (21)
 	struct : TYPEDEF STRUCT MENOR . lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA  (23)
 	struct : TYPEDEF STRUCT MENOR . lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error END  (24)
@@ -1786,30 +1809,30 @@ state 108
 	ULONGINT  shift 11
 	.  error
 
-	tipo  goto 106
-	lista_de_tipos  goto 167
-
-
-state 109
-	struct : TYPEDEF STRUCT lista_de_tipos . MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
-	lista_de_tipos : lista_de_tipos . COMA tipo  (31)
-
-	MAYOR  shift 168
-	COMA  shift 166
-	.  error
+	tipo  goto 107
+	lista_de_tipos  goto 168
 
 
 state 110
-	encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO . PARENTESIS_L parametro PARENTESIS_R  (43)
+	struct : TYPEDEF STRUCT lista_de_tipos . MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
+	lista_de_tipos : lista_de_tipos . COMA tipo  (31)
 
-	PARENTESIS_L  shift 169
+	MAYOR  shift 169
+	COMA  shift 167
 	.  error
 
 
 state 111
-	encabezado_funcion : tipo FUN PARENTESIS_L . parametro PARENTESIS_R  (44)
+	encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO . PARENTESIS_L parametro PARENTESIS_R  (44)
 
-	error  shift 170
+	PARENTESIS_L  shift 170
+	.  error
+
+
+state 112
+	encabezado_funcion : tipo FUN PARENTESIS_L . parametro PARENTESIS_R  (45)
+
+	error  shift 171
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_TIPO  shift 6
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -1818,105 +1841,105 @@ state 111
 	ULONGINT  shift 11
 	.  error
 
-	tipo  goto 171
-	identificador  goto 172
+	tipo  goto 172
+	identificador  goto 173
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	parametro  goto 173
-
-
-state 112
-	sentencia_declarativa : tipo lista_de_identificadores error . PUNTO_Y_COMA  (17)
-	sentencia_declarativa : tipo lista_de_identificadores error . END  (18)
-
-	PUNTO_Y_COMA  shift 174
-	END  shift 175
-	.  error
+	parametro  goto 174
 
 
 state 113
+	sentencia_declarativa : tipo lista_de_identificadores error . PUNTO_Y_COMA  (17)
+	sentencia_declarativa : tipo lista_de_identificadores error . END  (18)
+
+	PUNTO_Y_COMA  shift 175
+	END  shift 176
+	.  error
+
+
+state 114
 	sentencia_declarativa : tipo lista_de_identificadores PUNTO_Y_COMA .  (16)
 
 	.  reduce 16
 
 
-state 114
-	expresion_aritmetica : error .  (153)
-
-	.  reduce 153
-
-
 state 115
-	lista_de_expresiones : expresion .  (146)
+	expresion_aritmetica : error .  (154)
 
-	.  reduce 146
+	.  reduce 154
 
 
 state 116
-	sentencia_asignacion : lista_de_identificadores ASIGNACION lista_de_expresiones .  (90)
-	lista_de_expresiones : lista_de_expresiones . COMA expresion  (145)
+	lista_de_expresiones : expresion .  (147)
 
-	COMA  shift 176
-	error  reduce 90
-	PUNTO_Y_COMA  reduce 90
+	.  reduce 147
 
 
 state 117
+	sentencia_asignacion : lista_de_identificadores ASIGNACION lista_de_expresiones .  (91)
+	lista_de_expresiones : lista_de_expresiones . COMA expresion  (146)
+
+	COMA  shift 177
+	error  reduce 91
+	PUNTO_Y_COMA  reduce 91
+
+
+state 118
 	lista_de_identificadores : lista_de_identificadores COMA identificador .  (33)
 
 	.  reduce 33
 
 
-state 118
-	identificador_compuesto : identificador_simple . PUNTO identificador_compuesto  (40)
-	identificador_compuesto : identificador_simple . PUNTO identificador_simple  (41)
-	identificador_compuesto : identificador_simple PUNTO identificador_simple .  (41)
-
-	PUNTO  shift 66
-	error  reduce 41
-	IDENTIFICADOR_GENERICO  reduce 41
-	IDENTIFICADOR_ULONGINT  reduce 41
-	IDENTIFICADOR_SINGLE  reduce 41
-	SUMA  reduce 41
-	RESTA  reduce 41
-	MULTIPLICACION  reduce 41
-	DIVISION  reduce 41
-	ASIGNACION  reduce 41
-	MAYOR_O_IGUAL  reduce 41
-	MENOR_O_IGUAL  reduce 41
-	MAYOR  reduce 41
-	MENOR  reduce 41
-	IGUAL  reduce 41
-	DESIGUAL  reduce 41
-	CORCHETE_R  reduce 41
-	PARENTESIS_R  reduce 41
-	COMA  reduce 41
-	PUNTO_Y_COMA  reduce 41
-	FOR  reduce 41
-	UP  reduce 41
-	DOWN  reduce 41
-	IF  reduce 41
-	THEN  reduce 41
-	BEGIN  reduce 41
-	OUTF  reduce 41
-	RET  reduce 41
-
-
 state 119
-	identificador_compuesto : identificador_simple PUNTO identificador_compuesto .  (40)
+	identificador_compuesto : identificador_simple . PUNTO identificador_compuesto  (41)
+	identificador_compuesto : identificador_simple . PUNTO identificador_simple  (42)
+	identificador_compuesto : identificador_simple PUNTO identificador_simple .  (42)
 
-	.  reduce 40
+	PUNTO  shift 67
+	error  reduce 42
+	IDENTIFICADOR_GENERICO  reduce 42
+	IDENTIFICADOR_ULONGINT  reduce 42
+	IDENTIFICADOR_SINGLE  reduce 42
+	SUMA  reduce 42
+	RESTA  reduce 42
+	MULTIPLICACION  reduce 42
+	DIVISION  reduce 42
+	ASIGNACION  reduce 42
+	MAYOR_O_IGUAL  reduce 42
+	MENOR_O_IGUAL  reduce 42
+	MAYOR  reduce 42
+	MENOR  reduce 42
+	IGUAL  reduce 42
+	DESIGUAL  reduce 42
+	CORCHETE_R  reduce 42
+	PARENTESIS_R  reduce 42
+	COMA  reduce 42
+	PUNTO_Y_COMA  reduce 42
+	FOR  reduce 42
+	UP  reduce 42
+	DOWN  reduce 42
+	IF  reduce 42
+	THEN  reduce 42
+	BEGIN  reduce 42
+	OUTF  reduce 42
+	RET  reduce 42
 
 
 state 120
-	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (66)
-	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (67)
-	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END  (68)
-	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA  (69)
-	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (70)
-	sentencia_seleccion_en_funcion : IF . condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (71)
-	sentencia_seleccion_en_funcion : IF . condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (72)
-	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (73)
+	identificador_compuesto : identificador_simple PUNTO identificador_compuesto .  (41)
+
+	.  reduce 41
+
+
+state 121
+	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (67)
+	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (68)
+	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END  (69)
+	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA  (70)
+	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (71)
+	sentencia_seleccion_en_funcion : IF . condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (72)
+	sentencia_seleccion_en_funcion : IF . condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (73)
+	sentencia_seleccion_en_funcion : IF . PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (74)
 
 	error  shift 39
 	IDENTIFICADOR_GENERICO  shift 5
@@ -1927,7 +1950,7 @@ state 120
 	CONSTANTE_OCTAL  shift 42
 	CONSTANTE_SINGLE  shift 43
 	RESTA  shift 44
-	PARENTESIS_L  shift 177
+	PARENTESIS_L  shift 178
 	TOS  shift 46
 	.  error
 
@@ -1935,7 +1958,7 @@ state 120
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	expresion  goto 48
-	condicion  goto 178
+	condicion  goto 179
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -1943,25 +1966,25 @@ state 120
 	invocacion_a_funcion  goto 54
 
 
-state 121
-	sentencia_retorno : RET . PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA  (63)
-	sentencia_retorno : RET . PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA  (64)
-	sentencia_retorno : RET . PARENTESIS_L expresion PARENTESIS_R error END  (65)
+state 122
+	sentencia_retorno : RET . PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA  (64)
+	sentencia_retorno : RET . PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA  (65)
+	sentencia_retorno : RET . PARENTESIS_L expresion PARENTESIS_R error END  (66)
 
-	PARENTESIS_L  shift 179
+	PARENTESIS_L  shift 180
 	.  error
 
 
-state 122
-	cuerpo_funcion : sentencia_declarativa .  (53)
-
-	.  reduce 53
-
-
 state 123
-	funcion : encabezado_funcion BEGIN cuerpo_funcion . END  (42)
-	cuerpo_funcion : cuerpo_funcion . sentencia_ejecutable_en_funcion  (50)
-	cuerpo_funcion : cuerpo_funcion . sentencia_declarativa  (51)
+	cuerpo_funcion : sentencia_declarativa .  (54)
+
+	.  reduce 54
+
+
+state 124
+	funcion : encabezado_funcion BEGIN cuerpo_funcion . END  (43)
+	cuerpo_funcion : cuerpo_funcion . sentencia_ejecutable_en_funcion  (51)
+	cuerpo_funcion : cuerpo_funcion . sentencia_declarativa  (52)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_TIPO  shift 6
@@ -1970,14 +1993,14 @@ state 123
 	FOR  shift 9
 	SINGLE  shift 10
 	ULONGINT  shift 11
-	IF  shift 120
-	END  shift 180
+	IF  shift 121
+	END  shift 181
 	OUTF  shift 14
 	TYPEDEF  shift 15
-	RET  shift 121
+	RET  shift 122
 	.  error
 
-	sentencia_declarativa  goto 181
+	sentencia_declarativa  goto 182
 	tipo  goto 20
 	lista_de_identificadores  goto 21
 	funcion  goto 22
@@ -1986,120 +2009,120 @@ state 123
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	encabezado_funcion  goto 27
-	sentencia_ejecutable_en_funcion  goto 182
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
+	sentencia_ejecutable_en_funcion  goto 183
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
 	encabezado_for_obligatorio  goto 33
 
 
-state 124
-	cuerpo_funcion : sentencia_ejecutable_en_funcion .  (52)
-
-	.  reduce 52
-
-
 state 125
-	sentencia_ejecutable_en_funcion : sentencia_asignacion . PUNTO_Y_COMA  (54)
-	sentencia_ejecutable_en_funcion : sentencia_asignacion . error PUNTO_Y_COMA  (55)
-	sentencia_ejecutable_en_funcion : sentencia_asignacion . error END  (56)
+	cuerpo_funcion : sentencia_ejecutable_en_funcion .  (53)
 
-	error  shift 183
-	PUNTO_Y_COMA  shift 184
-	.  error
+	.  reduce 53
 
 
 state 126
-	sentencia_ejecutable_en_funcion : sentencia_seleccion_en_funcion .  (57)
+	sentencia_ejecutable_en_funcion : sentencia_asignacion . PUNTO_Y_COMA  (55)
+	sentencia_ejecutable_en_funcion : sentencia_asignacion . error PUNTO_Y_COMA  (56)
+	sentencia_ejecutable_en_funcion : sentencia_asignacion . error END  (57)
 
-	.  reduce 57
+	error  shift 184
+	PUNTO_Y_COMA  shift 185
+	.  error
 
 
 state 127
-	sentencia_ejecutable_en_funcion : sentencia_salida .  (58)
+	sentencia_ejecutable_en_funcion : sentencia_seleccion_en_funcion .  (58)
 
 	.  reduce 58
 
 
 state 128
-	sentencia_ejecutable_en_funcion : sentencia_control_en_funcion .  (59)
+	sentencia_ejecutable_en_funcion : sentencia_salida .  (59)
 
 	.  reduce 59
 
 
 state 129
-	sentencia_ejecutable_en_funcion : sentencia_retorno .  (60)
+	sentencia_ejecutable_en_funcion : sentencia_control_en_funcion .  (60)
 
 	.  reduce 60
 
 
 state 130
-	sentencia_control_en_funcion : encabezado_for . bloque_de_sent_ejecutables_en_funcion  (61)
-	sentencia_control_en_funcion : encabezado_for . error  (62)
+	sentencia_ejecutable_en_funcion : sentencia_retorno .  (61)
 
-	error  shift 185
+	.  reduce 61
+
+
+state 131
+	sentencia_control_en_funcion : encabezado_for . bloque_de_sent_ejecutables_en_funcion  (62)
+	sentencia_control_en_funcion : encabezado_for . error  (63)
+
+	error  shift 186
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
-	IF  shift 120
-	BEGIN  shift 186
+	IF  shift 121
+	BEGIN  shift 187
 	OUTF  shift 14
-	RET  shift 121
+	RET  shift 122
 	.  error
 
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	sentencia_ejecutable_en_funcion  goto 187
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
-	bloque_de_sent_ejecutables_en_funcion  goto 188
+	sentencia_ejecutable_en_funcion  goto 188
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
+	bloque_de_sent_ejecutables_en_funcion  goto 189
 	encabezado_for_obligatorio  goto 33
 
 
-state 131
-	sentencia_ejecutable : sentencia_asignacion error PUNTO_Y_COMA .  (85)
-
-	.  reduce 85
-
-
 state 132
-	sentencia_ejecutable : sentencia_asignacion error END .  (86)
+	sentencia_ejecutable : sentencia_asignacion error PUNTO_Y_COMA .  (86)
 
 	.  reduce 86
 
 
 state 133
-	sentencias_ejecutables : sentencia_ejecutable .  (116)
+	sentencia_ejecutable : sentencia_asignacion error END .  (87)
 
-	.  reduce 116
+	.  reduce 87
 
 
 state 134
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables . END PUNTO_Y_COMA  (111)
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables . END error PUNTO_Y_COMA  (112)
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables . END error END  (113)
-	sentencias_ejecutables : sentencias_ejecutables . sentencia_ejecutable  (115)
+	sentencias_ejecutables : sentencia_ejecutable .  (117)
+
+	.  reduce 117
+
+
+state 135
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables . END PUNTO_Y_COMA  (112)
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables . END error PUNTO_Y_COMA  (113)
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables . END error END  (114)
+	sentencias_ejecutables : sentencias_ejecutables . sentencia_ejecutable  (116)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
 	IF  shift 12
-	END  shift 189
+	END  shift 190
 	OUTF  shift 14
 	.  error
 
-	sentencia_ejecutable  goto 190
+	sentencia_ejecutable  goto 191
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
@@ -2112,53 +2135,17 @@ state 134
 	encabezado_for_obligatorio  goto 33
 
 
-state 135
-	encabezado_for : encabezado_for_obligatorio PARENTESIS_L condicion . PARENTESIS_R PARENTESIS_R  (131)
-
-	PARENTESIS_R  shift 191
-	.  error
-
-
 state 136
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L . condicion PARENTESIS_R PARENTESIS_R  (127)
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L . condicion PARENTESIS_R  (130)
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L . condicion  (133)
+	encabezado_for : encabezado_for_obligatorio PARENTESIS_L condicion . PARENTESIS_R PARENTESIS_R  (132)
 
-	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 5
-	IDENTIFICADOR_FUN  shift 40
-	IDENTIFICADOR_ULONGINT  shift 7
-	IDENTIFICADOR_SINGLE  shift 8
-	CONSTANTE_DECIMAL  shift 41
-	CONSTANTE_OCTAL  shift 42
-	CONSTANTE_SINGLE  shift 43
-	RESTA  shift 44
-	TOS  shift 46
+	PARENTESIS_R  shift 192
 	.  error
-
-	identificador  goto 47
-	identificador_simple  goto 25
-	identificador_compuesto  goto 26
-	expresion  goto 48
-	condicion  goto 192
-	expresion_aritmetica  goto 50
-	termino  goto 51
-	factor  goto 52
-	constante  goto 53
-	invocacion_a_funcion  goto 54
 
 
 state 137
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA condicion . PARENTESIS_R PARENTESIS_R  (132)
-
-	PARENTESIS_R  shift 193
-	.  error
-
-
-state 138
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA . condicion PUNTO_Y_COMA accion  (134)
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA . condicion PUNTO_Y_COMA  (136)
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA . condicion accion  (138)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L . condicion PARENTESIS_R PARENTESIS_R  (128)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L . condicion PARENTESIS_R  (131)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L . condicion  (134)
 
 	error  shift 39
 	IDENTIFICADOR_GENERICO  shift 5
@@ -2176,7 +2163,7 @@ state 138
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	expresion  goto 48
-	condicion  goto 194
+	condicion  goto 193
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -2184,127 +2171,113 @@ state 138
 	invocacion_a_funcion  goto 54
 
 
-state 139
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros condicion . PUNTO_Y_COMA accion  (137)
+state 138
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA condicion . PARENTESIS_R PARENTESIS_R  (133)
 
-	PUNTO_Y_COMA  shift 195
+	PARENTESIS_R  shift 194
 	.  error
 
 
+state 139
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA . condicion PUNTO_Y_COMA accion  (135)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA . condicion PUNTO_Y_COMA  (137)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA . condicion accion  (139)
+
+	error  shift 39
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	CONSTANTE_DECIMAL  shift 41
+	CONSTANTE_OCTAL  shift 42
+	CONSTANTE_SINGLE  shift 43
+	RESTA  shift 44
+	TOS  shift 46
+	.  error
+
+	identificador  goto 47
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+	expresion  goto 48
+	condicion  goto 195
+	expresion_aritmetica  goto 50
+	termino  goto 51
+	factor  goto 52
+	constante  goto 53
+	invocacion_a_funcion  goto 54
+
+
 state 140
-	asignacion_enteros : identificador ASIGNACION CONSTANTE_DECIMAL .  (139)
-
-	.  reduce 139
-
-
-state 141
-	asignacion_enteros : identificador ASIGNACION CONSTANTE_OCTAL .  (140)
-
-	.  reduce 140
-
-
-state 142
-	encabezado_for_obligatorio : FOR asignacion_enteros PUNTO_Y_COMA condicion . PUNTO_Y_COMA accion  (135)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros condicion . PUNTO_Y_COMA accion  (138)
 
 	PUNTO_Y_COMA  shift 196
 	.  error
 
 
+state 141
+	asignacion_enteros : identificador ASIGNACION CONSTANTE_DECIMAL .  (140)
+
+	.  reduce 140
+
+
+state 142
+	asignacion_enteros : identificador ASIGNACION CONSTANTE_OCTAL .  (141)
+
+	.  reduce 141
+
+
 state 143
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L PARENTESIS_R .  (165)
+	encabezado_for_obligatorio : FOR asignacion_enteros PUNTO_Y_COMA condicion . PUNTO_Y_COMA accion  (136)
 
-	.  reduce 165
-
-
-state 144
-	parametro_real : expresion .  (167)
-
-	.  reduce 167
-
-
-state 145
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real . PARENTESIS_R  (164)
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real . error PARENTESIS_R  (166)
-
-	error  shift 197
-	PARENTESIS_R  shift 198
+	PUNTO_Y_COMA  shift 197
 	.  error
 
 
-state 146
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if END_IF PUNTO_Y_COMA  (91)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if END_IF error PUNTO_Y_COMA  (92)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if END_IF error END  (93)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if PUNTO_Y_COMA  (94)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN END_IF PUNTO_Y_COMA  (98)
+state 144
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L PARENTESIS_R .  (166)
 
-	THEN  shift 199
+	.  reduce 166
+
+
+state 145
+	parametro_real : expresion .  (168)
+
+	.  reduce 168
+
+
+state 146
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real . PARENTESIS_R  (165)
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real . error PARENTESIS_R  (167)
+
+	error  shift 198
+	PARENTESIS_R  shift 199
 	.  error
 
 
 state 147
-	sentencia_seleccion : IF PARENTESIS_L condicion THEN . cuerpo_if END_IF PUNTO_Y_COMA  (95)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if END_IF PUNTO_Y_COMA  (92)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if END_IF error PUNTO_Y_COMA  (93)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if END_IF error END  (94)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if PUNTO_Y_COMA  (95)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R . THEN END_IF PUNTO_Y_COMA  (99)
 
-	IDENTIFICADOR_GENERICO  shift 5
-	IDENTIFICADOR_ULONGINT  shift 7
-	IDENTIFICADOR_SINGLE  shift 8
-	FOR  shift 9
-	IF  shift 12
-	BEGIN  shift 71
-	OUTF  shift 14
+	THEN  shift 200
 	.  error
-
-	sentencia_ejecutable  goto 72
-	lista_de_identificadores  goto 21
-	identificador  goto 24
-	identificador_simple  goto 25
-	identificador_compuesto  goto 26
-	sentencia_asignacion  goto 28
-	sentencia_salida  goto 29
-	encabezado_for  goto 30
-	sentencia_seleccion  goto 31
-	sentencia_control  goto 32
-	cuerpo_if  goto 200
-	bloque_de_sent_ejecutables  goto 153
-	encabezado_for_obligatorio  goto 33
 
 
 state 148
-	expresion : TOS PARENTESIS_L PARENTESIS_R .  (148)
-
-	.  reduce 148
-
-
-state 149
-	expresion : TOS PARENTESIS_L expresion_aritmetica . PARENTESIS_R  (147)
-	expresion_aritmetica : expresion_aritmetica . SUMA termino  (150)
-	expresion_aritmetica : expresion_aritmetica . RESTA termino  (151)
-
-	SUMA  shift 94
-	RESTA  shift 95
-	PARENTESIS_R  shift 201
-	.  error
-
-
-state 150
-	condicion : expresion comparador expresion .  (103)
-
-	.  reduce 103
-
-
-state 151
-	sentencia_seleccion : IF condicion PARENTESIS_R THEN . cuerpo_if END_IF PUNTO_Y_COMA  (96)
+	sentencia_seleccion : IF PARENTESIS_L condicion THEN . cuerpo_if END_IF PUNTO_Y_COMA  (96)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
 	IF  shift 12
-	BEGIN  shift 71
+	BEGIN  shift 72
 	OUTF  shift 14
 	.  error
 
-	sentencia_ejecutable  goto 72
+	sentencia_ejecutable  goto 73
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
@@ -2314,68 +2287,86 @@ state 151
 	encabezado_for  goto 30
 	sentencia_seleccion  goto 31
 	sentencia_control  goto 32
-	cuerpo_if  goto 202
-	bloque_de_sent_ejecutables  goto 153
+	cuerpo_if  goto 201
+	bloque_de_sent_ejecutables  goto 154
 	encabezado_for_obligatorio  goto 33
 
 
-state 152
-	sentencia_seleccion : IF condicion THEN cuerpo_if . END_IF PUNTO_Y_COMA  (97)
+state 149
+	expresion : TOS PARENTESIS_L PARENTESIS_R .  (149)
 
-	END_IF  shift 203
+	.  reduce 149
+
+
+state 150
+	expresion : TOS PARENTESIS_L expresion_aritmetica . PARENTESIS_R  (148)
+	expresion_aritmetica : expresion_aritmetica . SUMA termino  (151)
+	expresion_aritmetica : expresion_aritmetica . RESTA termino  (152)
+
+	SUMA  shift 95
+	RESTA  shift 96
+	PARENTESIS_R  shift 202
 	.  error
 
 
+state 151
+	condicion : expresion comparador expresion .  (104)
+
+	.  reduce 104
+
+
+state 152
+	sentencia_seleccion : IF condicion PARENTESIS_R THEN . cuerpo_if END_IF PUNTO_Y_COMA  (97)
+
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	FOR  shift 9
+	IF  shift 12
+	BEGIN  shift 72
+	OUTF  shift 14
+	.  error
+
+	sentencia_ejecutable  goto 73
+	lista_de_identificadores  goto 21
+	identificador  goto 24
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+	sentencia_asignacion  goto 28
+	sentencia_salida  goto 29
+	encabezado_for  goto 30
+	sentencia_seleccion  goto 31
+	sentencia_control  goto 32
+	cuerpo_if  goto 203
+	bloque_de_sent_ejecutables  goto 154
+	encabezado_for_obligatorio  goto 33
+
+
 state 153
-	cuerpo_if : bloque_de_sent_ejecutables . bloque_else  (99)
-	cuerpo_if : bloque_de_sent_ejecutables .  (100)
+	sentencia_seleccion : IF condicion THEN cuerpo_if . END_IF PUNTO_Y_COMA  (98)
 
-	ELSE  shift 204
-	PUNTO_Y_COMA  reduce 100
-	END_IF  reduce 100
-
-	bloque_else  goto 205
+	END_IF  shift 204
+	.  error
 
 
 state 154
-	expresion_aritmetica : expresion_aritmetica SUMA termino .  (150)
-	termino : termino . MULTIPLICACION factor  (154)
-	termino : termino . DIVISION factor  (155)
+	cuerpo_if : bloque_de_sent_ejecutables . bloque_else  (100)
+	cuerpo_if : bloque_de_sent_ejecutables .  (101)
 
-	MULTIPLICACION  shift 96
-	DIVISION  shift 97
-	error  reduce 150
-	IDENTIFICADOR_GENERICO  reduce 150
-	IDENTIFICADOR_ULONGINT  reduce 150
-	IDENTIFICADOR_SINGLE  reduce 150
-	SUMA  reduce 150
-	RESTA  reduce 150
-	MAYOR_O_IGUAL  reduce 150
-	MENOR_O_IGUAL  reduce 150
-	MAYOR  reduce 150
-	MENOR  reduce 150
-	IGUAL  reduce 150
-	DESIGUAL  reduce 150
-	PARENTESIS_R  reduce 150
-	COMA  reduce 150
-	PUNTO_Y_COMA  reduce 150
-	FOR  reduce 150
-	UP  reduce 150
-	DOWN  reduce 150
-	IF  reduce 150
-	THEN  reduce 150
-	BEGIN  reduce 150
-	OUTF  reduce 150
-	RET  reduce 150
+	ELSE  shift 205
+	PUNTO_Y_COMA  reduce 101
+	END_IF  reduce 101
+
+	bloque_else  goto 206
 
 
 state 155
-	expresion_aritmetica : expresion_aritmetica RESTA termino .  (151)
-	termino : termino . MULTIPLICACION factor  (154)
-	termino : termino . DIVISION factor  (155)
+	expresion_aritmetica : expresion_aritmetica SUMA termino .  (151)
+	termino : termino . MULTIPLICACION factor  (155)
+	termino : termino . DIVISION factor  (156)
 
-	MULTIPLICACION  shift 96
-	DIVISION  shift 97
+	MULTIPLICACION  shift 97
+	DIVISION  shift 98
 	error  reduce 151
 	IDENTIFICADOR_GENERICO  reduce 151
 	IDENTIFICADOR_ULONGINT  reduce 151
@@ -2402,79 +2393,111 @@ state 155
 
 
 state 156
-	termino : termino MULTIPLICACION factor .  (154)
+	expresion_aritmetica : expresion_aritmetica RESTA termino .  (152)
+	termino : termino . MULTIPLICACION factor  (155)
+	termino : termino . DIVISION factor  (156)
 
-	.  reduce 154
+	MULTIPLICACION  shift 97
+	DIVISION  shift 98
+	error  reduce 152
+	IDENTIFICADOR_GENERICO  reduce 152
+	IDENTIFICADOR_ULONGINT  reduce 152
+	IDENTIFICADOR_SINGLE  reduce 152
+	SUMA  reduce 152
+	RESTA  reduce 152
+	MAYOR_O_IGUAL  reduce 152
+	MENOR_O_IGUAL  reduce 152
+	MAYOR  reduce 152
+	MENOR  reduce 152
+	IGUAL  reduce 152
+	DESIGUAL  reduce 152
+	PARENTESIS_R  reduce 152
+	COMA  reduce 152
+	PUNTO_Y_COMA  reduce 152
+	FOR  reduce 152
+	UP  reduce 152
+	DOWN  reduce 152
+	IF  reduce 152
+	THEN  reduce 152
+	BEGIN  reduce 152
+	OUTF  reduce 152
+	RET  reduce 152
 
 
 state 157
-	termino : termino DIVISION factor .  (155)
+	termino : termino MULTIPLICACION factor .  (155)
 
 	.  reduce 155
 
 
 state 158
+	termino : termino DIVISION factor .  (156)
+
+	.  reduce 156
+
+
+state 159
 	programa : IDENTIFICADOR_GENERICO BEGIN sentencias error END .  (7)
 
 	.  reduce 7
 
 
-state 159
+state 160
 	programa : IDENTIFICADOR_GENERICO BEGIN sentencias END error .  (2)
 
 	.  reduce 2
 
 
-state 160
-	sentencia_salida : OUTF PARENTESIS_L error PUNTO_Y_COMA .  (124)
+state 161
+	sentencia_salida : OUTF PARENTESIS_L error PUNTO_Y_COMA .  (125)
+
+	.  reduce 125
+
+
+state 162
+	sentencia_salida : OUTF PARENTESIS_L PARENTESIS_R PUNTO_Y_COMA .  (124)
 
 	.  reduce 124
 
 
-state 161
-	sentencia_salida : OUTF PARENTESIS_L PARENTESIS_R PUNTO_Y_COMA .  (123)
-
-	.  reduce 123
-
-
-state 162
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R . PUNTO_Y_COMA  (117)
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R . error PUNTO_Y_COMA  (119)
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R . error END  (121)
-
-	error  shift 206
-	PUNTO_Y_COMA  shift 207
-	.  error
-
-
 state 163
-	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R . PUNTO_Y_COMA  (118)
-	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R . error PUNTO_Y_COMA  (120)
-	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R . error END  (122)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R . PUNTO_Y_COMA  (118)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R . error PUNTO_Y_COMA  (120)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R . error END  (122)
 
-	error  shift 208
-	PUNTO_Y_COMA  shift 209
+	error  shift 207
+	PUNTO_Y_COMA  shift 208
 	.  error
 
 
 state 164
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos . CORCHETE_L lista_de_identificadores CORCHETE_R PUNTO_Y_COMA  (27)
-	lista_de_tipos : lista_de_tipos . COMA tipo  (31)
+	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R . PUNTO_Y_COMA  (119)
+	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R . error PUNTO_Y_COMA  (121)
+	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R . error END  (123)
 
-	CORCHETE_L  shift 210
-	COMA  shift 166
+	error  shift 209
+	PUNTO_Y_COMA  shift 210
 	.  error
 
 
 state 165
-	struct : TYPEDEF MENOR lista_de_tipos MAYOR . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos . CORCHETE_L lista_de_identificadores CORCHETE_R PUNTO_Y_COMA  (27)
+	lista_de_tipos : lista_de_tipos . COMA tipo  (31)
 
 	CORCHETE_L  shift 211
+	COMA  shift 167
 	.  error
 
 
 state 166
+	struct : TYPEDEF MENOR lista_de_tipos MAYOR . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
+
+	CORCHETE_L  shift 212
+	.  error
+
+
+state 167
 	lista_de_tipos : lista_de_tipos COMA . tipo  (31)
 
 	IDENTIFICADOR_TIPO  shift 6
@@ -2482,31 +2505,31 @@ state 166
 	ULONGINT  shift 11
 	.  error
 
-	tipo  goto 212
+	tipo  goto 213
 
 
-state 167
+state 168
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos . MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (21)
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos . MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA  (23)
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos . MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error END  (24)
 	lista_de_tipos : lista_de_tipos . COMA tipo  (31)
 
-	MAYOR  shift 213
-	COMA  shift 166
-	.  error
-
-
-state 168
-	struct : TYPEDEF STRUCT lista_de_tipos MAYOR . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
-
-	CORCHETE_L  shift 214
+	MAYOR  shift 214
+	COMA  shift 167
 	.  error
 
 
 state 169
-	encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L . parametro PARENTESIS_R  (43)
+	struct : TYPEDEF STRUCT lista_de_tipos MAYOR . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
 
-	error  shift 170
+	CORCHETE_L  shift 215
+	.  error
+
+
+state 170
+	encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L . parametro PARENTESIS_R  (44)
+
+	error  shift 171
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_TIPO  shift 6
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -2515,63 +2538,63 @@ state 169
 	ULONGINT  shift 11
 	.  error
 
-	tipo  goto 171
-	identificador  goto 172
+	tipo  goto 172
+	identificador  goto 173
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	parametro  goto 215
-
-
-state 170
-	parametro : error .  (49)
-
-	.  reduce 49
+	parametro  goto 216
 
 
 state 171
-	parametro : tipo . identificador  (45)
-	parametro : tipo .  (47)
-	parametro : tipo . identificador error  (48)
+	parametro : error .  (50)
+
+	.  reduce 50
+
+
+state 172
+	parametro : tipo . identificador  (46)
+	parametro : tipo .  (48)
+	parametro : tipo . identificador error  (49)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
-	PARENTESIS_R  reduce 47
+	PARENTESIS_R  reduce 48
 
-	identificador  goto 216
+	identificador  goto 217
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 
 
-state 172
-	parametro : identificador .  (46)
-
-	.  reduce 46
-
-
 state 173
-	encabezado_funcion : tipo FUN PARENTESIS_L parametro . PARENTESIS_R  (44)
+	parametro : identificador .  (47)
 
-	PARENTESIS_R  shift 217
-	.  error
+	.  reduce 47
 
 
 state 174
+	encabezado_funcion : tipo FUN PARENTESIS_L parametro . PARENTESIS_R  (45)
+
+	PARENTESIS_R  shift 218
+	.  error
+
+
+state 175
 	sentencia_declarativa : tipo lista_de_identificadores error PUNTO_Y_COMA .  (17)
 
 	.  reduce 17
 
 
-state 175
+state 176
 	sentencia_declarativa : tipo lista_de_identificadores error END .  (18)
 
 	.  reduce 18
 
 
-state 176
-	lista_de_expresiones : lista_de_expresiones COMA . expresion  (145)
+state 177
+	lista_de_expresiones : lista_de_expresiones COMA . expresion  (146)
 
-	error  shift 114
+	error  shift 115
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -2586,7 +2609,7 @@ state 176
 	identificador  goto 47
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	expresion  goto 218
+	expresion  goto 219
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -2594,13 +2617,13 @@ state 176
 	invocacion_a_funcion  goto 54
 
 
-state 177
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (66)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (67)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END  (68)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA  (69)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (70)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (73)
+state 178
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (67)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (68)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END  (69)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA  (70)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (71)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L . condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (74)
 
 	error  shift 39
 	IDENTIFICADOR_GENERICO  shift 5
@@ -2618,7 +2641,7 @@ state 177
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 	expresion  goto 48
-	condicion  goto 219
+	condicion  goto 220
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -2626,21 +2649,21 @@ state 177
 	invocacion_a_funcion  goto 54
 
 
-state 178
-	sentencia_seleccion_en_funcion : IF condicion . PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (71)
-	sentencia_seleccion_en_funcion : IF condicion . THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (72)
+state 179
+	sentencia_seleccion_en_funcion : IF condicion . PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (72)
+	sentencia_seleccion_en_funcion : IF condicion . THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (73)
 
-	PARENTESIS_R  shift 220
-	THEN  shift 221
+	PARENTESIS_R  shift 221
+	THEN  shift 222
 	.  error
 
 
-state 179
-	sentencia_retorno : RET PARENTESIS_L . expresion PARENTESIS_R PUNTO_Y_COMA  (63)
-	sentencia_retorno : RET PARENTESIS_L . expresion PARENTESIS_R error PUNTO_Y_COMA  (64)
-	sentencia_retorno : RET PARENTESIS_L . expresion PARENTESIS_R error END  (65)
+state 180
+	sentencia_retorno : RET PARENTESIS_L . expresion PARENTESIS_R PUNTO_Y_COMA  (64)
+	sentencia_retorno : RET PARENTESIS_L . expresion PARENTESIS_R error PUNTO_Y_COMA  (65)
+	sentencia_retorno : RET PARENTESIS_L . expresion PARENTESIS_R error END  (66)
 
-	error  shift 114
+	error  shift 115
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_FUN  shift 40
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -2655,7 +2678,7 @@ state 179
 	identificador  goto 47
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	expresion  goto 222
+	expresion  goto 223
 	expresion_aritmetica  goto 50
 	termino  goto 51
 	factor  goto 52
@@ -2663,197 +2686,197 @@ state 179
 	invocacion_a_funcion  goto 54
 
 
-state 180
-	funcion : encabezado_funcion BEGIN cuerpo_funcion END .  (42)
-
-	.  reduce 42
-
-
 state 181
-	cuerpo_funcion : cuerpo_funcion sentencia_declarativa .  (51)
+	funcion : encabezado_funcion BEGIN cuerpo_funcion END .  (43)
+
+	.  reduce 43
+
+
+state 182
+	cuerpo_funcion : cuerpo_funcion sentencia_declarativa .  (52)
+
+	.  reduce 52
+
+
+state 183
+	cuerpo_funcion : cuerpo_funcion sentencia_ejecutable_en_funcion .  (51)
 
 	.  reduce 51
 
 
-state 182
-	cuerpo_funcion : cuerpo_funcion sentencia_ejecutable_en_funcion .  (50)
+state 184
+	sentencia_ejecutable_en_funcion : sentencia_asignacion error . PUNTO_Y_COMA  (56)
+	sentencia_ejecutable_en_funcion : sentencia_asignacion error . END  (57)
 
-	.  reduce 50
-
-
-state 183
-	sentencia_ejecutable_en_funcion : sentencia_asignacion error . PUNTO_Y_COMA  (55)
-	sentencia_ejecutable_en_funcion : sentencia_asignacion error . END  (56)
-
-	PUNTO_Y_COMA  shift 223
-	END  shift 224
+	PUNTO_Y_COMA  shift 224
+	END  shift 225
 	.  error
 
 
-state 184
-	sentencia_ejecutable_en_funcion : sentencia_asignacion PUNTO_Y_COMA .  (54)
-
-	.  reduce 54
-
-
 state 185
-	sentencia_control_en_funcion : encabezado_for error .  (62)
+	sentencia_ejecutable_en_funcion : sentencia_asignacion PUNTO_Y_COMA .  (55)
 
-	.  reduce 62
+	.  reduce 55
 
 
 state 186
-	bloque_de_sent_ejecutables_en_funcion : BEGIN . sentencias_ejecutable_en_funcion END PUNTO_Y_COMA  (78)
-	bloque_de_sent_ejecutables_en_funcion : BEGIN . sentencias_ejecutable_en_funcion END error PUNTO_Y_COMA  (79)
-	bloque_de_sent_ejecutables_en_funcion : BEGIN . sentencias_ejecutable_en_funcion END error END  (80)
+	sentencia_control_en_funcion : encabezado_for error .  (63)
+
+	.  reduce 63
+
+
+state 187
+	bloque_de_sent_ejecutables_en_funcion : BEGIN . sentencias_ejecutable_en_funcion END PUNTO_Y_COMA  (79)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN . sentencias_ejecutable_en_funcion END error PUNTO_Y_COMA  (80)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN . sentencias_ejecutable_en_funcion END error END  (81)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
-	IF  shift 120
+	IF  shift 121
 	OUTF  shift 14
-	RET  shift 121
+	RET  shift 122
 	.  error
 
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	sentencia_ejecutable_en_funcion  goto 225
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
-	sentencias_ejecutable_en_funcion  goto 226
+	sentencia_ejecutable_en_funcion  goto 226
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
+	sentencias_ejecutable_en_funcion  goto 227
 	encabezado_for_obligatorio  goto 33
 
 
-state 187
-	bloque_de_sent_ejecutables_en_funcion : sentencia_ejecutable_en_funcion .  (81)
-
-	.  reduce 81
-
-
 state 188
-	sentencia_control_en_funcion : encabezado_for bloque_de_sent_ejecutables_en_funcion .  (61)
+	bloque_de_sent_ejecutables_en_funcion : sentencia_ejecutable_en_funcion .  (82)
 
-	.  reduce 61
+	.  reduce 82
 
 
 state 189
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END . PUNTO_Y_COMA  (111)
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END . error PUNTO_Y_COMA  (112)
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END . error END  (113)
+	sentencia_control_en_funcion : encabezado_for bloque_de_sent_ejecutables_en_funcion .  (62)
 
-	error  shift 227
-	PUNTO_Y_COMA  shift 228
-	.  error
+	.  reduce 62
 
 
 state 190
-	sentencias_ejecutables : sentencias_ejecutables sentencia_ejecutable .  (115)
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END . PUNTO_Y_COMA  (112)
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END . error PUNTO_Y_COMA  (113)
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END . error END  (114)
 
-	.  reduce 115
+	error  shift 228
+	PUNTO_Y_COMA  shift 229
+	.  error
 
 
 state 191
-	encabezado_for : encabezado_for_obligatorio PARENTESIS_L condicion PARENTESIS_R . PARENTESIS_R  (131)
+	sentencias_ejecutables : sentencias_ejecutables sentencia_ejecutable .  (116)
 
-	PARENTESIS_R  shift 229
-	.  error
+	.  reduce 116
 
 
 state 192
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion . PARENTESIS_R PARENTESIS_R  (127)
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion . PARENTESIS_R  (130)
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion .  (133)
+	encabezado_for : encabezado_for_obligatorio PARENTESIS_L condicion PARENTESIS_R . PARENTESIS_R  (132)
 
 	PARENTESIS_R  shift 230
-	error  reduce 133
-	IDENTIFICADOR_GENERICO  reduce 133
-	IDENTIFICADOR_ULONGINT  reduce 133
-	IDENTIFICADOR_SINGLE  reduce 133
-	FOR  reduce 133
-	IF  reduce 133
-	BEGIN  reduce 133
-	OUTF  reduce 133
-	RET  reduce 133
+	.  error
 
 
 state 193
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA condicion PARENTESIS_R . PARENTESIS_R  (132)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion . PARENTESIS_R PARENTESIS_R  (128)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion . PARENTESIS_R  (131)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion .  (134)
 
 	PARENTESIS_R  shift 231
-	.  error
+	error  reduce 134
+	IDENTIFICADOR_GENERICO  reduce 134
+	IDENTIFICADOR_ULONGINT  reduce 134
+	IDENTIFICADOR_SINGLE  reduce 134
+	FOR  reduce 134
+	IF  reduce 134
+	BEGIN  reduce 134
+	OUTF  reduce 134
+	RET  reduce 134
 
 
 state 194
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion . PUNTO_Y_COMA accion  (134)
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion . PUNTO_Y_COMA  (136)
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion . accion  (138)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA condicion PARENTESIS_R . PARENTESIS_R  (133)
 
-	PUNTO_Y_COMA  shift 232
-	UP  shift 233
-	DOWN  shift 234
+	PARENTESIS_R  shift 232
 	.  error
-
-	accion  goto 235
 
 
 state 195
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA . accion  (137)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion . PUNTO_Y_COMA accion  (135)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion . PUNTO_Y_COMA  (137)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion . accion  (139)
 
-	UP  shift 233
-	DOWN  shift 234
+	PUNTO_Y_COMA  shift 233
+	UP  shift 234
+	DOWN  shift 235
 	.  error
 
 	accion  goto 236
 
 
 state 196
-	encabezado_for_obligatorio : FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA . accion  (135)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA . accion  (138)
 
-	UP  shift 233
-	DOWN  shift 234
+	UP  shift 234
+	DOWN  shift 235
 	.  error
 
 	accion  goto 237
 
 
 state 197
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real error . PARENTESIS_R  (166)
+	encabezado_for_obligatorio : FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA . accion  (136)
 
-	PARENTESIS_R  shift 238
+	UP  shift 234
+	DOWN  shift 235
 	.  error
+
+	accion  goto 238
 
 
 state 198
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real PARENTESIS_R .  (164)
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real error . PARENTESIS_R  (167)
 
-	.  reduce 164
+	PARENTESIS_R  shift 239
+	.  error
 
 
 state 199
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if END_IF PUNTO_Y_COMA  (91)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if END_IF error PUNTO_Y_COMA  (92)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if END_IF error END  (93)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if PUNTO_Y_COMA  (94)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . END_IF PUNTO_Y_COMA  (98)
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real PARENTESIS_R .  (165)
+
+	.  reduce 165
+
+
+state 200
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if END_IF PUNTO_Y_COMA  (92)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if END_IF error PUNTO_Y_COMA  (93)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if END_IF error END  (94)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if PUNTO_Y_COMA  (95)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN . END_IF PUNTO_Y_COMA  (99)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
 	IF  shift 12
-	BEGIN  shift 71
-	END_IF  shift 239
+	BEGIN  shift 72
+	END_IF  shift 240
 	OUTF  shift 14
 	.  error
 
-	sentencia_ejecutable  goto 72
+	sentencia_ejecutable  goto 73
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
@@ -2863,53 +2886,53 @@ state 199
 	encabezado_for  goto 30
 	sentencia_seleccion  goto 31
 	sentencia_control  goto 32
-	cuerpo_if  goto 240
-	bloque_de_sent_ejecutables  goto 153
+	cuerpo_if  goto 241
+	bloque_de_sent_ejecutables  goto 154
 	encabezado_for_obligatorio  goto 33
 
 
-state 200
-	sentencia_seleccion : IF PARENTESIS_L condicion THEN cuerpo_if . END_IF PUNTO_Y_COMA  (95)
-
-	END_IF  shift 241
-	.  error
-
-
 state 201
-	expresion : TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R .  (147)
-
-	.  reduce 147
-
-
-state 202
-	sentencia_seleccion : IF condicion PARENTESIS_R THEN cuerpo_if . END_IF PUNTO_Y_COMA  (96)
+	sentencia_seleccion : IF PARENTESIS_L condicion THEN cuerpo_if . END_IF PUNTO_Y_COMA  (96)
 
 	END_IF  shift 242
 	.  error
 
 
-state 203
-	sentencia_seleccion : IF condicion THEN cuerpo_if END_IF . PUNTO_Y_COMA  (97)
+state 202
+	expresion : TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R .  (148)
 
-	PUNTO_Y_COMA  shift 243
+	.  reduce 148
+
+
+state 203
+	sentencia_seleccion : IF condicion PARENTESIS_R THEN cuerpo_if . END_IF PUNTO_Y_COMA  (97)
+
+	END_IF  shift 243
 	.  error
 
 
 state 204
-	bloque_else : ELSE . bloque_de_sent_ejecutables  (101)
-	bloque_else : ELSE .  (102)
+	sentencia_seleccion : IF condicion THEN cuerpo_if END_IF . PUNTO_Y_COMA  (98)
+
+	PUNTO_Y_COMA  shift 244
+	.  error
+
+
+state 205
+	bloque_else : ELSE . bloque_de_sent_ejecutables  (102)
+	bloque_else : ELSE .  (103)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
 	IF  shift 12
-	BEGIN  shift 71
+	BEGIN  shift 72
 	OUTF  shift 14
-	PUNTO_Y_COMA  reduce 102
-	END_IF  reduce 102
+	PUNTO_Y_COMA  reduce 103
+	END_IF  reduce 103
 
-	sentencia_ejecutable  goto 72
+	sentencia_ejecutable  goto 73
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
@@ -2919,63 +2942,49 @@ state 204
 	encabezado_for  goto 30
 	sentencia_seleccion  goto 31
 	sentencia_control  goto 32
-	bloque_de_sent_ejecutables  goto 244
+	bloque_de_sent_ejecutables  goto 245
 	encabezado_for_obligatorio  goto 33
 
 
-state 205
-	cuerpo_if : bloque_de_sent_ejecutables bloque_else .  (99)
-
-	.  reduce 99
-
-
 state 206
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error . PUNTO_Y_COMA  (119)
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error . END  (121)
+	cuerpo_if : bloque_de_sent_ejecutables bloque_else .  (100)
 
-	PUNTO_Y_COMA  shift 245
-	END  shift 246
-	.  error
+	.  reduce 100
 
 
 state 207
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA .  (117)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error . PUNTO_Y_COMA  (120)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error . END  (122)
 
-	.  reduce 117
-
-
-state 208
-	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R error . PUNTO_Y_COMA  (120)
-	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R error . END  (122)
-
-	PUNTO_Y_COMA  shift 247
-	END  shift 248
+	PUNTO_Y_COMA  shift 246
+	END  shift 247
 	.  error
 
 
-state 209
-	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA .  (118)
+state 208
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA .  (118)
 
 	.  reduce 118
 
 
-state 210
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L . lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L . lista_de_identificadores CORCHETE_R PUNTO_Y_COMA  (27)
+state 209
+	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R error . PUNTO_Y_COMA  (121)
+	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R error . END  (123)
 
-	IDENTIFICADOR_GENERICO  shift 5
-	IDENTIFICADOR_ULONGINT  shift 7
-	IDENTIFICADOR_SINGLE  shift 8
+	PUNTO_Y_COMA  shift 248
+	END  shift 249
 	.  error
 
-	lista_de_identificadores  goto 249
-	identificador  goto 24
-	identificador_simple  goto 25
-	identificador_compuesto  goto 26
+
+state 210
+	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA .  (119)
+
+	.  reduce 119
 
 
 state 211
-	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L . lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L . lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L . lista_de_identificadores CORCHETE_R PUNTO_Y_COMA  (27)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
@@ -2989,21 +2998,35 @@ state 211
 
 
 state 212
+	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L . lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
+
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	.  error
+
+	lista_de_identificadores  goto 251
+	identificador  goto 24
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+
+
+state 213
 	lista_de_tipos : lista_de_tipos COMA tipo .  (31)
 
 	.  reduce 31
 
 
-state 213
+state 214
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (21)
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA  (23)
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR . CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error END  (24)
 
-	CORCHETE_L  shift 251
+	CORCHETE_L  shift 252
 	.  error
 
 
-state 214
+state 215
 	struct : TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L . lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
 
 	IDENTIFICADOR_GENERICO  shift 5
@@ -3011,340 +3034,356 @@ state 214
 	IDENTIFICADOR_SINGLE  shift 8
 	.  error
 
-	lista_de_identificadores  goto 252
+	lista_de_identificadores  goto 253
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
 
 
-state 215
-	encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro . PARENTESIS_R  (43)
-
-	PARENTESIS_R  shift 253
-	.  error
-
-
 state 216
-	parametro : tipo identificador .  (45)
-	parametro : tipo identificador . error  (48)
+	encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro . PARENTESIS_R  (44)
 
-	error  shift 254
-	PARENTESIS_R  reduce 45
+	PARENTESIS_R  shift 254
+	.  error
 
 
 state 217
-	encabezado_funcion : tipo FUN PARENTESIS_L parametro PARENTESIS_R .  (44)
+	parametro : tipo identificador .  (46)
+	parametro : tipo identificador . error  (49)
 
-	.  reduce 44
+	error  shift 255
+	PARENTESIS_R  reduce 46
 
 
 state 218
-	lista_de_expresiones : lista_de_expresiones COMA expresion .  (145)
+	encabezado_funcion : tipo FUN PARENTESIS_L parametro PARENTESIS_R .  (45)
 
-	.  reduce 145
+	.  reduce 45
 
 
 state 219
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (66)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (67)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END  (68)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA  (69)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (70)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (73)
+	lista_de_expresiones : lista_de_expresiones COMA expresion .  (146)
 
-	PARENTESIS_R  shift 255
-	THEN  shift 256
-	.  error
+	.  reduce 146
 
 
 state 220
-	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R . THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (71)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (67)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (68)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END  (69)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA  (70)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (71)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion . PARENTESIS_R THEN END_IF PUNTO_Y_COMA  (74)
 
+	PARENTESIS_R  shift 256
 	THEN  shift 257
 	.  error
 
 
 state 221
-	sentencia_seleccion_en_funcion : IF condicion THEN . cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (72)
+	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R . THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (72)
+
+	THEN  shift 258
+	.  error
+
+
+state 222
+	sentencia_seleccion_en_funcion : IF condicion THEN . cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (73)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
-	IF  shift 120
-	BEGIN  shift 186
+	IF  shift 121
+	BEGIN  shift 187
 	OUTF  shift 14
-	RET  shift 121
+	RET  shift 122
 	.  error
 
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	sentencia_ejecutable_en_funcion  goto 187
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
-	bloque_de_sent_ejecutables_en_funcion  goto 258
-	cuerpo_if_en_funcion  goto 259
+	sentencia_ejecutable_en_funcion  goto 188
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
+	bloque_de_sent_ejecutables_en_funcion  goto 259
+	cuerpo_if_en_funcion  goto 260
 	encabezado_for_obligatorio  goto 33
 
 
-state 222
-	sentencia_retorno : RET PARENTESIS_L expresion . PARENTESIS_R PUNTO_Y_COMA  (63)
-	sentencia_retorno : RET PARENTESIS_L expresion . PARENTESIS_R error PUNTO_Y_COMA  (64)
-	sentencia_retorno : RET PARENTESIS_L expresion . PARENTESIS_R error END  (65)
+state 223
+	sentencia_retorno : RET PARENTESIS_L expresion . PARENTESIS_R PUNTO_Y_COMA  (64)
+	sentencia_retorno : RET PARENTESIS_L expresion . PARENTESIS_R error PUNTO_Y_COMA  (65)
+	sentencia_retorno : RET PARENTESIS_L expresion . PARENTESIS_R error END  (66)
 
-	PARENTESIS_R  shift 260
+	PARENTESIS_R  shift 261
 	.  error
 
 
-state 223
-	sentencia_ejecutable_en_funcion : sentencia_asignacion error PUNTO_Y_COMA .  (55)
-
-	.  reduce 55
-
-
 state 224
-	sentencia_ejecutable_en_funcion : sentencia_asignacion error END .  (56)
+	sentencia_ejecutable_en_funcion : sentencia_asignacion error PUNTO_Y_COMA .  (56)
 
 	.  reduce 56
 
 
 state 225
-	sentencias_ejecutable_en_funcion : sentencia_ejecutable_en_funcion .  (83)
+	sentencia_ejecutable_en_funcion : sentencia_asignacion error END .  (57)
 
-	.  reduce 83
+	.  reduce 57
 
 
 state 226
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion . END PUNTO_Y_COMA  (78)
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion . END error PUNTO_Y_COMA  (79)
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion . END error END  (80)
-	sentencias_ejecutable_en_funcion : sentencias_ejecutable_en_funcion . sentencia_ejecutable_en_funcion  (82)
+	sentencias_ejecutable_en_funcion : sentencia_ejecutable_en_funcion .  (84)
+
+	.  reduce 84
+
+
+state 227
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion . END PUNTO_Y_COMA  (79)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion . END error PUNTO_Y_COMA  (80)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion . END error END  (81)
+	sentencias_ejecutable_en_funcion : sentencias_ejecutable_en_funcion . sentencia_ejecutable_en_funcion  (83)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
-	IF  shift 120
-	END  shift 261
+	IF  shift 121
+	END  shift 262
 	OUTF  shift 14
-	RET  shift 121
+	RET  shift 122
 	.  error
 
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	sentencia_ejecutable_en_funcion  goto 262
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
+	sentencia_ejecutable_en_funcion  goto 263
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
 	encabezado_for_obligatorio  goto 33
 
 
-state 227
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END error . PUNTO_Y_COMA  (112)
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END error . END  (113)
+state 228
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END error . PUNTO_Y_COMA  (113)
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END error . END  (114)
 
-	PUNTO_Y_COMA  shift 263
-	END  shift 264
+	PUNTO_Y_COMA  shift 264
+	END  shift 265
 	.  error
 
 
-state 228
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END PUNTO_Y_COMA .  (111)
-
-	.  reduce 111
-
-
 state 229
-	encabezado_for : encabezado_for_obligatorio PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R .  (131)
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END PUNTO_Y_COMA .  (112)
 
-	.  reduce 131
+	.  reduce 112
 
 
 state 230
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R . PARENTESIS_R  (127)
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R .  (130)
-
-	PARENTESIS_R  shift 265
-	error  reduce 130
-	IDENTIFICADOR_GENERICO  reduce 130
-	IDENTIFICADOR_ULONGINT  reduce 130
-	IDENTIFICADOR_SINGLE  reduce 130
-	FOR  reduce 130
-	IF  reduce 130
-	BEGIN  reduce 130
-	OUTF  reduce 130
-	RET  reduce 130
-
-
-state 231
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA condicion PARENTESIS_R PARENTESIS_R .  (132)
+	encabezado_for : encabezado_for_obligatorio PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R .  (132)
 
 	.  reduce 132
 
 
+state 231
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R . PARENTESIS_R  (128)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R .  (131)
+
+	PARENTESIS_R  shift 266
+	error  reduce 131
+	IDENTIFICADOR_GENERICO  reduce 131
+	IDENTIFICADOR_ULONGINT  reduce 131
+	IDENTIFICADOR_SINGLE  reduce 131
+	FOR  reduce 131
+	IF  reduce 131
+	BEGIN  reduce 131
+	OUTF  reduce 131
+	RET  reduce 131
+
+
 state 232
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA . accion  (134)
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA .  (136)
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA condicion PARENTESIS_R PARENTESIS_R .  (133)
 
-	UP  shift 233
-	DOWN  shift 234
-	error  reduce 136
-	IDENTIFICADOR_GENERICO  reduce 136
-	IDENTIFICADOR_ULONGINT  reduce 136
-	IDENTIFICADOR_SINGLE  reduce 136
-	PARENTESIS_L  reduce 136
-	PARENTESIS_R  reduce 136
-	PUNTO_Y_COMA  reduce 136
-	FOR  reduce 136
-	IF  reduce 136
-	BEGIN  reduce 136
-	OUTF  reduce 136
-	RET  reduce 136
-
-	accion  goto 266
+	.  reduce 133
 
 
 state 233
-	accion : UP . CONSTANTE_DECIMAL  (141)
-	accion : UP . CONSTANTE_OCTAL  (142)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA . accion  (135)
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA .  (137)
 
-	CONSTANTE_DECIMAL  shift 267
-	CONSTANTE_OCTAL  shift 268
-	.  error
+	UP  shift 234
+	DOWN  shift 235
+	error  reduce 137
+	IDENTIFICADOR_GENERICO  reduce 137
+	IDENTIFICADOR_ULONGINT  reduce 137
+	IDENTIFICADOR_SINGLE  reduce 137
+	PARENTESIS_L  reduce 137
+	PARENTESIS_R  reduce 137
+	PUNTO_Y_COMA  reduce 137
+	FOR  reduce 137
+	IF  reduce 137
+	BEGIN  reduce 137
+	OUTF  reduce 137
+	RET  reduce 137
+
+	accion  goto 267
 
 
 state 234
-	accion : DOWN . CONSTANTE_OCTAL  (143)
-	accion : DOWN . CONSTANTE_DECIMAL  (144)
+	accion : UP . CONSTANTE_DECIMAL  (142)
+	accion : UP . CONSTANTE_OCTAL  (143)
 
-	CONSTANTE_DECIMAL  shift 269
-	CONSTANTE_OCTAL  shift 270
+	CONSTANTE_DECIMAL  shift 268
+	CONSTANTE_OCTAL  shift 269
 	.  error
 
 
 state 235
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion .  (138)
+	accion : DOWN . CONSTANTE_OCTAL  (144)
+	accion : DOWN . CONSTANTE_DECIMAL  (145)
+
+	CONSTANTE_DECIMAL  shift 270
+	CONSTANTE_OCTAL  shift 271
+	.  error
+
+
+state 236
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion .  (139)
+
+	.  reduce 139
+
+
+state 237
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion .  (138)
 
 	.  reduce 138
 
 
-state 236
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion .  (137)
-
-	.  reduce 137
-
-
-state 237
-	encabezado_for_obligatorio : FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion .  (135)
-
-	.  reduce 135
-
-
 state 238
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real error PARENTESIS_R .  (166)
+	encabezado_for_obligatorio : FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion .  (136)
 
-	.  reduce 166
+	.  reduce 136
 
 
 state 239
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF . PUNTO_Y_COMA  (98)
+	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L parametro_real error PARENTESIS_R .  (167)
 
-	PUNTO_Y_COMA  shift 271
-	.  error
+	.  reduce 167
 
 
 state 240
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if . END_IF PUNTO_Y_COMA  (91)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if . END_IF error PUNTO_Y_COMA  (92)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if . END_IF error END  (93)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if . PUNTO_Y_COMA  (94)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF . PUNTO_Y_COMA  (99)
 
 	PUNTO_Y_COMA  shift 272
-	END_IF  shift 273
 	.  error
 
 
 state 241
-	sentencia_seleccion : IF PARENTESIS_L condicion THEN cuerpo_if END_IF . PUNTO_Y_COMA  (95)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if . END_IF PUNTO_Y_COMA  (92)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if . END_IF error PUNTO_Y_COMA  (93)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if . END_IF error END  (94)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if . PUNTO_Y_COMA  (95)
 
-	PUNTO_Y_COMA  shift 274
+	PUNTO_Y_COMA  shift 273
+	END_IF  shift 274
 	.  error
 
 
 state 242
-	sentencia_seleccion : IF condicion PARENTESIS_R THEN cuerpo_if END_IF . PUNTO_Y_COMA  (96)
+	sentencia_seleccion : IF PARENTESIS_L condicion THEN cuerpo_if END_IF . PUNTO_Y_COMA  (96)
 
 	PUNTO_Y_COMA  shift 275
 	.  error
 
 
 state 243
-	sentencia_seleccion : IF condicion THEN cuerpo_if END_IF PUNTO_Y_COMA .  (97)
+	sentencia_seleccion : IF condicion PARENTESIS_R THEN cuerpo_if END_IF . PUNTO_Y_COMA  (97)
 
-	.  reduce 97
+	PUNTO_Y_COMA  shift 276
+	.  error
 
 
 state 244
-	bloque_else : ELSE bloque_de_sent_ejecutables .  (101)
+	sentencia_seleccion : IF condicion THEN cuerpo_if END_IF PUNTO_Y_COMA .  (98)
 
-	.  reduce 101
+	.  reduce 98
 
 
 state 245
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA .  (119)
+	bloque_else : ELSE bloque_de_sent_ejecutables .  (102)
 
-	.  reduce 119
+	.  reduce 102
 
 
 state 246
-	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error END .  (121)
-
-	.  reduce 121
-
-
-state 247
-	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA .  (120)
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA .  (120)
 
 	.  reduce 120
 
 
-state 248
-	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R error END .  (122)
+state 247
+	sentencia_salida : OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error END .  (122)
 
 	.  reduce 122
 
 
-state 249
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores . CORCHETE_R PUNTO_Y_COMA  (27)
-	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
+state 248
+	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA .  (121)
 
-	CORCHETE_R  shift 276
-	COMA  shift 65
-	.  error
+	.  reduce 121
+
+
+state 249
+	sentencia_salida : OUTF PARENTESIS_L expresion PARENTESIS_R error END .  (123)
+
+	.  reduce 123
 
 
 state 250
-	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores . CORCHETE_R PUNTO_Y_COMA  (27)
 	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
+	lista_de_identificadores : lista_de_identificadores . identificador  (34)
 
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
 	CORCHETE_R  shift 277
 	COMA  shift 65
 	.  error
 
+	identificador  goto 66
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+
 
 state 251
+	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
+	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
+	lista_de_identificadores : lista_de_identificadores . identificador  (34)
+
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	CORCHETE_R  shift 278
+	COMA  shift 65
+	.  error
+
+	identificador  goto 66
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+
+
+state 252
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L . lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (21)
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L . lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA  (23)
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L . lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error END  (24)
@@ -3354,629 +3393,645 @@ state 251
 	IDENTIFICADOR_SINGLE  shift 8
 	.  error
 
-	lista_de_identificadores  goto 278
+	lista_de_identificadores  goto 279
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-
-
-state 252
-	struct : TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
-	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
-
-	CORCHETE_R  shift 279
-	COMA  shift 65
-	.  error
 
 
 state 253
-	encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R .  (43)
+	struct : TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
+	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
+	lista_de_identificadores : lista_de_identificadores . identificador  (34)
 
-	.  reduce 43
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	CORCHETE_R  shift 280
+	COMA  shift 65
+	.  error
+
+	identificador  goto 66
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
 
 
 state 254
-	parametro : tipo identificador error .  (48)
+	encabezado_funcion : tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R .  (44)
 
-	.  reduce 48
+	.  reduce 44
 
 
 state 255
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (66)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (67)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if_en_funcion END_IF error END  (68)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if_en_funcion PUNTO_Y_COMA  (69)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN END_IF PUNTO_Y_COMA  (73)
+	parametro : tipo identificador error .  (49)
 
-	THEN  shift 280
-	.  error
+	.  reduce 49
 
 
 state 256
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion THEN . cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (70)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (67)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (68)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if_en_funcion END_IF error END  (69)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN cuerpo_if_en_funcion PUNTO_Y_COMA  (70)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R . THEN END_IF PUNTO_Y_COMA  (74)
 
-	IDENTIFICADOR_GENERICO  shift 5
-	IDENTIFICADOR_ULONGINT  shift 7
-	IDENTIFICADOR_SINGLE  shift 8
-	FOR  shift 9
-	IF  shift 120
-	BEGIN  shift 186
-	OUTF  shift 14
-	RET  shift 121
+	THEN  shift 281
 	.  error
-
-	lista_de_identificadores  goto 21
-	identificador  goto 24
-	identificador_simple  goto 25
-	identificador_compuesto  goto 26
-	sentencia_ejecutable_en_funcion  goto 187
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
-	bloque_de_sent_ejecutables_en_funcion  goto 258
-	cuerpo_if_en_funcion  goto 281
-	encabezado_for_obligatorio  goto 33
 
 
 state 257
-	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R THEN . cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (71)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion THEN . cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (71)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
-	IF  shift 120
-	BEGIN  shift 186
+	IF  shift 121
+	BEGIN  shift 187
 	OUTF  shift 14
-	RET  shift 121
+	RET  shift 122
 	.  error
 
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	sentencia_ejecutable_en_funcion  goto 187
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
-	bloque_de_sent_ejecutables_en_funcion  goto 258
+	sentencia_ejecutable_en_funcion  goto 188
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
+	bloque_de_sent_ejecutables_en_funcion  goto 259
 	cuerpo_if_en_funcion  goto 282
 	encabezado_for_obligatorio  goto 33
 
 
 state 258
-	cuerpo_if_en_funcion : bloque_de_sent_ejecutables_en_funcion . bloque_else_en_funcion  (74)
-	cuerpo_if_en_funcion : bloque_de_sent_ejecutables_en_funcion .  (75)
-
-	ELSE  shift 283
-	PUNTO_Y_COMA  reduce 75
-	END_IF  reduce 75
-
-	bloque_else_en_funcion  goto 284
-
-
-state 259
-	sentencia_seleccion_en_funcion : IF condicion THEN cuerpo_if_en_funcion . END_IF PUNTO_Y_COMA  (72)
-
-	END_IF  shift 285
-	.  error
-
-
-state 260
-	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R . PUNTO_Y_COMA  (63)
-	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R . error PUNTO_Y_COMA  (64)
-	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R . error END  (65)
-
-	error  shift 286
-	PUNTO_Y_COMA  shift 287
-	.  error
-
-
-state 261
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END . PUNTO_Y_COMA  (78)
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END . error PUNTO_Y_COMA  (79)
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END . error END  (80)
-
-	error  shift 288
-	PUNTO_Y_COMA  shift 289
-	.  error
-
-
-state 262
-	sentencias_ejecutable_en_funcion : sentencias_ejecutable_en_funcion sentencia_ejecutable_en_funcion .  (82)
-
-	.  reduce 82
-
-
-state 263
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END error PUNTO_Y_COMA .  (112)
-
-	.  reduce 112
-
-
-state 264
-	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END error END .  (113)
-
-	.  reduce 113
-
-
-state 265
-	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R .  (127)
-
-	.  reduce 127
-
-
-state 266
-	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion .  (134)
-
-	.  reduce 134
-
-
-state 267
-	accion : UP CONSTANTE_DECIMAL .  (141)
-
-	.  reduce 141
-
-
-state 268
-	accion : UP CONSTANTE_OCTAL .  (142)
-
-	.  reduce 142
-
-
-state 269
-	accion : DOWN CONSTANTE_DECIMAL .  (144)
-
-	.  reduce 144
-
-
-state 270
-	accion : DOWN CONSTANTE_OCTAL .  (143)
-
-	.  reduce 143
-
-
-state 271
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA .  (98)
-
-	.  reduce 98
-
-
-state 272
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA .  (94)
-
-	.  reduce 94
-
-
-state 273
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF . PUNTO_Y_COMA  (91)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF . error PUNTO_Y_COMA  (92)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF . error END  (93)
-
-	error  shift 290
-	PUNTO_Y_COMA  shift 291
-	.  error
-
-
-state 274
-	sentencia_seleccion : IF PARENTESIS_L condicion THEN cuerpo_if END_IF PUNTO_Y_COMA .  (95)
-
-	.  reduce 95
-
-
-state 275
-	sentencia_seleccion : IF condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA .  (96)
-
-	.  reduce 96
-
-
-state 276
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R . PUNTO_Y_COMA  (27)
-
-	IDENTIFICADOR_GENERICO  shift 292
-	PUNTO_Y_COMA  shift 293
-	.  error
-
-
-state 277
-	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
-
-	IDENTIFICADOR_GENERICO  shift 294
-	.  error
-
-
-state 278
-	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (21)
-	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA  (23)
-	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO error END  (24)
-	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
-
-	CORCHETE_R  shift 295
-	COMA  shift 65
-	.  error
-
-
-state 279
-	struct : TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
-
-	IDENTIFICADOR_GENERICO  shift 296
-	.  error
-
-
-state 280
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (66)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (67)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if_en_funcion END_IF error END  (68)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if_en_funcion PUNTO_Y_COMA  (69)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . END_IF PUNTO_Y_COMA  (73)
+	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R THEN . cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (72)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
-	IF  shift 120
-	BEGIN  shift 186
-	END_IF  shift 297
+	IF  shift 121
+	BEGIN  shift 187
 	OUTF  shift 14
-	RET  shift 121
+	RET  shift 122
 	.  error
 
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	sentencia_ejecutable_en_funcion  goto 187
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
-	bloque_de_sent_ejecutables_en_funcion  goto 258
-	cuerpo_if_en_funcion  goto 298
+	sentencia_ejecutable_en_funcion  goto 188
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
+	bloque_de_sent_ejecutables_en_funcion  goto 259
+	cuerpo_if_en_funcion  goto 283
 	encabezado_for_obligatorio  goto 33
 
 
-state 281
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion . END_IF PUNTO_Y_COMA  (70)
+state 259
+	cuerpo_if_en_funcion : bloque_de_sent_ejecutables_en_funcion . bloque_else_en_funcion  (75)
+	cuerpo_if_en_funcion : bloque_de_sent_ejecutables_en_funcion .  (76)
 
-	END_IF  shift 299
+	ELSE  shift 284
+	PUNTO_Y_COMA  reduce 76
+	END_IF  reduce 76
+
+	bloque_else_en_funcion  goto 285
+
+
+state 260
+	sentencia_seleccion_en_funcion : IF condicion THEN cuerpo_if_en_funcion . END_IF PUNTO_Y_COMA  (73)
+
+	END_IF  shift 286
 	.  error
 
 
+state 261
+	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R . PUNTO_Y_COMA  (64)
+	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R . error PUNTO_Y_COMA  (65)
+	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R . error END  (66)
+
+	error  shift 287
+	PUNTO_Y_COMA  shift 288
+	.  error
+
+
+state 262
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END . PUNTO_Y_COMA  (79)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END . error PUNTO_Y_COMA  (80)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END . error END  (81)
+
+	error  shift 289
+	PUNTO_Y_COMA  shift 290
+	.  error
+
+
+state 263
+	sentencias_ejecutable_en_funcion : sentencias_ejecutable_en_funcion sentencia_ejecutable_en_funcion .  (83)
+
+	.  reduce 83
+
+
+state 264
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END error PUNTO_Y_COMA .  (113)
+
+	.  reduce 113
+
+
+state 265
+	bloque_de_sent_ejecutables : BEGIN sentencias_ejecutables END error END .  (114)
+
+	.  reduce 114
+
+
+state 266
+	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R .  (128)
+
+	.  reduce 128
+
+
+state 267
+	encabezado_for_obligatorio : FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion .  (135)
+
+	.  reduce 135
+
+
+state 268
+	accion : UP CONSTANTE_DECIMAL .  (142)
+
+	.  reduce 142
+
+
+state 269
+	accion : UP CONSTANTE_OCTAL .  (143)
+
+	.  reduce 143
+
+
+state 270
+	accion : DOWN CONSTANTE_DECIMAL .  (145)
+
+	.  reduce 145
+
+
+state 271
+	accion : DOWN CONSTANTE_OCTAL .  (144)
+
+	.  reduce 144
+
+
+state 272
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA .  (99)
+
+	.  reduce 99
+
+
+state 273
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA .  (95)
+
+	.  reduce 95
+
+
+state 274
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF . PUNTO_Y_COMA  (92)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF . error PUNTO_Y_COMA  (93)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF . error END  (94)
+
+	error  shift 291
+	PUNTO_Y_COMA  shift 292
+	.  error
+
+
+state 275
+	sentencia_seleccion : IF PARENTESIS_L condicion THEN cuerpo_if END_IF PUNTO_Y_COMA .  (96)
+
+	.  reduce 96
+
+
+state 276
+	sentencia_seleccion : IF condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA .  (97)
+
+	.  reduce 97
+
+
+state 277
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (26)
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R . PUNTO_Y_COMA  (27)
+
+	IDENTIFICADOR_GENERICO  shift 293
+	PUNTO_Y_COMA  shift 294
+	.  error
+
+
+state 278
+	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (22)
+
+	IDENTIFICADOR_GENERICO  shift 295
+	.  error
+
+
+state 279
+	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (21)
+	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA  (23)
+	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores . CORCHETE_R IDENTIFICADOR_GENERICO error END  (24)
+	lista_de_identificadores : lista_de_identificadores . COMA identificador  (33)
+	lista_de_identificadores : lista_de_identificadores . identificador  (34)
+
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	CORCHETE_R  shift 296
+	COMA  shift 65
+	.  error
+
+	identificador  goto 66
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+
+
+state 280
+	struct : TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (25)
+
+	IDENTIFICADOR_GENERICO  shift 297
+	.  error
+
+
+state 281
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if_en_funcion END_IF PUNTO_Y_COMA  (67)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA  (68)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if_en_funcion END_IF error END  (69)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . cuerpo_if_en_funcion PUNTO_Y_COMA  (70)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN . END_IF PUNTO_Y_COMA  (74)
+
+	IDENTIFICADOR_GENERICO  shift 5
+	IDENTIFICADOR_ULONGINT  shift 7
+	IDENTIFICADOR_SINGLE  shift 8
+	FOR  shift 9
+	IF  shift 121
+	BEGIN  shift 187
+	END_IF  shift 298
+	OUTF  shift 14
+	RET  shift 122
+	.  error
+
+	lista_de_identificadores  goto 21
+	identificador  goto 24
+	identificador_simple  goto 25
+	identificador_compuesto  goto 26
+	sentencia_ejecutable_en_funcion  goto 188
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
+	bloque_de_sent_ejecutables_en_funcion  goto 259
+	cuerpo_if_en_funcion  goto 299
+	encabezado_for_obligatorio  goto 33
+
+
 state 282
-	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion . END_IF PUNTO_Y_COMA  (71)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion . END_IF PUNTO_Y_COMA  (71)
 
 	END_IF  shift 300
 	.  error
 
 
 state 283
-	bloque_else_en_funcion : ELSE . bloque_de_sent_ejecutables_en_funcion  (76)
-	bloque_else_en_funcion : ELSE .  (77)
+	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion . END_IF PUNTO_Y_COMA  (72)
+
+	END_IF  shift 301
+	.  error
+
+
+state 284
+	bloque_else_en_funcion : ELSE . bloque_de_sent_ejecutables_en_funcion  (77)
+	bloque_else_en_funcion : ELSE .  (78)
 
 	IDENTIFICADOR_GENERICO  shift 5
 	IDENTIFICADOR_ULONGINT  shift 7
 	IDENTIFICADOR_SINGLE  shift 8
 	FOR  shift 9
-	IF  shift 120
-	BEGIN  shift 186
+	IF  shift 121
+	BEGIN  shift 187
 	OUTF  shift 14
-	RET  shift 121
-	PUNTO_Y_COMA  reduce 77
-	END_IF  reduce 77
+	RET  shift 122
+	PUNTO_Y_COMA  reduce 78
+	END_IF  reduce 78
 
 	lista_de_identificadores  goto 21
 	identificador  goto 24
 	identificador_simple  goto 25
 	identificador_compuesto  goto 26
-	sentencia_ejecutable_en_funcion  goto 187
-	sentencia_asignacion  goto 125
-	sentencia_seleccion_en_funcion  goto 126
-	sentencia_salida  goto 127
-	sentencia_control_en_funcion  goto 128
-	sentencia_retorno  goto 129
-	encabezado_for  goto 130
-	bloque_de_sent_ejecutables_en_funcion  goto 301
+	sentencia_ejecutable_en_funcion  goto 188
+	sentencia_asignacion  goto 126
+	sentencia_seleccion_en_funcion  goto 127
+	sentencia_salida  goto 128
+	sentencia_control_en_funcion  goto 129
+	sentencia_retorno  goto 130
+	encabezado_for  goto 131
+	bloque_de_sent_ejecutables_en_funcion  goto 302
 	encabezado_for_obligatorio  goto 33
 
 
-state 284
-	cuerpo_if_en_funcion : bloque_de_sent_ejecutables_en_funcion bloque_else_en_funcion .  (74)
-
-	.  reduce 74
-
-
 state 285
-	sentencia_seleccion_en_funcion : IF condicion THEN cuerpo_if_en_funcion END_IF . PUNTO_Y_COMA  (72)
+	cuerpo_if_en_funcion : bloque_de_sent_ejecutables_en_funcion bloque_else_en_funcion .  (75)
 
-	PUNTO_Y_COMA  shift 302
-	.  error
+	.  reduce 75
 
 
 state 286
-	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R error . PUNTO_Y_COMA  (64)
-	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R error . END  (65)
+	sentencia_seleccion_en_funcion : IF condicion THEN cuerpo_if_en_funcion END_IF . PUNTO_Y_COMA  (73)
 
 	PUNTO_Y_COMA  shift 303
-	END  shift 304
 	.  error
 
 
 state 287
-	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA .  (63)
+	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R error . PUNTO_Y_COMA  (65)
+	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R error . END  (66)
 
-	.  reduce 63
+	PUNTO_Y_COMA  shift 304
+	END  shift 305
+	.  error
 
 
 state 288
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END error . PUNTO_Y_COMA  (79)
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END error . END  (80)
+	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R PUNTO_Y_COMA .  (64)
 
-	PUNTO_Y_COMA  shift 305
-	END  shift 306
-	.  error
+	.  reduce 64
 
 
 state 289
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END PUNTO_Y_COMA .  (78)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END error . PUNTO_Y_COMA  (80)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END error . END  (81)
 
-	.  reduce 78
+	PUNTO_Y_COMA  shift 306
+	END  shift 307
+	.  error
 
 
 state 290
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error . PUNTO_Y_COMA  (92)
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error . END  (93)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END PUNTO_Y_COMA .  (79)
 
-	PUNTO_Y_COMA  shift 307
-	END  shift 308
-	.  error
+	.  reduce 79
 
 
 state 291
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA .  (91)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error . PUNTO_Y_COMA  (93)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error . END  (94)
 
-	.  reduce 91
-
-
-state 292
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . PUNTO_Y_COMA  (26)
-
-	PUNTO_Y_COMA  shift 309
+	PUNTO_Y_COMA  shift 308
+	END  shift 309
 	.  error
 
 
+state 292
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA .  (92)
+
+	.  reduce 92
+
+
 state 293
-	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R PUNTO_Y_COMA .  (27)
-
-	.  reduce 27
-
-
-state 294
-	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . PUNTO_Y_COMA  (22)
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . PUNTO_Y_COMA  (26)
 
 	PUNTO_Y_COMA  shift 310
 	.  error
 
 
-state 295
-	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (21)
-	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO error PUNTO_Y_COMA  (23)
-	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO error END  (24)
+state 294
+	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R PUNTO_Y_COMA .  (27)
 
-	IDENTIFICADOR_GENERICO  shift 311
+	.  reduce 27
+
+
+state 295
+	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . PUNTO_Y_COMA  (22)
+
+	PUNTO_Y_COMA  shift 311
 	.  error
 
 
 state 296
-	struct : TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . PUNTO_Y_COMA  (25)
+	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO PUNTO_Y_COMA  (21)
+	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO error PUNTO_Y_COMA  (23)
+	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R . IDENTIFICADOR_GENERICO error END  (24)
 
-	PUNTO_Y_COMA  shift 312
+	IDENTIFICADOR_GENERICO  shift 312
 	.  error
 
 
 state 297
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF . PUNTO_Y_COMA  (73)
+	struct : TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . PUNTO_Y_COMA  (25)
 
 	PUNTO_Y_COMA  shift 313
 	.  error
 
 
 state 298
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion . END_IF PUNTO_Y_COMA  (66)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion . END_IF error PUNTO_Y_COMA  (67)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion . END_IF error END  (68)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion . PUNTO_Y_COMA  (69)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF . PUNTO_Y_COMA  (74)
 
 	PUNTO_Y_COMA  shift 314
-	END_IF  shift 315
 	.  error
 
 
 state 299
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF . PUNTO_Y_COMA  (70)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion . END_IF PUNTO_Y_COMA  (67)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion . END_IF error PUNTO_Y_COMA  (68)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion . END_IF error END  (69)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion . PUNTO_Y_COMA  (70)
 
-	PUNTO_Y_COMA  shift 316
+	PUNTO_Y_COMA  shift 315
+	END_IF  shift 316
 	.  error
 
 
 state 300
-	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF . PUNTO_Y_COMA  (71)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF . PUNTO_Y_COMA  (71)
 
 	PUNTO_Y_COMA  shift 317
 	.  error
 
 
 state 301
-	bloque_else_en_funcion : ELSE bloque_de_sent_ejecutables_en_funcion .  (76)
+	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF . PUNTO_Y_COMA  (72)
 
-	.  reduce 76
+	PUNTO_Y_COMA  shift 318
+	.  error
 
 
 state 302
-	sentencia_seleccion_en_funcion : IF condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA .  (72)
+	bloque_else_en_funcion : ELSE bloque_de_sent_ejecutables_en_funcion .  (77)
 
-	.  reduce 72
+	.  reduce 77
 
 
 state 303
-	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA .  (64)
+	sentencia_seleccion_en_funcion : IF condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA .  (73)
 
-	.  reduce 64
+	.  reduce 73
 
 
 state 304
-	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R error END .  (65)
+	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R error PUNTO_Y_COMA .  (65)
 
 	.  reduce 65
 
 
 state 305
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END error PUNTO_Y_COMA .  (79)
+	sentencia_retorno : RET PARENTESIS_L expresion PARENTESIS_R error END .  (66)
 
-	.  reduce 79
+	.  reduce 66
 
 
 state 306
-	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END error END .  (80)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END error PUNTO_Y_COMA .  (80)
 
 	.  reduce 80
 
 
 state 307
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA .  (92)
+	bloque_de_sent_ejecutables_en_funcion : BEGIN sentencias_ejecutable_en_funcion END error END .  (81)
 
-	.  reduce 92
+	.  reduce 81
 
 
 state 308
-	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error END .  (93)
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA .  (93)
 
 	.  reduce 93
 
 
 state 309
+	sentencia_seleccion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error END .  (94)
+
+	.  reduce 94
+
+
+state 310
 	struct : TYPEDEF MENOR STRUCT lista_de_tipos CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA .  (26)
 
 	.  reduce 26
 
 
-state 310
+state 311
 	struct : TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA .  (22)
 
 	.  reduce 22
 
 
-state 311
+state 312
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . PUNTO_Y_COMA  (21)
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . error PUNTO_Y_COMA  (23)
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO . error END  (24)
 
-	error  shift 318
-	PUNTO_Y_COMA  shift 319
+	error  shift 319
+	PUNTO_Y_COMA  shift 320
 	.  error
 
 
-state 312
+state 313
 	struct : TYPEDEF STRUCT lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA .  (25)
 
 	.  reduce 25
 
 
-state 313
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA .  (73)
-
-	.  reduce 73
-
-
 state 314
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA .  (69)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA .  (74)
 
-	.  reduce 69
+	.  reduce 74
 
 
 state 315
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF . PUNTO_Y_COMA  (66)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF . error PUNTO_Y_COMA  (67)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF . error END  (68)
-
-	error  shift 320
-	PUNTO_Y_COMA  shift 321
-	.  error
-
-
-state 316
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA .  (70)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA .  (70)
 
 	.  reduce 70
 
 
+state 316
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF . PUNTO_Y_COMA  (67)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF . error PUNTO_Y_COMA  (68)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF . error END  (69)
+
+	error  shift 321
+	PUNTO_Y_COMA  shift 322
+	.  error
+
+
 state 317
-	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA .  (71)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA .  (71)
 
 	.  reduce 71
 
 
 state 318
-	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error . PUNTO_Y_COMA  (23)
-	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error . END  (24)
+	sentencia_seleccion_en_funcion : IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA .  (72)
 
-	PUNTO_Y_COMA  shift 322
-	END  shift 323
-	.  error
+	.  reduce 72
 
 
 state 319
+	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error . PUNTO_Y_COMA  (23)
+	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error . END  (24)
+
+	PUNTO_Y_COMA  shift 323
+	END  shift 324
+	.  error
+
+
+state 320
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA .  (21)
 
 	.  reduce 21
 
 
-state 320
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error . PUNTO_Y_COMA  (67)
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error . END  (68)
+state 321
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error . PUNTO_Y_COMA  (68)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error . END  (69)
 
-	PUNTO_Y_COMA  shift 324
-	END  shift 325
+	PUNTO_Y_COMA  shift 325
+	END  shift 326
 	.  error
 
 
-state 321
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA .  (66)
-
-	.  reduce 66
-
-
 state 322
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA .  (67)
+
+	.  reduce 67
+
+
+state 323
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA .  (23)
 
 	.  reduce 23
 
 
-state 323
+state 324
 	struct : TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error END .  (24)
 
 	.  reduce 24
 
 
-state 324
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA .  (67)
-
-	.  reduce 67
-
-
 state 325
-	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END .  (68)
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA .  (68)
 
 	.  reduce 68
 
 
+state 326
+	sentencia_seleccion_en_funcion : IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END .  (69)
+
+	.  reduce 69
+
+
 47 terminals, 47 nonterminals
-168 grammar rules, 326 states
+169 grammar rules, 327 states
