@@ -18,6 +18,7 @@
 
 programa                    :   IDENTIFICADOR_GENERICO BEGIN sentencias END { Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "PROGRAMA"); }
                             |   IDENTIFICADOR_GENERICO BEGIN sentencias END error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del END no forma parte del programa."); }
+			    |   IDENTIFICADOR_GENERICO error BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del identificador del programa y antes del primer begin no forma parte del programa."); }
                             |   BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea 1: Falta identificador de programa"); }
                             |   IDENTIFICADOR_GENERICO sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + (((Token) $1.obj).getNumeroDeLinea()+1) + ": Falta un BEGIN despues del identificador del programa"); }
                             |   IDENTIFICADOR_GENERICO BEGIN sentencias { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Ultima linea: Falta un END al final del programa"); }
