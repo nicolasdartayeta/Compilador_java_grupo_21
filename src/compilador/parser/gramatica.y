@@ -417,5 +417,6 @@ private int yylex() {
 }
 
 private void yyerror(String string) {
+  parsingConErrores = true;
   System.out.println("Error: " + string );
 }
