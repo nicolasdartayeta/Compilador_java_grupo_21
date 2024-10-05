@@ -326,14 +326,10 @@ constante                   :   CONSTANTE_DECIMAL { $$.obj = ((Token) $1.obj); }
                             |   CONSTANTE_SINGLE { $$.obj = ((Token) $1.obj); }
                             ;
 
-invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L parametro_real PARENTESIS_R
+invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion PARENTESIS_R
                             |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
                             |   IDENTIFICADOR_FUN PARENTESIS_L parametro_real error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
                             ;
-
-parametro_real              :   expresion
-                            ;
-
 
 %%
 private static Lexer lex;
