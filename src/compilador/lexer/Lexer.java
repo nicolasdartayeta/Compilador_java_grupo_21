@@ -29,6 +29,10 @@ public class Lexer {
         }
     }
 
+    public int getNumeroDeLinea() {
+        return numeroDeLinea;
+    }
+
     private int getIndexFromChar(char c) {
         if (c == '0')
             return 0;

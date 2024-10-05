@@ -9,9 +9,7 @@ begin
         b
     ] myStruct;
 #/
-
-/# if (k <10) then
-    k := 2;
-#/
-
-    X
+    if (k 10) then
+        outf(a);
+    end_if;
+end
