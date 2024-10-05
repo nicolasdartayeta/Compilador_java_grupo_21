@@ -13,16 +13,16 @@ public class AS6 implements AccionSemantica {
     public Token ejecutar(StringCharacterIterator input, StringBuilder lexema, int numeroDeLinea) {
         input.previous();
         String lexemaAux = lexema.toString();
-        if (lexemaAux.length() > 15){
-            //INFORMAR WARNING
-            System.out.println("Linea " + numeroDeLinea + ": El identificador '" + lexemaAux + "' tiene mas de 15 caracteres, sera truncado." );
-            lexemaAux = lexemaAux.substring(0,14);
-        }
 
         if (TablaSimbolos.esPalabraReservada(lexemaAux.toUpperCase())) {
             return new Token(TablaSimbolos.getIDPalabraReservada(lexemaAux.toUpperCase()), lexemaAux, numeroDeLinea);
         }
 
+        if (lexemaAux.length() > 15){
+            //INFORMAR WARNING
+            System.out.println("Linea " + numeroDeLinea + ": El identificador '" + lexemaAux + "' tiene mas de 15 caracteres, sera truncado." );
+            lexemaAux = lexemaAux.substring(0,14);
+        }
         int tokenId;
 
         if (lexemaAux.charAt(0) == 's'){

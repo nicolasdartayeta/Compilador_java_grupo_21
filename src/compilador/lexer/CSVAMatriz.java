@@ -87,7 +87,6 @@ public class CSVAMatriz {
             case "AS2": return new AS2();
             case "AS3": return new AS3();
             case "AS4": return new AS4();
-            case "AS5": return new AS5();
             case "AS6": return new AS6();
             case "AS7": return new AS7();
             case "AS8": return new AS8();
