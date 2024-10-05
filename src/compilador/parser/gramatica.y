@@ -104,12 +104,14 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                             |   tipo FUN PARENTESIS_L parametro PARENTESIS_R {
                                                                                 $$.ival = $1.ival;
                                                                                 agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador de la funcion");
-                                                                            }
+                                                                             }
                             ;
 
 parametro                   :   tipo identificador
                             |   identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el tipo del parametro de la funcion"); }
                             |   tipo { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador del parametro de la funcion"); }
+                            |   tipo identificador error {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": La funcion no puede tener mas de un parametro");}
+                            |   error {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $$.ival + ": Falta el parametro de la funcion");}
                             ;
 
 cuerpo_funcion              :   cuerpo_funcion sentencia_ejecutable_en_funcion
@@ -118,7 +120,9 @@ cuerpo_funcion              :   cuerpo_funcion sentencia_ejecutable_en_funcion
                             |   sentencia_declarativa
                             ;
 
-sentencia_ejecutable_en_funcion         :   sentencia_asignacion
+sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "ASIGNACION"); }
+                                        |   sentencia_asignacion error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
+                                        |   sentencia_asignacion error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
                                         |   sentencia_seleccion_en_funcion { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
                                         |   sentencia_salida
                                         |   sentencia_control_en_funcion { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
@@ -257,7 +261,7 @@ lista_de_expresiones        :   lista_de_expresiones COMA expresion
 		                    |   expresion
 		                    ;
 
-expresion                   :   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R
+expresion                   :   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();}
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   expresion_aritmetica
 		                    ;
@@ -322,6 +326,8 @@ constante                   :   CONSTANTE_DECIMAL { $$.obj = ((Token) $1.obj); }
                             ;
 
 invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L parametro_real PARENTESIS_R
+                            |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
+                            |   IDENTIFICADOR_FUN PARENTESIS_L parametro_real error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
                             ;
 
 parametro_real              :   expresion

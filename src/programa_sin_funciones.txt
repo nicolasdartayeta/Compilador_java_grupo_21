@@ -3,13 +3,20 @@ programa_sin_funciones
 begin
     ulongint f;
 
+    ulongint fun f1 (ulongint x)
+    begin
+        x := x+1;
+        ret(x);
+    end
+
+    z := f1();
 /#
    TYPEDEF STRUCT  < ulongint > [
         a,
         b
     ] myStruct;
 #/
-    if (k 10) then
-        outf(a);
+    if (k < 10) then
+        outf(5+-5);
     end_if;
 end
