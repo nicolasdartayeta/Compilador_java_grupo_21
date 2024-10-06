@@ -1,0 +1,59 @@
+funciones
+
+/# Sentencias antes del begin del principio del programa. #/
+single o;
+
+begin
+    /# funcion que calcula 2^p #/
+    ulongint fun myFunction (ulongint p)
+    begin
+        ulongint x;
+        if (p = 0)
+            ret(2);
+        else
+            begin
+                /# Cantidad errónea de parámetros en invocación de función. #/
+                ret(2*myFunction(p-1, 4));
+            end
+        end_if;
+    end
+
+    /# Falta de nombre en función. #/
+    single fun (ulongint o)
+    begin
+        ret(o + 1)
+    end
+
+    /# Falta de sentencia RET en función. #/
+    single fun b(ulongint i)
+    begin
+        i := 1;
+    end
+
+    /# Falta de nombre de parámetro formal en declaración de función. #/
+    single fun (ulongint)
+    begin
+        i := 1;
+    end
+
+    /# Falta de tipo de parámetro formal en declaración de función. #/
+    single fun c(j)
+    begin
+        j := 1;
+    end
+
+    /# Cantidad errónea de parámetros en declaración de función. #/
+    single fun c(ulongint k, ulongint l)
+    begin
+        j := 1;
+    end
+
+    u := myFunction(5);
+    
+    outf();
+
+    /# Falta parámetro en sentencia OUTF. #/
+    outf();
+
+    single r;
+/# Falta de delimitador de programa. #/

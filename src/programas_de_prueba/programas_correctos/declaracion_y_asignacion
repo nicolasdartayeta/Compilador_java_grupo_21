@@ -1,0 +1,25 @@
+declaracion_y_asignacion
+
+begin
+    /# variables en el rango admitido #/
+    ulongint a, e, f;
+
+    a := 2 + 2 * 4 + 9;
+
+    single b;
+
+    b := 3.2s-4;
+
+    e, f := 6, 7;
+
+    /# variables fuera de rango #/
+    ulongint c;
+
+    c := 5294967296;
+
+    single d;
+    
+    d := 4.4s40;
+
+    outf( { Programa terminado } );
+end
