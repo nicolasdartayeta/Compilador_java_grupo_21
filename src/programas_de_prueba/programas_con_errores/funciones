@@ -1,8 +1,5 @@
 funciones
 
-/# Sentencias antes del begin del principio del programa. #/
-single o;
-
 begin
     /# funcion que calcula 2^p #/
     ulongint fun myFunction (ulongint p)
@@ -44,14 +41,12 @@ begin
     end
 
     /# Cantidad errónea de parámetros en declaración de función. #/
-    single fun c(ulongint k, ulongint l)
+    single fun f3(ulongint k, ulongint l)
     begin
         j := 1;
     end
 
     u := myFunction(5);
-
-    outf();
 
     /# Falta parámetro en sentencia OUTF. #/
     outf();

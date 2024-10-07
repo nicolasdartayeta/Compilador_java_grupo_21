@@ -26,9 +26,9 @@ begin
 
     c.a := 9;
     /# Falta expresión en conversión explícita. #/
-    c.b : 4.2s9 + tos();
+    c.b := tos();
 
-    /# Falta de “;” al final de las sentencias. #/
+    /# Falta de “;” al final de las sentencias. NO ANDA#/
     c.a := c.a + 1
 
     x := 1;

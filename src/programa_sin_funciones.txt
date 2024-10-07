@@ -1,60 +1,38 @@
-funciones
-
-/# Sentencias antes del begin del principio del programa. #/
-single o;
-
+/# ⁠Falta de nombre de programa. #/
 begin
-    /# funcion que calcula 2^p #/
-    ulongint fun myFunction (ulongint p)
-    begin
-        ulongint x;
-        /# Falta el THEN #/
-        if (p = 0)
-            ret(2);
-        else
-            begin
-                /# Cantidad errónea de parámetros en invocación de función. #/
-                ret(2*myFunction(p-1, 4));
-            end;
-        end_if;
-    end
+    typedef struct <ulongint, single> [
+        a,
+        b
+    ] myStruct;
 
-    /# Falta de nombre en función. #/
-    single fun (ulongint o)
-    begin
-        ret(o + 1);
-    end
+    /# Falta STRUCT. #/
+    typedef  <ulongint, single> [
+        a,
+        b
+    ] myStruct2;
 
-    /# Falta de sentencia RET en función. #/
-    single fun b(ulongint i)
-    begin
-        i := 1;
-    end
+    /# Falta <> en declaración de STRUCT. #/
+    typedef Struct ulongint [
+        c
+    ] myStruct3;
 
-    /# Falta de nombre de funcion y de parámetro formal en declaración de función. #/
-    single fun (ulongint)
-    begin
-        i := 1;
-    end
+    /# Falta identificador al final de la declaración de STRUCT. #/
+    typedef struct <ulongint, single> [
+        a,
+        b
+    ];
 
-    /# Falta de tipo de parámetro formal en declaración de función. #/
-    single fun c(j)
-    begin
-        j := 1;
-    end
+    myStruct c;
 
-    /# Cantidad errónea de parámetros en declaración de función. #/
-    single fun c(ulongint k, ulongint l)
-    begin
-        j := 1;
-    end
+    c.a := 9;
+    /# Falta expresión en conversión explícita. #/
+    c.b := tos();
 
-    u := myFunction(5);
+    /# Falta de “;” al final de las sentencias. NO ANDA#/
+    c.a := c.a + 1
 
-    outf();
+    x := 1;
 
-    /# Falta parámetro en sentencia OUTF. #/
-    outf();
-
-    single r;
-/# Falta de delimitador de programa. #/
+    /# Parámetro incorrecto en sentencia OUTF. #/
+    outf(c.a);
+end

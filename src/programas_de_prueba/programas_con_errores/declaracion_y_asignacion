@@ -1,5 +1,8 @@
 declaracion_y_asignacion
 
+/# Sentencias antes del begin del principio del programa. #/
+single o;
+
 begin
     /# variables en el rango admitido #/
     /# Falta de “,” en lista de variables #/
@@ -17,11 +20,13 @@ begin
     /# variables fuera de rango #/
     ulongint c;
 
+    d := 4.4s3;
+
     c := 5294967296;
 
     single d;
 
-    d := 4.4s40;
+
 
     outf( { Programa terminado } );
 end
