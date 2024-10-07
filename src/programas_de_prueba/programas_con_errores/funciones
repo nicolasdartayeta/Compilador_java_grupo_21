@@ -8,20 +8,21 @@ begin
     ulongint fun myFunction (ulongint p)
     begin
         ulongint x;
+        /# Falta el THEN #/
         if (p = 0)
             ret(2);
         else
             begin
                 /# Cantidad errónea de parámetros en invocación de función. #/
                 ret(2*myFunction(p-1, 4));
-            end
+            end;
         end_if;
     end
 
     /# Falta de nombre en función. #/
     single fun (ulongint o)
     begin
-        ret(o + 1)
+        ret(o + 1);
     end
 
     /# Falta de sentencia RET en función. #/
@@ -30,7 +31,7 @@ begin
         i := 1;
     end
 
-    /# Falta de nombre de parámetro formal en declaración de función. #/
+    /# Falta de nombre de funcion y de parámetro formal en declaración de función. #/
     single fun (ulongint)
     begin
         i := 1;
@@ -49,7 +50,7 @@ begin
     end
 
     u := myFunction(5);
-    
+
     outf();
 
     /# Falta parámetro en sentencia OUTF. #/
