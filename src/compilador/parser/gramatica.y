@@ -16,17 +16,17 @@
 
 %%
 
-programa                    :   IDENTIFICADOR_GENERICO BEGIN sentencias END { Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "PROGRAMA"); }
-                            |   IDENTIFICADOR_GENERICO BEGIN sentencias END error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del END no forma parte del programa."); }
-			    |   IDENTIFICADOR_GENERICO error BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del identificador del programa y antes del primer begin no forma parte del programa."); }
+programa                    :   identificador_simple BEGIN sentencias END { Parser.agregarEstructuraDetectadas( $$.ival = $1.ival, "PROGRAMA"); }
+                            |   identificador_simple BEGIN sentencias END error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del END no forma parte del programa."); }
+			                |   identificador_simple error BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del identificador del programa y antes del primer begin no forma parte del programa."); }
                             |   BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea 1: Falta identificador de programa"); }
-                            |   IDENTIFICADOR_GENERICO sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + (((Token) $1.obj).getNumeroDeLinea()+1) + ": Falta un BEGIN despues del identificador del programa"); }
-                            |   IDENTIFICADOR_GENERICO BEGIN sentencias { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Ultima linea: Falta un END al final del programa"); }
-                            |   IDENTIFICADOR_GENERICO sentencias { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Falta un BEGIN despues del identificador del programa y falta un END al final del programa"); }
-                            |   IDENTIFICADOR_GENERICO BEGIN sentencias error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "HUBO ERRORES IRRECUPERABLES PORQUE NO SE ENCONTRO UN CARACTER DE SINCRONIZACION LUEGO DEL ERROR. APRENDE A ESCRIBIR CODIGO. <3"); }
-                            |   IDENTIFICADOR_GENERICO BEGIN error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "HUBO ERRORES IRRECUPERABLES PORQUE NO SE ENCONTRO UN CARACTER DE SINCRONIZACION LUEGO DEL ERROR. APRENDE A ESCRIBIR CODIGO. <3"); }
-                            |   IDENTIFICADOR_GENERICO BEGIN sentencias error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "HUBO ERRORES IRRECUPERABLES PORQUE NO SE ENCONTRO UN CARACTER DE SINCRONIZACION LUEGO DEL ERROR. APRENDE A ESCRIBIR CODIGO. FALTA EL END AL FINAL DEL PROGRAMA <3"); }
-                            |   IDENTIFICADOR_GENERICO BEGIN error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "HUBO ERRORES IRRECUPERABLES PORQUE NO SE ENCONTRO UN CARACTER DE SINCRONIZACION LUEGO DEL ERROR. APRENDE A ESCRIBIR CODIGO. FALTA EL END AL FINAL DEL PROGRAMA <3"); }
+                            |   identificador_simple sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ( $$.ival = $1.ival +1) + ": Falta un BEGIN despues del identificador del programa"); }
+                            |   identificador_simple BEGIN sentencias { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Ultima linea: Falta un END al final del programa"); }
+                            |   identificador_simple sentencias { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Falta un BEGIN despues del identificador del programa y falta un END al final del programa"); }
+                            |   identificador_simple BEGIN sentencias error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "HUBO ERRORES IRRECUPERABLES PORQUE NO SE ENCONTRO UN CARACTER DE SINCRONIZACION LUEGO DEL ERROR."); }
+                            |   identificador_simple BEGIN error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "HUBO ERRORES IRRECUPERABLES PORQUE NO SE ENCONTRO UN CARACTER DE SINCRONIZACION LUEGO DEL ERROR."); }
+                            |   identificador_simple BEGIN sentencias error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "HUBO ERRORES IRRECUPERABLES PORQUE NO SE ENCONTRO UN CARACTER DE SINCRONIZACION LUEGO DEL ERROR. FALTA EL END AL FINAL DEL PROGRAMA"); }
+                            |   identificador_simple BEGIN error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "HUBO ERRORES IRRECUPERABLES PORQUE NO SE ENCONTRO UN CARACTER DE SINCRONIZACION LUEGO DEL ERROR. FALTA EL END AL FINAL DEL PROGRAMA"); }
                             ;
 
 sentencias                  : 	sentencias sentencia
@@ -328,7 +328,7 @@ constante                   :   CONSTANTE_DECIMAL { $$.obj = ((Token) $1.obj); }
 
 invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion PARENTESIS_R
                             |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
-                            |   IDENTIFICADOR_FUN PARENTESIS_L parametro_real error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
+                            |   IDENTIFICADOR_FUN PARENTESIS_L expresion error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
                             ;
 
 %%

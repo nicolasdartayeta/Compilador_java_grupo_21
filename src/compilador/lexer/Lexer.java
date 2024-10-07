@@ -25,7 +25,7 @@ public class Lexer {
             // Inicializa el input del lexer con el contenido del archivo
             this.input = new StringCharacterIterator(fileContent);
         } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
+            System.err.println("Error al leer el  archivo: " + e.getMessage());
         }
     }
 

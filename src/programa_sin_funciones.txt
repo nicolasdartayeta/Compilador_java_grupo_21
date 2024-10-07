@@ -1,23 +1,14 @@
-programa_sin_funciones
-
+structs
 begin
-    ulongint f;
-
-    ulongint fun f1 (ulongint x)
-    begin
-        x := x+1;
-        ret(x);
-    end
-    ulongint x;
-
-    z := f1(4);
-/#
-   TYPEDEF STRUCT  < ulongint > [
+    typedef Struct <ulongint, single> [
         a,
         b
     ] myStruct;
-#/
-    if (k < 10) then
-        outf(5+-5);
-    end_if;
+
+    myStruct c;
+
+    c.a := 9;
+    c.b := 4.2s9 + tos(c.a);
+
+    outf( { Programa terminado } );
 end
