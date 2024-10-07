@@ -20,7 +20,7 @@ begin
     c := 5294967296;
 
     single d;
-    
+
     d := 4.4s40;
 
     outf( { Programa terminado } );

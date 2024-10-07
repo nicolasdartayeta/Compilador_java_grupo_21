@@ -209,8 +209,9 @@ comparador                  :   MAYOR { $$.ival = ((Token) $1.obj).getNumeroDeLi
                             ;
 
 bloque_de_sent_ejecutables  :   BEGIN sentencias_ejecutables END PUNTO_Y_COMA
-                            |   BEGIN sentencias_ejecutables END error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
-			                |   BEGIN sentencias_ejecutables END error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
+                            |   BEGIN sentencias_ejecutables END error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $3.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
+                            |   BEGIN END PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan sentencias ejecutables en el bloque"); }
+			                |   BEGIN sentencias_ejecutables END error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $3.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 			                |   sentencia_ejecutable
 			                ;
 
@@ -256,6 +257,8 @@ accion                      :   UP CONSTANTE_DECIMAL
                             |   UP CONSTANTE_OCTAL
                             |   DOWN CONSTANTE_OCTAL
                             |   DOWN CONSTANTE_DECIMAL
+                            |   CONSTANTE_OCTAL { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra reservada en la acción del encabezado FOR"); }
+                            |   CONSTANTE_DECIMAL { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra reservada en la acción del encabezado FOR"); }
                             ;
 
 lista_de_expresiones        :   lista_de_expresiones COMA expresion
@@ -270,7 +273,7 @@ expresion                   :   TOS PARENTESIS_L expresion_aritmetica PARENTESIS
 expresion_aritmetica        :   expresion_aritmetica SUMA termino
 		                    |   expresion_aritmetica RESTA termino
 		                    |   termino
-		                    |   error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Falta operador u operandos"); }
+		                    |   error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + " :Falta operador u operandos"); }
 		                    ;
 
 termino                     :   termino MULTIPLICACION factor

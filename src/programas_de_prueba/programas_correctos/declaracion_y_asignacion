@@ -12,14 +12,5 @@ begin
 
     e, f := 6, 7;
 
-    /# variables fuera de rango #/
-    ulongint c;
-
-    c := 5294967296;
-
-    single d;
-    
-    d := 4.4s40;
-
     outf( { Programa terminado } );
 end

@@ -7,12 +7,12 @@ begin
     for(x := 10; x > 0; down 1)
     begin
         x := x + 1;
-    end
+    end;
 
     for(x := 10; x > 0; up 1; (x < 100))
     begin
         x := x + 1;
-    end
+    end;
 
     outf( { Programa terminado } );
 end
