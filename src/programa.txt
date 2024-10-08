@@ -1,3 +1,0 @@
-ulongint uola;
-/# hola #/
-a

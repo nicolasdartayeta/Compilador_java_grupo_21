@@ -22,6 +22,6 @@ public class AS10 implements AccionSemantica {
         }
 
         input.previous();
-        return new TokenError(TablaToken.getTokenID(TablaToken.ERROR),lexema.toString(), numeroDeLinea, "No puede venir un" + c + "despues de " + lexema.toString());
+        return new TokenError(TablaToken.getTokenID(TablaToken.TOKERROR),lexema.toString(), numeroDeLinea, "No puede venir un" + c + "despues de " + lexema.toString());
     }
 }

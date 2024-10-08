@@ -19,7 +19,7 @@ public class AS7 implements AccionSemantica {
             float nro = Float.parseFloat(posibleFloat);
 
             if (nro == Float.POSITIVE_INFINITY || nro == Float.NEGATIVE_INFINITY || nro == -0.0f) {
-                return new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, "La constante se pasa de rango");
+                return new TokenError(TablaToken.getTokenID(TablaToken.TOKERROR), lexema.toString(), numeroDeLinea, "Linea "+ numeroDeLinea +": La constante se pasa de rango");
             } else {
                 int tokenSingle = TablaToken.getTokenID(TablaToken.CONSTANTE_SINGLE);
 
@@ -32,7 +32,7 @@ public class AS7 implements AccionSemantica {
                 return new Token(tokenSingle, lexema.toString(), numeroDeLinea);
             }
         } catch (NumberFormatException e) {
-            return new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, "La constante se pasa de rango");
+            return new TokenError(TablaToken.getTokenID(TablaToken.TOKERROR), lexema.toString(), numeroDeLinea, "Linea "+ numeroDeLinea +": La constante se pasa de rango");
         }
     }
 

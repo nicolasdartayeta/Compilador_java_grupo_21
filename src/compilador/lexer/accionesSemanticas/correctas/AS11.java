@@ -14,7 +14,7 @@ public class AS11 implements AccionSemantica {
     public Token ejecutar(StringCharacterIterator input, StringBuilder lexema, int numeroDeLinea) {
         input.previous();
         try {
-            long numero = Long.parseUnsignedLong(lexema.toString(),8);
+            long numero = Integer.parseUnsignedInt(lexema.toString(),8);
 
             int tokenOctal = TablaToken.getTokenID(TablaToken.CONSTANTE_OCTAL);
 
@@ -26,7 +26,7 @@ public class AS11 implements AccionSemantica {
 
             return new Token(tokenOctal, lexema.toString(), numeroDeLinea);
         } catch (NumberFormatException e) {
-            return new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, "La constante se pasa de rango");
+            return new TokenError(TablaToken.getTokenID(TablaToken.TOKERROR), lexema.toString(), numeroDeLinea, "Linea "+ numeroDeLinea +": La constante se pasa de rango");
         }
     }
 }

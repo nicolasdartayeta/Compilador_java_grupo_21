@@ -9,7 +9,7 @@
 
 %}
 
-%token IDENTIFICADOR_GENERICO IDENTIFICADOR_FUN IDENTIFICADOR_TIPO IDENTIFICADOR_ULONGINT IDENTIFICADOR_SINGLE CONSTANTE_DECIMAL CONSTANTE_OCTAL CONSTANTE_SINGLE SUMA RESTA MULTIPLICACION DIVISION ASIGNACION MAYOR_O_IGUAL MENOR_O_IGUAL MAYOR MENOR IGUAL DESIGUAL CORCHETE_L CORCHETE_R PARENTESIS_L PARENTESIS_R COMA PUNTO PUNTO_Y_COMA INLINE_STRING ERROR STRUCT FOR UP DOWN SINGLE ULONGINT IF THEN ELSE BEGIN END END_IF OUTF TYPEDEF FUN RET TOS
+%token IDENTIFICADOR_GENERICO IDENTIFICADOR_FUN IDENTIFICADOR_TIPO IDENTIFICADOR_ULONGINT IDENTIFICADOR_SINGLE CONSTANTE_DECIMAL CONSTANTE_OCTAL CONSTANTE_SINGLE SUMA RESTA MULTIPLICACION DIVISION ASIGNACION MAYOR_O_IGUAL MENOR_O_IGUAL MAYOR MENOR IGUAL DESIGUAL CORCHETE_L CORCHETE_R PARENTESIS_L PARENTESIS_R COMA PUNTO PUNTO_Y_COMA INLINE_STRING TOKERROR STRUCT FOR UP DOWN SINGLE ULONGINT IF THEN ELSE BEGIN END END_IF OUTF TYPEDEF FUN RET TOS
 
 %left SUMA RESTA
 %left MULTIPLICACION DIVISION
@@ -73,7 +73,7 @@ lista_de_tipos              :   lista_de_tipos COMA tipo
 		                    ;
 
 lista_de_identificadores    :   lista_de_identificadores COMA identificador
-                            |   lista_de_identificadores identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ',' entre las variables"); }
+                            |   lista_de_identificadores identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ',' entre las identificadores"); }
 		                    |   identificador { $$.ival = $1.ival; }
 		                    ;
 
@@ -126,7 +126,7 @@ cuerpo_funcion              :   cuerpo_funcion sentencia_ejecutable_en_funcion
 sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "ASIGNACION"); }
                                         |   sentencia_asignacion error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
                                         |   sentencia_asignacion error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
-                                        |   sentencia_seleccion_en_funcion { Parser.agregarEstructuraDetectadas($1.ival, "IF"); }
+                                        |   sentencia_seleccion_en_funcion
                                         |   sentencia_salida
                                         |   sentencia_control_en_funcion { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
                                         |   sentencia_retorno { Parser.agregarEstructuraDetectadas($1.ival, "RET"); returnEncontrado = true; }
@@ -175,7 +175,7 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
                             |   sentencia_asignacion error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
 		                    |   sentencia_seleccion
 		                    |   sentencia_salida
-		                    |   sentencia_control { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
+		                    |   sentencia_control
 		                    ;
 
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones { $$.ival = $1.ival; }
@@ -233,11 +233,11 @@ sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUN
 		                    |   OUTF PARENTESIS_L error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Parametros incorrectos en la sentencia de salida"); }
 		                    ;
 
-sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { $$.ival = $1.ival; }
+sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
                             |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                             ;
 
-encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R {$$.ival = $1.ival;}
+encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R { $$.ival = $1.ival; }
                             |   encabezado_for_obligatorio PARENTESIS_R {$$.ival = $1.ival;}
                             |   encabezado_for_obligatorio { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
                             |   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
@@ -269,15 +269,13 @@ lista_de_expresiones        :   lista_de_expresiones COMA expresion
 		                    |   expresion
 		                    ;
 
-expresion                   :   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();}
-                            |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
-		                    |   expresion_aritmetica
+expresion                   :   expresion_aritmetica
 		                    ;
 
 expresion_aritmetica        :   expresion_aritmetica SUMA termino
 		                    |   expresion_aritmetica RESTA termino
 		                    |   termino
-		                    |   error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + " :Falta operador u operandos"); }
+		                    |   error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
 		                    ;
 
 termino                     :   termino MULTIPLICACION factor
@@ -287,55 +285,52 @@ termino                     :   termino MULTIPLICACION factor
 
 factor                      :   identificador
                             |   constante
-                            |   RESTA constante {
-                                                    String lexema = ((Token) $2.obj).getLexema();
-                                                    String tipoConstante = ((Token) $2.obj).getTokenName();
-
-                                                    int cantidadDeUsos = TablaSimbolos.getCantidadDeUsos(lexema);
-                                                    String tipoLexemaOriginal = TablaSimbolos.getTipo(lexema);
-
-                                                    if (cantidadDeUsos > 1) {
-                                                        // Bajar la cantidad de usos en 1
-                                                        TablaSimbolos.decrementarUso(lexema);
-                                                    } else {
-                                                        // Eliminar la entrada
-                                                        TablaSimbolos.eliminarLexema(lexema);
-                                                    }
-
-                                                    String lexemaNegativo = "-" + lexema;
-
-                                                    // Chequear rango
-                                                    if (TablaToken.CONSTANTE_DECIMAL.equals(tipoConstante)) {
-                                                        // long numero = Long.parseUnsignedLong(lexemaNegativo);
-                                                    } else if (TablaToken.CONSTANTE_OCTAL.equals(tipoConstante)) {
-                                                        // long numero = Long.parseUnsignedLong(lexemaNegativo,8);
-                                                    } else if (TablaToken.CONSTANTE_SINGLE.equals(tipoConstante)) {
-                                                        float numero = Float.parseFloat(lexemaNegativo.replace('s','e'));
-                                                        if (numero == Float.POSITIVE_INFINITY || numero == Float.NEGATIVE_INFINITY || numero == -0.0f) {
-                                                            System.out.println(numero);
-                                                            throw new NumberFormatException("Linea " + ((Token) $2.obj).getNumeroDeLinea() + ": la constante se va de rango");
-                                                        }
-                                                    }
-
-                                                    // Hay que fijarse si ya esta la negativa en la tabla, sino agregarla como negativa.
-                                                    if (TablaSimbolos.existeLexema(lexemaNegativo)) {
-                                                        TablaSimbolos.aumentarUso(lexemaNegativo);
-                                                    } else {
-                                                        TablaSimbolos.agregarLexema(lexemaNegativo, new CampoTablaSimbolos(false, tipoLexemaOriginal));
-                                                        TablaSimbolos.aumentarUso(lexemaNegativo);
-                                                    }
-                                                }
+                            |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();}
+                            |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   invocacion_a_funcion
 		                    ;
 
 constante                   :   CONSTANTE_DECIMAL { $$.obj = ((Token) $1.obj); }
                             |   CONSTANTE_OCTAL { $$.obj = ((Token) $1.obj); }
                             |   CONSTANTE_SINGLE { $$.obj = ((Token) $1.obj); }
+                            |   TOKERROR { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
+                            |   RESTA CONSTANTE_DECIMAL { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes long negativas."); }
+                            |   RESTA CONSTANTE_OCTAL { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes long negativas."); }
+                            |   RESTA CONSTANTE_SINGLE {
+                                                            $$.obj = ((Token) $1.obj);
+                                                            String lexema = ((Token) $2.obj).getLexema();
+                                                            int cantidadDeUsos = TablaSimbolos.getCantidadDeUsos(lexema);
+
+                                                            if (cantidadDeUsos > 1) {
+                                                                // Bajar la cantidad de usos en 1
+                                                                TablaSimbolos.decrementarUso(lexema);
+                                                            } else {
+                                                                // Eliminar la entrada
+                                                                TablaSimbolos.eliminarLexema(lexema);
+                                                            }
+
+                                                            String lexemaNegativo = "-" + lexema;
+
+                                                            float numero = Float.parseFloat(lexemaNegativo.replace('s','e'));
+                                                            if (numero == Float.POSITIVE_INFINITY || numero == Float.NEGATIVE_INFINITY || numero == -0.0f) {
+                                                                System.out.println(numero);
+                                                                agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $2.obj).getNumeroDeLinea() + ": la constante se va de rango");
+                                                            } else {
+                                                                // Hay que fijarse si ya esta la negativa en la tabla, sino agregarla como negativa.
+                                                                if (TablaSimbolos.existeLexema(lexemaNegativo)) {
+                                                                    TablaSimbolos.aumentarUso(lexemaNegativo);
+                                                                } else {
+                                                                    TablaSimbolos.agregarLexema(lexemaNegativo, new CampoTablaSimbolos(false, TablaSimbolos.SINGLE));
+                                                                    TablaSimbolos.aumentarUso(lexemaNegativo);
+                                                                }
+                                                            }
+                                                        }
+                            |   RESTA TOKERROR { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
                             ;
 
 invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion PARENTESIS_R
-                            |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
-                            |   IDENTIFICADOR_FUN PARENTESIS_L expresion error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
+                            |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
+                            |   IDENTIFICADOR_FUN PARENTESIS_L expresion error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
                             ;
 
 %%
@@ -354,6 +349,9 @@ public static final String RESET = "\033[0m";
 public static boolean parsingConErrores = false;
 public static boolean lexingConErrores = false;
 private static boolean returnEncontrado = false;
+
+// Lista de tokens recibidos
+public static final List<Token> tokensRecibidos = new ArrayList<>();
 
 // Lista de estructuras detectadas
 public static final List<String> estructurasDetectadas = new ArrayList<>();
@@ -378,17 +376,20 @@ public static void agregarError(List<String> listaErrores, String tipo, String e
     listaErrores.add(String.format("%-20s", tipo) + "| "+ error);
 }
 
-public static void imprimirLista(List<String> lista) {
-    for (String elemento : lista) {
+public static <T> void imprimirLista(List<T> lista) {
+    for (T elemento : lista) {
         System.out.println(elemento);
     }
 }
 
 public static void main(String[] args) {
-    Lexer lexer = new Lexer("src/programa_sin_funciones.txt");
+    Lexer lexer = new Lexer(args[0]);
     Parser.lex = lexer;
     Parser parser = new Parser(true);
     parser.run();
+
+    System.out.println(Parser.VERDE + "TOKENS RECIBIDOS DEL ANALIZADOR LEXICO" + Parser.RESET);
+    Parser.imprimirLista(tokensRecibidos);
 
     if (Parser.lexingConErrores){
         System.out.println(Parser.ROJO + "SE ENCONTRARON ERRORES LEXICOS" + Parser.RESET);
@@ -411,6 +412,7 @@ public static void main(String[] args) {
 
 private int yylex() {
     Token tok = lex.getNextToken();
+    tokensRecibidos.add(tok);
 
     if (tok.isError()) {
         agregarError(erroresLexicos, ERROR_LEXICO, ((TokenError) tok).getDescripcionError());

@@ -4,8 +4,6 @@ import compilador.parser.Parser;
 
 import java.util.HashMap;
 
-import static java.lang.System.in;
-
 public class TablaToken {
     public static final String IDENTIFICADOR_GENERICO = "IDENTIFICADOR_GENERICO";
     public static final String IDENTIFICADOR_FUN = "IDENTIFICADOR_FUN";
@@ -34,7 +32,7 @@ public class TablaToken {
     public static final String PUNTO = "PUNTO";
     public static final String PUNTO_Y_COMA = "PUNTO_Y_COMA";
     public static final String INLINE_STRING = "INLINE_STRING";
-    public static final String ERROR = "ERROR";
+    public static final String TOKERROR = "TOKERROR";
     public static final String EOF = "EOF";
 
     private static HashMap<String, Integer> tablaTokens = createTablaTokens();
@@ -69,7 +67,7 @@ public class TablaToken {
         tabla.put(PUNTO, (int) Parser.PUNTO);
         tabla.put(PUNTO_Y_COMA, (int) Parser.PUNTO_Y_COMA);
         tabla.put(INLINE_STRING, (int) Parser.INLINE_STRING);
-        tabla.put(ERROR, (int) Parser.ERROR);
+        tabla.put(TOKERROR, (int) Parser.TOKERROR);
         tabla.put(EOF, 0);
         return tabla;
     }

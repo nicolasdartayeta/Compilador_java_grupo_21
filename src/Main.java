@@ -4,7 +4,7 @@ import compilador.parser.Parser;
 
 public class Main {
     public static void main(String[] args) {
-        Lexer lexer = new Lexer("src/programa.txt");
+        Lexer lexer = new Lexer(args[0]);
        int token = -1;
 
        while (token != 0) {

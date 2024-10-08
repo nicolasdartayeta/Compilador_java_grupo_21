@@ -20,16 +20,11 @@ begin
     /# variables fuera de rango #/
     ulongint c;
 
-    d := 4.4s3;
+    d := 4.4s300;
 
-    c := 5294967296;
+    c := -4294967296;
 
     single d;
 
-
-
     outf( { Programa terminado } );
 end
-
-/# Sentencias luego el end del final del programa. #/
-single s;

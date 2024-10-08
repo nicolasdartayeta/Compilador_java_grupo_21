@@ -71,3 +71,6 @@ begin
 
     outf( { Programa terminado } );
 end
+
+/# Sentencias luego el end del final del programa. #/
+single s;

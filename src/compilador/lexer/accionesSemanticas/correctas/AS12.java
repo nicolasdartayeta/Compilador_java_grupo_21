@@ -15,7 +15,7 @@ public class AS12 implements AccionSemantica {
         input.previous();
 
         try {
-            long decimal = Long.parseUnsignedLong(lexema.toString());
+            long decimal = Integer.parseUnsignedInt(lexema.toString());
 
             int tokenDecimal = TablaToken.getTokenID(TablaToken.CONSTANTE_DECIMAL);
 
@@ -27,7 +27,7 @@ public class AS12 implements AccionSemantica {
 
             return new Token(tokenDecimal, lexema.toString(), numeroDeLinea);
         } catch (NumberFormatException e) {
-            return new TokenError(TablaToken.getTokenID(TablaToken.ERROR), lexema.toString(), numeroDeLinea, "La constante se pasa de rango");
+            return new TokenError(TablaToken.getTokenID(TablaToken.TOKERROR), lexema.toString(), numeroDeLinea, "Linea "+ numeroDeLinea +": La constante se pasa de rango");
         }
     }
 }
