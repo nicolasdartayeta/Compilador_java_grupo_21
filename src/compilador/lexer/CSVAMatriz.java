@@ -18,13 +18,14 @@ public class CSVAMatriz {
 //        }
     }
 
-    public static int[][] leerMatrizDeTransicion(String path, int filas, int columnas) {
-        String csvFile = path;
+    public static int[][] leerMatrizDeTransicion(String csvFileName, int filas, int columnas) {
         String line;
         String cvsSplitBy = ",";
         int[][] matrix = new int[filas][columnas];
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+        try (InputStream inputStream = CSVAMatriz.class.getClassLoader().getResourceAsStream(csvFileName)) {
+            assert inputStream != null;
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             int row = 0;
             while ((line = br.readLine()) != null && row < filas) {
                 String[] values = line.split(cvsSplitBy);
@@ -52,13 +53,14 @@ public class CSVAMatriz {
         return matrix;
     }
 
-    public static AccionSemantica[][] leerMatrizDeAccionesSemanticas(String path, int filas, int columnas) {
-        String csvFile = path;
+    public static AccionSemantica[][] leerMatrizDeAccionesSemanticas(String csvFileName, int filas, int columnas) {
         String line;
         String cvsSplitBy = ",";
         AccionSemantica[][] matrix = new AccionSemantica[filas][columnas];
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+        try (InputStream inputStream = CSVAMatriz.class.getClassLoader().getResourceAsStream(csvFileName)) {
+            assert inputStream != null;
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             int row = 0;
             while ((line = br.readLine()) != null && row < filas) {
                 String[] values = line.split(cvsSplitBy);

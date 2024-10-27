@@ -13,9 +13,9 @@ public class Lexer {
     private int current_index = 0;
     private int numeroDeLinea = 1;
 
-    private final int[][] matrizTransicionEstado = CSVAMatriz.leerMatrizDeTransicion("src/compilador/lexer/matrizTransicion.csv", 30, 18);
+    private final int[][] matrizTransicionEstado = CSVAMatriz.leerMatrizDeTransicion("matrizTransicion.csv", 30, 18);
 
-    private final AccionSemantica[][] matrizDeAccionesSemanticas = CSVAMatriz.leerMatrizDeAccionesSemanticas("src/compilador/lexer/accionesSemanticas.csv", 30, 18);
+    private final AccionSemantica[][] matrizDeAccionesSemanticas = CSVAMatriz.leerMatrizDeAccionesSemanticas("accionesSemanticas.csv", 30, 18);
 
     public Lexer(String filePath) {
         try {
@@ -129,7 +129,7 @@ public class Lexer {
             tokenFound = true;
             token = new Token(TablaToken.getTokenID(TablaToken.EOF), TablaToken.EOF, numeroDeLinea);
         }
-
+        System.out.println(token);
         return token;
     }
 }
