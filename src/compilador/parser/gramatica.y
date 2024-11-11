@@ -16,7 +16,7 @@
 
 %%
 
-programa                    :   identificador_simple BEGIN sentencias END { Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "PROGRAMA"); representacionPolaca.remove(0); }
+programa                    :   identificador_simple BEGIN sentencias END { Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "PROGRAMA"); }
                             |   identificador_simple BEGIN sentencias END error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del END no forma parte del programa."); }
 			                |   identificador_simple error BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del identificador del programa y antes del primer begin no forma parte del programa."); }
                             |   BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea 1: Falta identificador de programa"); }
@@ -40,7 +40,7 @@ sentencia                   :   sentencia_declarativa
                             |   error PUNTO_Y_COMA {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token)$2.obj).getNumeroDeLinea() + ": Syntax Error"); }
                             ;
 
-sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S"); eliminarUltimosElementos(representacionPolaca, cantidadIdEnListaId); cantidadIdEnListaId = 0;}
+sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S"); eliminarUltimosElementos(representacionPolaca, cantidadIdEnListaId); cantidadIdEnListaId = 0; agregarTipoAIdentificadores($1.sval); listaIdentificadores.clear(); }
                             |   tipo lista_de_identificadores error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
 		                    |   tipo lista_de_identificadores error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
 		                    |   funcion { Parser.agregarEstructuraDetectadas($1.ival, "FUNCION"); }
@@ -54,6 +54,7 @@ struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHE
                                                                                                                                                     TablaSimbolos.convertirATipo(lexema, TablaSimbolos.STRUCT);
                                                                                                                                                     eliminarUltimosElementos(representacionPolaca, cantidadIdEnListaId);
                                                                                                                                                     cantidadIdEnListaId = 0;
+                                                                                                                                                     listaIdentificadores.clear();
                                                                                                                                                 }
                             |   TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra STRUCT en la declaración del STRUCT"); }
                             |   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' en la declaración del STRUCT"); }
@@ -65,31 +66,31 @@ struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHE
 
                             ;
 
-tipo                        :   ULONGINT { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
-		                    |   SINGLE { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
-		                    |   IDENTIFICADOR_TIPO { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+tipo                        :   ULONGINT { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema().toUpperCase(); }
+		                    |   SINGLE { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema(); }
+		                    |   IDENTIFICADOR_TIPO { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema(); }
 		                    ;
 
 lista_de_tipos              :   lista_de_tipos COMA tipo
 		                    |   tipo
 		                    ;
 
-lista_de_identificadores    :   lista_de_identificadores COMA identificador {cantidadIdEnListaId++;}
+lista_de_identificadores    :   lista_de_identificadores COMA identificador {cantidadIdEnListaId++; listaIdentificadores.add($3.sval);}
                             |   lista_de_identificadores identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ',' entre las identificadores"); }
-		                    |   identificador { $$.ival = $1.ival; cantidadIdEnListaId++;}
+		                    |   identificador { $$.ival = $1.ival; cantidadIdEnListaId++; listaIdentificadores.add($1.sval);}
 		                    ;
 
-identificador               :   identificador_simple { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
-                            |   identificador_compuesto { $$.ival = $1.ival; }
+identificador               :   identificador_simple { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
+                            |   identificador_compuesto { $$.ival = $1.ival; $$.sval = $1.sval; System.out.println("ID COMPUESTO: " + $1.sval); representacionPolaca.add($1.sval);}
                             ;
 
-identificador_simple        :   IDENTIFICADOR_GENERICO { $$.obj = ((Token) $1.obj); representacionPolaca.add(((Token) $1.obj).getLexema());}
-                            |   IDENTIFICADOR_ULONGINT { $$.obj = ((Token) $1.obj); representacionPolaca.add(((Token) $1.obj).getLexema());}
-                            |   IDENTIFICADOR_SINGLE { $$.obj = ((Token) $1.obj); representacionPolaca.add(((Token) $1.obj).getLexema());}
+identificador_simple        :   IDENTIFICADOR_GENERICO { $$.obj = ((Token) $1.obj); }
+                            |   IDENTIFICADOR_ULONGINT { $$.obj = ((Token) $1.obj); }
+                            |   IDENTIFICADOR_SINGLE { $$.obj = ((Token) $1.obj); }
                             ;
 
-identificador_compuesto     :   identificador_simple PUNTO identificador_compuesto { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
-                            |   identificador_simple PUNTO identificador_simple { $$.ival = ((Token) $1.obj).getNumeroDeLinea();}
+identificador_compuesto     :   identificador_simple PUNTO identificador_compuesto { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema() + ((Token) $2.obj).getLexema() + $3.sval;}
+                            |   identificador_simple PUNTO identificador_simple { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema() + ((Token) $2.obj).getLexema() +((Token) $3.obj).getLexema();}
                             ;
 
 funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
@@ -105,6 +106,9 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         $$.ival = $1.ival;
                                                                                                         String lexema = ((Token) $3.obj).getLexema().toString();
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
+                                                                                                        TablaSimbolos.setCantidadDeParametros(lexema, 1);
+                                                                                                        TablaSimbolos.setTipoParametro(lexema, $5.sval);
+                                                                                                        TablaSimbolos.setTipoRetorno(lexema, $1.sval);
                                                                                                     }
                             |   tipo FUN PARENTESIS_L parametro PARENTESIS_R {
                                                                                 $$.ival = $1.ival;
@@ -112,7 +116,7 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                              }
                             ;
 
-parametro                   :   tipo identificador
+parametro                   :   tipo identificador { $$.sval = $1.sval; TablaSimbolos.cambiarTipo($2.sval, $1.sval); }
                             |   identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el tipo del parametro de la funcion"); }
                             |   tipo { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador del parametro de la funcion"); }
                             |   tipo identificador error {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": La funcion no puede tener mas de un parametro");}
@@ -138,7 +142,7 @@ sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecuta
                                        |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                                        ;
 
-sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
+sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); representacionPolaca.add(((Token) $1.obj).getLexema()); }
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R error PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R  error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             ;
@@ -180,7 +184,7 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 		                    |   sentencia_control
 		                    ;
 
-sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones { $$.ival = $1.ival; representacionPolaca.add(((Token) $2.obj).getLexema());cantidadIdEnListaId = 0;}
+sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones { $$.ival = $1.ival; representacionPolaca.add(((Token) $2.obj).getLexema());cantidadIdEnListaId = 0; listaIdentificadores.clear();}
                             ;
 
 sentencia_seleccion         :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "IF"); }
@@ -225,8 +229,8 @@ sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable
 		                    |   sentencia_ejecutable
 		                    ;
 
-sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA{ $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "OUTF"); }
-		                    |   OUTF PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "OUTF"); }
+sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA{ $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "OUTF"); representacionPolaca.add(((Token) $3.obj).getLexema()); representacionPolaca.add(((Token) $1.obj).getLexema());}
+		                    |   OUTF PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "OUTF"); representacionPolaca.add(((Token) $1.obj).getLexema());}
 		                    |   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA{ $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             |   OUTF PARENTESIS_L expresion_aritmetica PARENTESIS_R error PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 		                    |   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error END{ $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
@@ -267,22 +271,22 @@ lista_de_expresiones        :   lista_de_expresiones COMA expresion_aritmetica
 		                    |   expresion_aritmetica
 		                    ;
 
-expresion_aritmetica        :   expresion_aritmetica SUMA termino { representacionPolaca.add(((Token) $2.obj).getLexema()); }
-		                    |   expresion_aritmetica RESTA termino { representacionPolaca.add(((Token) $2.obj).getLexema()); }
-		                    |   termino
+expresion_aritmetica        :   expresion_aritmetica SUMA termino { representacionPolaca.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
+		                    |   expresion_aritmetica RESTA termino { representacionPolaca.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
+		                    |   termino { $$.sval = $1.sval; }
 		                    |   error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
 		                    ;
 
-termino                     :   termino MULTIPLICACION factor { representacionPolaca.add(((Token) $2.obj).getLexema()); }
-		                    |   termino DIVISION factor { representacionPolaca.add(((Token) $2.obj).getLexema()); }
-		                    |   factor
+termino                     :   termino MULTIPLICACION factor { representacionPolaca.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
+		                    |   termino DIVISION factor { representacionPolaca.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
+		                    |   factor { $$.sval = $1.sval; }
 		                    ;
 
-factor                      :   identificador
-                            |   constante
-                            |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();}
+factor                      :   identificador { $$.sval = TablaSimbolos.getTipo($1.sval); System.out.println("AAAAAAAAAAAAAAAAA TIPO:" + TablaSimbolos.getTipo($1.sval)); }
+                            |   constante { $$.sval = TablaSimbolos.getTipo(((Token) $1.obj).getLexema()); }
+                            |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "single"; }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
-		                    |   invocacion_a_funcion
+		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
 		                    ;
 
 constante_entera            :   CONSTANTE_DECIMAL { $$.obj = ((Token) $1.obj); representacionPolaca.add(((Token) $1.obj).getLexema());}
@@ -326,7 +330,14 @@ constante                   :   constante_entera { $$.obj = ((Token) $1.obj);}
                             |   RESTA TOKERROR { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
                             ;
 
-invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica PARENTESIS_R
+invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica PARENTESIS_R {
+                                                                                                    $$.sval = TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema());
+                                                                                                    if (!TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()).equals($3.sval)) {
+                                                                                                        agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Parametro real: " + $3.sval +". Parametro formal: " + TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()) + ".");
+                                                                                                    }
+                                                                                                    representacionPolaca.add(((Token) $1.obj).getLexema()); representacionPolaca.add("jmp");
+
+                                                                                                }
                             |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
                             |   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
                             ;
@@ -353,12 +364,23 @@ private static boolean returnEncontrado = false;
 // Lista de tokens recibidos
 public static final List<Token> tokensRecibidos = new ArrayList<>();
 
+// Lista de identificadores
+public static final List<String> listaIdentificadores = new ArrayList<>();
+
 // Lista de estructuras detectadas
 public static final List<String> estructurasDetectadas = new ArrayList<>();
 
 // Listas de errores
 public static final List<String> erroresLexicos = new ArrayList<>();
 public static final List<String> erroresSintacticos = new ArrayList<>();
+
+// Agregar tipo a la tabla de simbolos para los identificadores que estan en la lista de identificadores
+public static void agregarTipoAIdentificadores(String tipo) {
+    for (String lexema: listaIdentificadores) {
+        System.out.println(lexema + " es tipo " + tipo);
+        TablaSimbolos.cambiarTipo(lexema, tipo);
+    }
+}
 
 // Agregar error a la lista de errores
 public static void agregarEstructuraDetectadas(int numeroLinea, String estructura) {

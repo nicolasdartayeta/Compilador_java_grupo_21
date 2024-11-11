@@ -82,27 +82,87 @@ public class TablaSimbolos {
 
     public static void imprimirTabla() {
         // Encabezado
-        System.out.println("---------------------------------------------");
-        System.out.printf("%-15s %-10s %-10s %-10s\n", "Simbolo", "Es Tipo", "Tipo", "Usos");
-        System.out.println("---------------------------------------------");
+        System.out.println("-----------------");
+        System.out.println("Tabla de simbolos");
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.printf("%-20s %-10s %-15s %-10s %-10s %-10s\n", "Simbolo", "Es Tipo", "Tipo", "Usos", "T. retorno", "T. parametro");
+        System.out.println("-----------------------------------------------------------------------------");
 
         // Iterar sobre la tabla e imprimir cada entrada
         for (Map.Entry<String, CampoTablaSimbolos> entry : tablaSimbolos.entrySet()) {
             String simbolo = entry.getKey();
             CampoTablaSimbolos campos = entry.getValue();
 
-            System.out.printf("%-15s %-10s %-10s %-10d\n",
+            System.out.printf("%-20s %-10s %-15s %-10d %-10s %-10s\n",
                     simbolo,
                     campos.esTipo(),
                     campos.getTipo(),
-                    campos.getUsos()
+                    campos.getUsos(),
+                    campos.getTipoRetorno(),
+                    campos.getTipoParametro()
             );
         }
 
-        System.out.println("---------------------------------------------");
+        System.out.println("-----------------------------------------------------------------------------");
     }
 
-    public void cambiarValor(String lexema){}
+    public static int getCantidadDeParametros(String lexema){
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No existe la funcoin " +  lexema + "en la tabla de simbolos");
+        }
+
+        return campoTablaSimbolos.getCantidadDeParametros();
+    }
+
+    public static void setCantidadDeParametros(String lexema, Integer cantidad){
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No existe la funcoin " +  lexema + "en la tabla de simbolos");
+        }
+        campoTablaSimbolos.setCantidadDeParametros(cantidad);
+    }
+
+    public static String getTipoParametro(String lexema){
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No existe la funcoin " +  lexema + "en la tabla de simbolos");
+        }
+
+        return campoTablaSimbolos.getTipoParametro();
+    }
+
+    public static void setTipoParametro(String lexema, String tipo){
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No existe la funcoin " +  lexema + "en la tabla de simbolos");
+        }
+        campoTablaSimbolos.setTipoParametro(tipo);
+    }
+
+    public static String getTipoRetorno(String lexema){
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No existe la funcoin " +  lexema + "en la tabla de simbolos");
+        }
+
+        return campoTablaSimbolos.getTipoRetorno();
+    }
+
+    public static void setTipoRetorno(String lexema, String tipo){
+        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+
+        if (campoTablaSimbolos == null) {
+            throw new IllegalArgumentException("No existe la funcoin " +  lexema + "en la tabla de simbolos");
+        }
+        campoTablaSimbolos.setTipoRetorno(tipo);
+    }
+
 
     public static boolean existeLexema(String lexema){
         return tablaSimbolos.containsKey(lexema);
