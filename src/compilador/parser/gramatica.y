@@ -6,6 +6,7 @@
     import compilador.lexer.TablaToken;
     import java.util.ArrayList;
     import java.util.List;
+    import java.util.Stack;
 
 %}
 
@@ -99,6 +100,7 @@ funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
                                                                                     agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un return en la funcion");
                                                                                 }
                                                                                 returnEncontrado = false;
+                                                                                ambito.pop();
                                                                              }
                             ;
 
@@ -106,9 +108,12 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         $$.ival = $1.ival;
                                                                                                         String lexema = ((Token) $3.obj).getLexema().toString();
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
+                                                                                                        ambito.push(":" + lexema);
+                                                                                                        TablaSimbolos.setAmbito(representacionPolaca.getLast(),ambito.peek());
                                                                                                         TablaSimbolos.setCantidadDeParametros(lexema, 1);
                                                                                                         TablaSimbolos.setTipoParametro(lexema, $5.sval);
                                                                                                         TablaSimbolos.setTipoRetorno(lexema, $1.sval);
+                                                                                                        eliminarUltimosElementos(representacionPolaca, 1);
                                                                                                     }
                             |   tipo FUN PARENTESIS_L parametro PARENTESIS_R {
                                                                                 $$.ival = $1.ival;
@@ -347,6 +352,9 @@ private static int cantidadIdEnListaId = 0;
 private static Lexer lex;
 private static ArrayList<String> representacionPolaca;
 
+// Pila de ambitos
+public static final Stack<String> ambito = new Stack<>();
+
 // Tipo de mensajes
 public static final String ERROR_LEXICO = "ERROR_LEXICO";
 public static final String ERROR_SINTACTICO = "ERROR_SINTACTICO";
@@ -424,6 +432,7 @@ public static <T> void appendListToList(List<T> lista1, List<T> lista2) {
 }
 
 public static void main(String[] args) {
+    ambito.push(":main");
     representacionPolaca = new ArrayList<String>();
     Lexer lexer = new Lexer(args[0]);
     Parser.lex = lexer;

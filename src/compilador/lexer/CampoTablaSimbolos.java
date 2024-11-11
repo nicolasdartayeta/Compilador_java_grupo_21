@@ -1,6 +1,7 @@
 package compilador.lexer;
 
 public class CampoTablaSimbolos {
+    String ambito;
     boolean esTipo;
     String tipo;
     Integer usos;
@@ -9,6 +10,7 @@ public class CampoTablaSimbolos {
     String tipoParametro;
 
     public CampoTablaSimbolos(boolean esTipo, String tipo) {
+        this.ambito = null;
         this.esTipo = esTipo;
         this.tipo = tipo;
         this.usos = 1;
@@ -16,6 +18,9 @@ public class CampoTablaSimbolos {
         this.tipoParametro = null;
         this.tipoRetorno = null;
     }
+
+    public String getAmbito() {return ambito;}
+    public void setAmbito(String ambito) {this.ambito = ambito;}
 
     public boolean esTipo() {
         return esTipo;
