@@ -1,0 +1,17 @@
+programa_for
+
+begin
+    ulongint x;
+
+    for(x := 10; x > 0; down 1)
+    begin
+        x := x + 1;
+    end;
+    single c;
+    for(x := 10; x > 0; up 1; (x < 100))
+    begin
+        x := x - -1.2s3 / 3;
+    end;
+
+    outf( {Programa terminado} );
+end

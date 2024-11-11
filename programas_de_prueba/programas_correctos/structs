@@ -1,0 +1,15 @@
+structs
+
+begin
+    typedef Struct <ulongint, single> [
+        a,
+        b
+    ] myStruct;
+
+    myStruct c;
+
+    c.a := 9;
+    c.b := 4.2s9 + tos(c.a);
+
+    outf( { Programa terminado } );
+end
