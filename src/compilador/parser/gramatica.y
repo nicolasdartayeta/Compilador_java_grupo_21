@@ -125,7 +125,7 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         String lexema = ((Token) $3.obj).getLexema().toString();
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
                                                                                                         ambito.push(":" + lexema);
-                                                                                                        TablaSimbolos.setAmbito(representacionPolaca.getLast(), this.getAmbitoActual());
+                                                                                                        TablaSimbolos.setAmbito(representacionPolaca.get(representacionPolaca.size()-1), this.getAmbitoActual());
                                                                                                         TablaSimbolos.setCantidadDeParametros(lexema, 1);
                                                                                                         TablaSimbolos.setTipoParametro(lexema, $5.sval);
                                                                                                         TablaSimbolos.setTipoRetorno(lexema, $1.sval);
@@ -168,26 +168,34 @@ sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R  error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             ;
 
-sentencia_seleccion_en_funcion  :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "IF"); }
-                                |   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia");}
-                                |   IF PARENTESIS_L condicion PARENTESIS_R cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la palabra reservada THEN en la sentencia de selección");}
-                                |   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia");}
-                                |   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if_en_funcion PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el END_IF en la sentencia de selección"); }
-                                |   IF PARENTESIS_L condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis derecho en la condición"); }
-                                |   IF condicion PARENTESIS_R THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis izquierdo en la condición"); }
-                                |   IF condicion THEN cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan ambos parentesis en la condición"); }
-                                |   IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo de la sentencia de seleccion"); }
+sentencia_seleccion_en_funcion  :   inicio_seleccion cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); }
+                                |   inicio_seleccion cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia de selección");}
+                                |   inicio_seleccion cuerpo_if_en_funcion END_IF error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
+                                |   inicio_seleccion cuerpo_if_en_funcion PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el END_IF en la sentencia de selección"); }
+                                |   IF PARENTESIS_L condicion cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis derecho en la condición"); }
+                                |   IF condicion PARENTESIS_R cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis izquierdo en la condición"); }
+                                |   IF condicion cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan ambos parentesis en la condición"); }
+                                |   inicio_seleccion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo de la sentencia de seleccion"); }
                                 ;
 
-cuerpo_if_en_funcion        :   bloque_de_sent_ejecutables_en_funcion bloque_else_en_funcion
-		                    |   bloque_de_sent_ejecutables_en_funcion
-		                    ;
+cuerpo_if_en_funcion        :   THEN cuerpo_then_en_funcion cuerpo_else_en_funcion
+                            |   THEN cuerpo_then_en_funcion
+                            |   cuerpo_then_en_funcion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta THEN en el cuerpo de la selección"); }
+                            |   cuerpo_then_en_funcion cuerpo_else_en_funcion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta THEN en el cuerpo de la selección"); }
+                            ;
 
-bloque_else_en_funcion      :   ELSE bloque_de_sent_ejecutables_en_funcion
+cuerpo_then_en_funcion      : bloque_de_sent_ejecutables_en_funcion {$$.ival = $1.ival;
+                                                        representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
+                                                        representacionPolaca.add("");bfs.push(representacionPolaca.size()-1);
+                                                        representacionPolaca.add("BI"); }
+                            ;
+
+cuerpo_else_en_funcion      :   ELSE bloque_de_sent_ejecutables_en_funcion
+                            |   bloque_de_sent_ejecutables_en_funcion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ELSE en el cuerpo de la selección"); }
                             |   ELSE { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo deL ELSE de la sentencia de seleccion"); }
                             ;
 
-bloque_de_sent_ejecutables_en_funcion   :   BEGIN sentencias_ejecutable_en_funcion END PUNTO_Y_COMA
+bloque_de_sent_ejecutables_en_funcion   :   BEGIN sentencias_ejecutable_en_funcion END PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea();}
                                         |   BEGIN sentencias_ejecutable_en_funcion END error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $3.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                                         |   BEGIN sentencias_ejecutable_en_funcion END error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $3.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                                         |   sentencia_ejecutable_en_funcion
@@ -208,22 +216,33 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones { $$.ival = $1.ival; representacionPolaca.add(((Token) $2.obj).getLexema());cantidadIdEnListaId = 0; listaIdentificadores.clear();}
                             ;
 
-sentencia_seleccion         :   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "IF"); }
-                            |   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia de selección");}
-                            |   IF PARENTESIS_L condicion PARENTESIS_R cuerpo_if END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la palabra reservada THEN en la sentencia de selección");}
-                            |   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if END_IF error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
-                            |   IF PARENTESIS_L condicion PARENTESIS_R THEN cuerpo_if PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el END_IF en la sentencia de selección"); }
-                            |   IF PARENTESIS_L condicion THEN cuerpo_if END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis derecho en la condición"); }
-                            |   IF condicion PARENTESIS_R THEN cuerpo_if END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis izquierdo en la condición"); }
-                            |   IF condicion THEN cuerpo_if END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan ambos parentesis en la condición"); }
-                            |   IF PARENTESIS_L condicion PARENTESIS_R THEN END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo de la sentencia de seleccion"); }
+sentencia_seleccion         :   inicio_seleccion cuerpo_if END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); }
+                            |   inicio_seleccion cuerpo_if END_IF error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia de selección");}
+                            |   inicio_seleccion cuerpo_if END_IF error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
+                            |   inicio_seleccion cuerpo_if PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el END_IF en la sentencia de selección"); }
+                            |   IF PARENTESIS_L condicion cuerpo_if END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis derecho en la condición"); }
+                            |   IF condicion PARENTESIS_R cuerpo_if END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis izquierdo en la condición"); }
+                            |   IF condicion cuerpo_if END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan ambos parentesis en la condición"); }
+                            |   inicio_seleccion END_IF PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo de la sentencia de seleccion"); }
                             ;
 
-cuerpo_if                   :   bloque_de_sent_ejecutables bloque_else
-		                    |   bloque_de_sent_ejecutables
+inicio_seleccion            :   IF PARENTESIS_L condicion PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();representacionPolaca.add("");bfs.push(representacionPolaca.size()-1); representacionPolaca.add("BF");}
+                            ;
+
+cuerpo_if                   :   THEN cuerpo_then cuerpo_else
+		                    |   THEN cuerpo_then
+		                    |   cuerpo_then { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta THEN en el cuerpo de la selección"); }
+		                    |   cuerpo_then cuerpo_else { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta THEN en el cuerpo de la selección"); }
 		                    ;
 
-bloque_else                 :   ELSE bloque_de_sent_ejecutables
+cuerpo_then                 : bloque_de_sent_ejecutables {$$.ival = $1.ival;
+                                                            representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
+                                                            representacionPolaca.add("");bfs.push(representacionPolaca.size()-1);
+                                                            representacionPolaca.add("BI"); }
+                            ;
+
+cuerpo_else                 :   ELSE bloque_de_sent_ejecutables
+                            |   bloque_de_sent_ejecutables { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ELSE en el cuerpo de la selección"); }
                             |   ELSE { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo deL ELSE de la sentencia de seleccion"); }
                             ;
 
@@ -239,14 +258,14 @@ comparador                  :   MAYOR { $$.obj = ((Token) $1.obj); }
                             |   DESIGUAL { $$.obj = ((Token) $1.obj); }
                             ;
 
-bloque_de_sent_ejecutables  :   BEGIN sentencias_ejecutables END PUNTO_Y_COMA
+bloque_de_sent_ejecutables  :   BEGIN sentencias_ejecutables END PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea();}
                             |   BEGIN sentencias_ejecutables END error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $3.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             |   BEGIN END PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Faltan sentencias ejecutables en el bloque"); }
 			                |   BEGIN sentencias_ejecutables END error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $3.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 			                |   sentencia_ejecutable
 			                ;
 
-sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable
+sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable { $$.ival = ((Token) $1.obj).getNumeroDeLinea();}
 		                    |   sentencia_ejecutable
 		                    ;
 
@@ -372,6 +391,9 @@ private static ArrayList<String> representacionPolaca;
 // Pila de ambitos
 public static final Stack<String> ambito = new Stack<>();
 
+// Pila para bifurcaciones
+public static final Stack<Integer> bfs = new Stack<>();
+
 // Tipo de mensajes
 public static final String ERROR_LEXICO = "ERROR_LEXICO";
 public static final String ERROR_SINTACTICO = "ERROR_SINTACTICO";
@@ -462,6 +484,18 @@ public static <T> void imprimirLista(List<T> lista) {
     }
 }
 
+public static void imprimirPila(Stack<Integer> pila) {
+    if (pila.isEmpty()) {
+                System.out.println("La pila está vacía.");
+    } else {
+        System.out.println("Contenido de la pila:");
+        // Recorrer la pila e imprimir cada elemento
+        for (Integer elemento : pila) {
+            System.out.println(elemento);
+        }
+    }
+}
+
 public static void imprimirPolaca(List<String> lista) {
     if (!lista.isEmpty()) {
     int i = 0;
@@ -511,6 +545,7 @@ public static void main(String[] args) {
     TablaSimbolos.imprimirTabla();
 
     imprimirPolaca(representacionPolaca);
+    imprimirPila(bfs);
 }
 
 private int yylex() {
