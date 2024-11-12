@@ -1,6 +1,7 @@
 funciones
 
 begin
+    single d;
     /# funcion que calcula 2^p #/
     ulongint fun myFunction (ulongint p)
     begin

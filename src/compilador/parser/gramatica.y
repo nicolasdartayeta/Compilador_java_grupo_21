@@ -41,7 +41,19 @@ sentencia                   :   sentencia_declarativa
                             |   error PUNTO_Y_COMA {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token)$2.obj).getNumeroDeLinea() + ": Syntax Error"); }
                             ;
 
-sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  { Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S"); eliminarUltimosElementos(representacionPolaca, cantidadIdEnListaId); cantidadIdEnListaId = 0; agregarTipoAIdentificadores($1.sval); listaIdentificadores.clear(); }
+sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
+                                                                                Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
+                                                                                eliminarUltimosElementos(representacionPolaca, cantidadIdEnListaId);
+                                                                                cantidadIdEnListaId = 0;
+                                                                                agregarTipoAIdentificadores($1.sval);
+                                                                                agregarAmbitoAIdentificadores(listaIdentificadores);
+                                                                                if (TablaSimbolos.esUnTipo($1.sval) && TablaSimbolos.getTipo($1.sval).equals("STRUCT")) {
+                                                                                    for(String identificador: listaIdentificadores) {
+                                                                                        crearCampo($1.sval, identificador);
+                                                                                    }
+                                                                                };
+                                                                                listaIdentificadores.clear();
+                                                                            }
                             |   tipo lista_de_identificadores error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
 		                    |   tipo lista_de_identificadores error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
 		                    |   funcion { Parser.agregarEstructuraDetectadas($1.ival, "FUNCION"); }
@@ -55,7 +67,11 @@ struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHE
                                                                                                                                                     TablaSimbolos.convertirATipo(lexema, TablaSimbolos.STRUCT);
                                                                                                                                                     eliminarUltimosElementos(representacionPolaca, cantidadIdEnListaId);
                                                                                                                                                     cantidadIdEnListaId = 0;
-                                                                                                                                                     listaIdentificadores.clear();
+                                                                                                                                                    listaIdentificadores.forEach((subcampo)->TablaSimbolos.deleteEntrada(subcampo));
+                                                                                                                                                    agregarAmbitoAIdentificador(lexema);
+                                                                                                                                                    TablaSimbolos.agregarCampos(lexema, listaTipos, listaIdentificadores);
+                                                                                                                                                    listaIdentificadores.clear();
+                                                                                                                                                    listaTipos.clear();
                                                                                                                                                 }
                             |   TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra STRUCT en la declaración del STRUCT"); }
                             |   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' en la declaración del STRUCT"); }
@@ -68,12 +84,12 @@ struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHE
                             ;
 
 tipo                        :   ULONGINT { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema().toUpperCase(); }
-		                    |   SINGLE { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema(); }
+		                    |   SINGLE { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema().toUpperCase(); }
 		                    |   IDENTIFICADOR_TIPO { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema(); }
 		                    ;
 
-lista_de_tipos              :   lista_de_tipos COMA tipo
-		                    |   tipo
+lista_de_tipos              :   lista_de_tipos COMA tipo { listaTipos.add($3.sval); }
+		                    |   tipo { listaTipos.add($1.sval); }
 		                    ;
 
 lista_de_identificadores    :   lista_de_identificadores COMA identificador {cantidadIdEnListaId++; listaIdentificadores.add($3.sval);}
@@ -109,7 +125,7 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         String lexema = ((Token) $3.obj).getLexema().toString();
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
                                                                                                         ambito.push(":" + lexema);
-                                                                                                        TablaSimbolos.setAmbito(representacionPolaca.getLast(),ambito.peek());
+                                                                                                        TablaSimbolos.setAmbito(representacionPolaca.getLast(), this.getAmbitoActual());
                                                                                                         TablaSimbolos.setCantidadDeParametros(lexema, 1);
                                                                                                         TablaSimbolos.setTipoParametro(lexema, $5.sval);
                                                                                                         TablaSimbolos.setTipoRetorno(lexema, $1.sval);
@@ -288,22 +304,23 @@ termino                     :   termino MULTIPLICACION factor { representacionPo
 		                    ;
 
 factor                      :   identificador { $$.sval = TablaSimbolos.getTipo($1.sval); System.out.println("AAAAAAAAAAAAAAAAA TIPO:" + TablaSimbolos.getTipo($1.sval)); }
-                            |   constante { $$.sval = TablaSimbolos.getTipo(((Token) $1.obj).getLexema()); }
+                            |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); }
                             |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "single"; }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
 		                    ;
 
-constante_entera            :   CONSTANTE_DECIMAL { $$.obj = ((Token) $1.obj); representacionPolaca.add(((Token) $1.obj).getLexema());}
-                            |   CONSTANTE_OCTAL { $$.obj = ((Token) $1.obj); representacionPolaca.add(((Token) $1.obj).getLexema());}
+constante_entera            :   CONSTANTE_DECIMAL { $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
+                            |   CONSTANTE_OCTAL { $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
                             ;
 
-constante                   :   constante_entera { $$.obj = ((Token) $1.obj);}
-                            |   RESTA constante_entera { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes enteras negativas."); }
-                            |   CONSTANTE_SINGLE { $$.obj = ((Token) $1.obj); representacionPolaca.add(((Token) $1.obj).getLexema());}
-                            |   TOKERROR { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
+constante                   :   constante_entera { $$.sval = $1.sval;}
+                            |   RESTA constante_entera { $$.sval = ((Token) $1.obj).getLexema() + $2.sval; agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes enteras negativas."); }
+                            |   CONSTANTE_SINGLE { $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
+                            |   TOKERROR { $$.sval = ((Token) $1.obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
                             |   RESTA CONSTANTE_SINGLE {
-                                                            $$.obj = ((Token) $1.obj);
+                                                            System.out.println(((Token) $1.obj).getLexema() + ((Token) $2.obj).getLexema());
+                                                            $$.sval = ((Token) $1.obj).getLexema() + ((Token) $2.obj).getLexema();
                                                             String lexema = ((Token) $2.obj).getLexema();
                                                             int cantidadDeUsos = TablaSimbolos.getCantidadDeUsos(lexema);
 
@@ -340,7 +357,7 @@ invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmet
                                                                                                     if (!TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()).equals($3.sval)) {
                                                                                                         agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Parametro real: " + $3.sval +". Parametro formal: " + TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()) + ".");
                                                                                                     }
-                                                                                                    representacionPolaca.add(((Token) $1.obj).getLexema()); representacionPolaca.add("jmp");
+                                                                                                    representacionPolaca.add(((Token) $1.obj).getLexema()); representacionPolaca.add("BI");
 
                                                                                                 }
                             |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
@@ -375,12 +392,35 @@ public static final List<Token> tokensRecibidos = new ArrayList<>();
 // Lista de identificadores
 public static final List<String> listaIdentificadores = new ArrayList<>();
 
+// Lista de tipos
+public static final List<String> listaTipos = new ArrayList<>();
+
 // Lista de estructuras detectadas
 public static final List<String> estructurasDetectadas = new ArrayList<>();
 
 // Listas de errores
 public static final List<String> erroresLexicos = new ArrayList<>();
 public static final List<String> erroresSintacticos = new ArrayList<>();
+
+public static String getAmbitoActual() {
+    StringBuilder ambitoActual = new StringBuilder();
+    for (String elemento: ambito) {
+        ambitoActual.append(elemento);
+    }
+    return ambitoActual.toString();
+}
+
+public static void agregarAmbitoAIdentificadores(List<String> identificadores) {
+    String ambitoActual = getAmbitoActual();
+
+    for (String lexema: identificadores) {
+        TablaSimbolos.setAmbito(lexema, ambitoActual);
+    }
+}
+public static void agregarAmbitoAIdentificador(String lexema) {
+    String ambitoActual = getAmbitoActual();
+    TablaSimbolos.setAmbito(lexema, ambitoActual);
+}
 
 // Agregar tipo a la tabla de simbolos para los identificadores que estan en la lista de identificadores
 public static void agregarTipoAIdentificadores(String tipo) {
@@ -404,6 +444,16 @@ public static void agregarError(List<String> listaErrores, String tipo, String e
     }
 
     listaErrores.add(String.format("%-20s", tipo) + "| "+ error);
+}
+
+// Agregar los campos de una variable struct a la tabla de simbolos
+public static void crearCampo(String tipo, String lexema){
+    List<CampoTablaSimbolos.Campo> campos = TablaSimbolos.getCamposTablaSimbolos(tipo);
+    for (CampoTablaSimbolos.Campo campo: campos){
+        String nombreCampo = lexema + "." + campo.nombre();
+        CampoTablaSimbolos nuevoCampo = new CampoTablaSimbolos(false, campo.tipo());
+        TablaSimbolos.agregarLexema(nombreCampo, nuevoCampo);
+    }
 }
 
 public static <T> void imprimirLista(List<T> lista) {

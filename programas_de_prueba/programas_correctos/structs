@@ -7,9 +7,11 @@ begin
     ] myStruct;
 
     myStruct c;
+    typedef Struct <myStruct, single> [
+        d,
+        e
+    ] myStructB;
+    myStructB d;
 
-    c.a := 9;
-    c.b := 4.2s9 + tos(c.a);
-
-    outf( { Programa terminado } );
+    outf( {Programa terminado} );
 end

@@ -1,6 +1,14 @@
 package compilador.lexer;
 
+import java.util.ArrayList;
+
 public class CampoTablaSimbolos {
+    public record Campo(String tipo, String nombre){
+        public Campo(String tipo, String nombre){
+            this.tipo = tipo;
+            this.nombre = nombre;
+        }
+    }
     String ambito;
     boolean esTipo;
     String tipo;
@@ -8,6 +16,7 @@ public class CampoTablaSimbolos {
     Integer cantidadDeParametros;
     String tipoRetorno;
     String tipoParametro;
+    public ArrayList<Campo> campos;
 
     public CampoTablaSimbolos(boolean esTipo, String tipo) {
         this.ambito = null;
@@ -17,6 +26,7 @@ public class CampoTablaSimbolos {
         this.cantidadDeParametros = null;
         this.tipoParametro = null;
         this.tipoRetorno = null;
+        this.campos = null;
     }
 
     public String getAmbito() {return ambito;}
@@ -76,5 +86,16 @@ public class CampoTablaSimbolos {
 
     public void setTipoRetorno(String tipoRetorno) {
         this.tipoRetorno = tipoRetorno;
+    }
+
+    public void agregarCampo(String tipo, String nombre) {
+        if (campos == null) {
+            campos = new ArrayList<>();
+        }
+        campos.add(new Campo(tipo, nombre));
+    }
+
+    public ArrayList<Campo> getCampos() {
+        return campos;
     }
 }

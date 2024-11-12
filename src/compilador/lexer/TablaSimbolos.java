@@ -3,6 +3,7 @@ package compilador.lexer;
 import compilador.parser.Parser;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TablaSimbolos {
@@ -85,7 +86,7 @@ public class TablaSimbolos {
         System.out.println("-----------------");
         System.out.println("Tabla de simbolos");
         System.out.println("-----------------------------------------------------------------------------");
-        System.out.printf("%-20s %-10s %-10s %-15s %-10s %-10s %-10s\n", "Simbolo", "Ambito", "Es Tipo", "Tipo", "Usos", "T. retorno", "T. parametro");
+        System.out.printf("%-20s %-30s %-10s %-15s %-7s %-15s %-15s %-40s\n", "Simbolo", "Ambito", "Es Tipo", "Tipo", "Usos", "T. retorno", "T. parametro", "Campos");
         System.out.println("-----------------------------------------------------------------------------");
 
         // Iterar sobre la tabla e imprimir cada entrada
@@ -93,74 +94,61 @@ public class TablaSimbolos {
             String simbolo = entry.getKey();
             CampoTablaSimbolos campos = entry.getValue();
 
-            System.out.printf("%-20s %-10s %-10s %-15s %-10d %-10s %-10s\n",
+            System.out.printf("%-20s %-30s %-10s %-15s %-7d %-15s %-15s %-40s\n",
                     simbolo,
                     campos.getAmbito(),
                     campos.esTipo(),
                     campos.getTipo(),
                     campos.getUsos(),
                     campos.getTipoRetorno(),
-                    campos.getTipoParametro()
+                    campos.getTipoParametro(),
+                    campos.getCampos()
             );
         }
 
         System.out.println("-----------------------------------------------------------------------------");
     }
 
-    public static int getCantidadDeParametros(String lexema){
+    private static CampoTablaSimbolos getCampoTablaSimbolos(String lexema) {
         CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
 
         if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No existe la funcion " +  lexema + "en la tabla de simbolos");
+            throw new IllegalArgumentException("No existe la entrada " +  lexema + " en la tabla de simbolos");
         }
+
+        return campoTablaSimbolos;
+    }
+
+    public static int getCantidadDeParametros(String lexema){
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         return campoTablaSimbolos.getCantidadDeParametros();
     }
 
     public static void setCantidadDeParametros(String lexema, Integer cantidad){
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No existe la funcion " +  lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
         campoTablaSimbolos.setCantidadDeParametros(cantidad);
     }
 
     public static String getTipoParametro(String lexema){
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No existe la funcion " +  lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         return campoTablaSimbolos.getTipoParametro();
     }
 
     public static void setTipoParametro(String lexema, String tipo){
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No existe la funcion " +  lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
         campoTablaSimbolos.setTipoParametro(tipo);
     }
 
     public static String getTipoRetorno(String lexema){
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No existe la funcion " +  lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         return campoTablaSimbolos.getTipoRetorno();
     }
 
     public static void setTipoRetorno(String lexema, String tipo){
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No existe la funcion " +  lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
         campoTablaSimbolos.setTipoRetorno(tipo);
     }
 
@@ -170,31 +158,19 @@ public class TablaSimbolos {
     };
 
     public static int getCantidadDeUsos(String lexema) {
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No se puede aumentar el lexema " + lexema);
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         return campoTablaSimbolos.getUsos();
     }
 
     public static void aumentarUso(String lexema) {
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No se puede aumentar el lexema " + lexema);
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         campoTablaSimbolos.aumentarUso();
     }
 
     public static void decrementarUso(String lexema) {
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No se puede aumentar el lexema " + lexema);
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         campoTablaSimbolos.decrementarUso();
     }
@@ -220,50 +196,56 @@ public class TablaSimbolos {
     }
 
     public static String getTipo(String lexema) {
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
-        if (campoTablaSimbolos != null) {
-            return campoTablaSimbolos.getTipo();
-        }
-
-        throw new IllegalArgumentException("No existe el lexema " + lexema);
+        return campoTablaSimbolos.getTipo();
     }
 
     public static void convertirATipo(String lexema, String tipo) {
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-        if (campoTablaSimbolos != null) {
-            campoTablaSimbolos.setTipo(tipo);
-            campoTablaSimbolos.setEsTipo(true);
-        } else {
-        throw new IllegalArgumentException("No se encuentra el lexema " + lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+        campoTablaSimbolos.setTipo(tipo);
+        campoTablaSimbolos.setEsTipo(true);
     }
 
     public static void cambiarTipo(String lexema, String tipo) {
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-        if (campoTablaSimbolos != null) {
-            campoTablaSimbolos.setTipo(tipo);
-        } else {
-            throw new IllegalArgumentException("No se encuentra el lexema " + lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+        campoTablaSimbolos.setTipo(tipo);
     }
 
     public static String getAmbito(String lexema) {
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No existe la variable " +  lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         return campoTablaSimbolos.getAmbito();
     }
     public static void setAmbito(String lexema, String ambito) {
-        CampoTablaSimbolos campoTablaSimbolos = tablaSimbolos.get(lexema);
-
-        if (campoTablaSimbolos == null) {
-            throw new IllegalArgumentException("No existe la variable " +  lexema + "en la tabla de simbolos");
-        }
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         campoTablaSimbolos.setAmbito(ambito);
+    }
+
+    public static void deleteEntrada(String lexema) {
+        tablaSimbolos.remove(lexema);
+    }
+
+    public static void addCampo(String lexema, String tipo, String nombre) {
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+        campoTablaSimbolos.agregarCampo(tipo, nombre);
+    }
+
+    public static void agregarCampos(String lexema, List<String> tipo, List<String> nombre) {
+        if (tipo.size() != nombre.size()) {
+            throw new IllegalArgumentException("No se pasaron la misma cantidad de tipos que de nombres");
+        }
+
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+
+        for (int i = 0; i < tipo.size(); i++) {
+            campoTablaSimbolos.agregarCampo(tipo.get(i), nombre.get(i));
+        }
+    }
+
+    public static List<CampoTablaSimbolos.Campo> getCamposTablaSimbolos(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+        return campoTablaSimbolos.getCampos();
     }
 }
