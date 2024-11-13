@@ -2,13 +2,16 @@ programa_for
 
 begin
     ulongint x;
-
-    for(x := 10; x > 0; down 1)
+    ulongint j;
+    for(x := 10; x >= 0; down 1)
     begin
-        x := x + 1;
+        for (j:=5; j > 0; down 2)
+        begin
+            x := x + 1;
+        end;
     end;
     single c;
-    for(x := 10; x > 0; up 1; (x < 100))
+    for(x := 10; x > 0; up 2; (x < 100))
     begin
         x := x - -1.2s3 / 3;
     end;

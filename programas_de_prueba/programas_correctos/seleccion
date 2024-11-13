@@ -1,0 +1,21 @@
+programa_if
+
+begin
+ulongint a;
+if (x <5) then
+   a := a+1;
+else
+    a:=a-1;
+end_if;
+
+single z;
+
+if (a=1) then
+    if (x != 10) then
+        z:= z+3.14;
+    else
+        a := 20;
+    end_if;
+end_if;
+
+end

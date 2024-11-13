@@ -117,10 +117,13 @@ funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
                                                                                 }
                                                                                 returnEncontrado = false;
                                                                                 ambito.pop();
+                                                                                representacionPolaca.add("Fin " + aux.pop());
                                                                              }
                             ;
 
 encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R {
+                                                                                                        representacionPolaca.add(representacionPolaca.size()-1,"Comienzo " + ((Token) $3.obj).getLexema().toString());
+                                                                                                        aux.push(((Token) $3.obj).getLexema().toString());
                                                                                                         $$.ival = $1.ival;
                                                                                                         String lexema = ((Token) $3.obj).getLexema().toString();
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
@@ -280,8 +283,8 @@ sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUN
 		                    ;
 
 sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Parser.agregarEstructuraDetectadas($1.ival, "FOR");
-                                                                            representacionPolaca.add(action.pop());
-                                                                            representacionPolaca.add(action.pop());
+                                                                            representacionPolaca.add(aux.pop());
+                                                                            representacionPolaca.add(aux.pop());
                                                                             representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
                                                                             representacionPolaca.add(String.valueOf(bfs.pop()));
                                                                             representacionPolaca.add("BI");}
@@ -317,8 +320,8 @@ inicio_for                  : FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea()
 asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema()); }
                             ;
 
-accion                      :   UP constante_entera { action.push("UP"); action.push(((Token) $2.obj).getLexema()); }
-                            |   DOWN constante_entera { action.push("DOWN"); action.push(((Token) $2.obj).getLexema()); }
+accion                      :   UP constante_entera { aux.push("UP"); aux.push(((Token) $2.obj).getLexema()); }
+                            |   DOWN constante_entera { aux.push("DOWN"); aux.push(((Token) $2.obj).getLexema()); }
                             |   constante_entera { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra reservada en la acción del encabezado FOR"); }
                             ;
 
@@ -410,7 +413,7 @@ public static final Stack<String> ambito = new Stack<>();
 public static final Stack<Integer> bfs = new Stack<>();
 
 // Pila para almacenar acción del for
-public static final Stack<String> action = new Stack<>();
+public static final Stack<String> aux = new Stack<>();
 
 // Tipo de mensajes
 public static final String ERROR_LEXICO = "ERROR_LEXICO";
