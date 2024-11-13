@@ -279,12 +279,23 @@ sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUN
 		                    |   OUTF PARENTESIS_L error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Parametros incorrectos en la sentencia de salida"); }
 		                    ;
 
-sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Parser.agregarEstructuraDetectadas($1.ival, "FOR"); }
+sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Parser.agregarEstructuraDetectadas($1.ival, "FOR");
+                                                                            representacionPolaca.add(action.pop());
+                                                                            representacionPolaca.add(action.pop());
+                                                                            representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
+                                                                            representacionPolaca.add(String.valueOf(bfs.pop()));
+                                                                            representacionPolaca.add("BI");}
                             |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                             ;
 
-encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R { $$.ival = $1.ival; }
-                            |   encabezado_for_obligatorio PARENTESIS_R {$$.ival = $1.ival;}
+encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R { $$.ival = $1.ival;
+                                                                                                                           representacionPolaca.add("");
+                                                                                                                           bfs.push(representacionPolaca.size()-1);
+                                                                                                                           representacionPolaca.add("BF");}
+                            |   encabezado_for_obligatorio PARENTESIS_R {$$.ival = $1.ival;
+                                                                        representacionPolaca.add("");
+                                                                        bfs.push(representacionPolaca.size()-1);
+                                                                        representacionPolaca.add("BF");}
                             |   encabezado_for_obligatorio { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
                             |   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
                             |   encabezado_for_obligatorio PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un ';' en el encabezado del FOR"); }
@@ -292,18 +303,22 @@ encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTES
                             |   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ambos parentesis izquierdos del encabezado del FOR"); }
                             ;
 
-encabezado_for_obligatorio  :   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); }
-                            |   FOR asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el parentesis derecho en el encabezado del FOR"); }
-                            |   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la acción en el encabezado del FOR"); }
-                            |   FOR PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta un ';' en el encabezado del FOR"); }
-                            |   FOR PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta un ';' en el encabezado del FOR"); }
+encabezado_for_obligatorio  :   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { $$.ival = $1.ival ;
+                                                                                                                        representacionPolaca.remove(representacionPolaca.size()-1);} /* Se borra el ultimo elemento ya que se registra en la polaca la constante de la accion aunque se vaya a insertar luego  */
+                            |   inicio_for asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
+                            |   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta la acción en el encabezado del FOR"); }
+                            |   inicio_for PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un ';' en el encabezado del FOR"); }
+                            |   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un ';' en el encabezado del FOR"); }
+                            ;
+
+inicio_for                  : FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea(); bfs.push(representacionPolaca.size());}
                             ;
 
 asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema()); }
                             ;
 
-accion                      :   UP constante_entera { representacionPolaca.add(((Token) $1.obj).getLexema()); }
-                            |   DOWN constante_entera { representacionPolaca.add(((Token) $1.obj).getLexema()); }
+accion                      :   UP constante_entera { action.push("UP"); action.push(((Token) $2.obj).getLexema()); }
+                            |   DOWN constante_entera { action.push("DOWN"); action.push(((Token) $2.obj).getLexema()); }
                             |   constante_entera { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra reservada en la acción del encabezado FOR"); }
                             ;
 
@@ -393,6 +408,9 @@ public static final Stack<String> ambito = new Stack<>();
 
 // Pila para bifurcaciones
 public static final Stack<Integer> bfs = new Stack<>();
+
+// Pila para almacenar acción del for
+public static final Stack<String> action = new Stack<>();
 
 // Tipo de mensajes
 public static final String ERROR_LEXICO = "ERROR_LEXICO";
@@ -515,6 +533,7 @@ public static <T> void eliminarUltimosElementos(List<T> lista, int cantidadEleme
 public static <T> void appendListToList(List<T> lista1, List<T> lista2) {
 }
 
+
 public static void main(String[] args) {
     ambito.push(":main");
     representacionPolaca = new ArrayList<String>();
@@ -545,7 +564,6 @@ public static void main(String[] args) {
     TablaSimbolos.imprimirTabla();
 
     imprimirPolaca(representacionPolaca);
-    imprimirPila(bfs);
 }
 
 private int yylex() {
