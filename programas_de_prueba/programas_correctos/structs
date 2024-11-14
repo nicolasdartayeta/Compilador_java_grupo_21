@@ -7,11 +7,13 @@ begin
     ] myStruct;
 
     myStruct c;
+
     typedef Struct <myStruct, single> [
         d,
         e
     ] myStructB;
-    myStructB d;
+
+    myStructB d; 
 
     outf( {Programa terminado} );
 end

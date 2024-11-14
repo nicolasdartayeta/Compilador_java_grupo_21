@@ -17,7 +17,7 @@
 
 %%
 
-programa                    :   identificador_simple BEGIN sentencias END { Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "PROGRAMA"); }
+programa                    :   identificador_simple BEGIN sentencias END { Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "PROGRAMA"); agregarUsoAIdentificador(((Token) $1.obj).getLexema(), "nombre de programa");}
                             |   identificador_simple BEGIN sentencias END error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del END no forma parte del programa."); }
 			                |   identificador_simple error BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $4.obj).getNumeroDeLinea() + ": Todo lo que esta despues del identificador del programa y antes del primer begin no forma parte del programa."); }
                             |   BEGIN sentencias END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea 1: Falta identificador de programa"); }
@@ -43,10 +43,11 @@ sentencia                   :   sentencia_declarativa
 
 sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                 Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
-                                                                                eliminarUltimosElementos(representacionPolaca, cantidadIdEnListaId);
-                                                                                cantidadIdEnListaId = 0;
+                                                                                eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
                                                                                 agregarTipoAIdentificadores($1.sval);
                                                                                 agregarAmbitoAIdentificadores(listaIdentificadores);
+                                                                                agregarUsoAIdentificadores(listaIdentificadores, "nombre de variable");
+                                                                                listaIdentificadores.forEach((lexema)->TablaSimbolos.cambiarLexema(lexema, lexema + getAmbitoActual()));
                                                                                 if (TablaSimbolos.esUnTipo($1.sval) && TablaSimbolos.getTipo($1.sval).equals("STRUCT")) {
                                                                                     for(String identificador: listaIdentificadores) {
                                                                                         crearCampo($1.sval, identificador);
@@ -65,13 +66,14 @@ struct                      :   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHE
                                                                                                                                                     Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "STRUCT");
                                                                                                                                                     String lexema = ((Token) $9.obj).getLexema().toString();
                                                                                                                                                     TablaSimbolos.convertirATipo(lexema, TablaSimbolos.STRUCT);
-                                                                                                                                                    eliminarUltimosElementos(representacionPolaca, cantidadIdEnListaId);
-                                                                                                                                                    cantidadIdEnListaId = 0;
+                                                                                                                                                    eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
+                                                                                                                                                    agregarUsoAIdentificador(lexema, "nombre de struct");
                                                                                                                                                     listaIdentificadores.forEach((subcampo)->TablaSimbolos.deleteEntrada(subcampo));
                                                                                                                                                     agregarAmbitoAIdentificador(lexema);
                                                                                                                                                     TablaSimbolos.agregarCampos(lexema, listaTipos, listaIdentificadores);
                                                                                                                                                     listaIdentificadores.clear();
                                                                                                                                                     listaTipos.clear();
+                                                                                                                                                    //TablaSimbolos.cambiarLexema(lexema, lexema + getAmbitoActual());
                                                                                                                                                 }
                             |   TYPEDEF MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra STRUCT en la declaración del STRUCT"); }
                             |   TYPEDEF STRUCT MENOR lista_de_tipos MAYOR CORCHETE_L lista_de_identificadores CORCHETE_R IDENTIFICADOR_GENERICO error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' en la declaración del STRUCT"); }
@@ -92,9 +94,9 @@ lista_de_tipos              :   lista_de_tipos COMA tipo { listaTipos.add($3.sva
 		                    |   tipo { listaTipos.add($1.sval); }
 		                    ;
 
-lista_de_identificadores    :   lista_de_identificadores COMA identificador {cantidadIdEnListaId++; listaIdentificadores.add($3.sval);}
+lista_de_identificadores    :   lista_de_identificadores COMA identificador { listaIdentificadores.add($3.sval);}
                             |   lista_de_identificadores identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ',' entre las identificadores"); }
-		                    |   identificador { $$.ival = $1.ival; cantidadIdEnListaId++; listaIdentificadores.add($1.sval);}
+		                    |   identificador { $$.ival = $1.ival; listaIdentificadores.add($1.sval);}
 		                    ;
 
 identificador               :   identificador_simple { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
@@ -127,8 +129,11 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         $$.ival = $1.ival;
                                                                                                         String lexema = ((Token) $3.obj).getLexema().toString();
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
+                                                                                                        agregarAmbitoAIdentificador(lexema);
+                                                                                                        agregarUsoAIdentificador(lexema, "nombre de funcion");
                                                                                                         ambito.push(":" + lexema);
-                                                                                                        TablaSimbolos.setAmbito(representacionPolaca.get(representacionPolaca.size()-1), this.getAmbitoActual());
+                                                                                                        agregarAmbitoAIdentificador(representacionPolaca.get(representacionPolaca.size()-1));
+                                                                                                        TablaSimbolos.cambiarLexema(representacionPolaca.get(representacionPolaca.size()-1), representacionPolaca.get(representacionPolaca.size()-1) + getAmbitoActual());
                                                                                                         TablaSimbolos.setCantidadDeParametros(lexema, 1);
                                                                                                         TablaSimbolos.setTipoParametro(lexema, $5.sval);
                                                                                                         TablaSimbolos.setTipoRetorno(lexema, $1.sval);
@@ -140,7 +145,7 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                              }
                             ;
 
-parametro                   :   tipo identificador { $$.sval = $1.sval; TablaSimbolos.cambiarTipo($2.sval, $1.sval); }
+parametro                   :   tipo identificador { $$.sval = $1.sval; TablaSimbolos.cambiarTipo($2.sval, $1.sval); agregarUsoAIdentificador($2.sval, "nombre de parametro"); }
                             |   identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el tipo del parametro de la funcion"); }
                             |   tipo { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador del parametro de la funcion"); }
                             |   tipo identificador error {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": La funcion no puede tener mas de un parametro");}
@@ -216,7 +221,11 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 		                    |   sentencia_control
 		                    ;
 
-sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones { $$.ival = $1.ival; representacionPolaca.add(((Token) $2.obj).getLexema());cantidadIdEnListaId = 0; listaIdentificadores.clear();}
+sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones {
+                                                                                            $$.ival = $1.ival;
+                                                                                            representacionPolaca.add(((Token) $2.obj).getLexema());
+                                                                                            listaIdentificadores.clear();
+                                                                                         }
                             ;
 
 sentencia_seleccion         :   inicio_seleccion cuerpo_if END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); }
@@ -341,7 +350,7 @@ termino                     :   termino MULTIPLICACION factor { representacionPo
 		                    ;
 
 factor                      :   identificador { $$.sval = TablaSimbolos.getTipo($1.sval); System.out.println("AAAAAAAAAAAAAAAAA TIPO:" + TablaSimbolos.getTipo($1.sval)); }
-                            |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); }
+                            |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
                             |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "single"; }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
@@ -435,6 +444,9 @@ public static final List<Token> tokensRecibidos = new ArrayList<>();
 // Lista de identificadores
 public static final List<String> listaIdentificadores = new ArrayList<>();
 
+// Lista de expresiones
+public static final List<List<String>> listaExpresiones = new ArrayList<>();
+
 // Lista de tipos
 public static final List<String> listaTipos = new ArrayList<>();
 
@@ -465,6 +477,16 @@ public static void agregarAmbitoAIdentificador(String lexema) {
     TablaSimbolos.setAmbito(lexema, ambitoActual);
 }
 
+public static void agregarUsoAIdentificador(String identificador, String uso) {
+    TablaSimbolos.setUso(identificador, uso);
+}
+
+public static void agregarUsoAIdentificadores(List<String> identificadores, String uso) {
+    for (String lexema: identificadores) {
+        TablaSimbolos.setUso(lexema, uso);
+    }
+}
+
 // Agregar tipo a la tabla de simbolos para los identificadores que estan en la lista de identificadores
 public static void agregarTipoAIdentificadores(String tipo) {
     for (String lexema: listaIdentificadores) {
@@ -493,9 +515,10 @@ public static void agregarError(List<String> listaErrores, String tipo, String e
 public static void crearCampo(String tipo, String lexema){
     List<CampoTablaSimbolos.Campo> campos = TablaSimbolos.getCamposTablaSimbolos(tipo);
     for (CampoTablaSimbolos.Campo campo: campos){
-        String nombreCampo = lexema + "." + campo.nombre();
+        String nombreCampo = lexema + "." + campo.nombre() + getAmbitoActual();
         CampoTablaSimbolos nuevoCampo = new CampoTablaSimbolos(false, campo.tipo());
         TablaSimbolos.agregarLexema(nombreCampo, nuevoCampo);
+        agregarAmbitoAIdentificador(nombreCampo);
     }
 }
 

@@ -17,6 +17,7 @@ public class CampoTablaSimbolos {
     String tipoRetorno;
     String tipoParametro;
     public ArrayList<Campo> campos;
+    String uso;
 
     public CampoTablaSimbolos(boolean esTipo, String tipo) {
         this.ambito = null;
@@ -27,9 +28,11 @@ public class CampoTablaSimbolos {
         this.tipoParametro = null;
         this.tipoRetorno = null;
         this.campos = null;
+        this.uso = null;
     }
 
     public String getAmbito() {return ambito;}
+
     public void setAmbito(String ambito) {this.ambito = ambito;}
 
     public boolean esTipo() {
@@ -97,5 +100,13 @@ public class CampoTablaSimbolos {
 
     public ArrayList<Campo> getCampos() {
         return campos;
+    }
+
+    public String getUso() {
+        return uso;
+    }
+
+    public void setUso(String uso) {
+        this.uso = uso;
     }
 }

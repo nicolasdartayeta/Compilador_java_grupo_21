@@ -2,6 +2,8 @@ funciones
 
 begin
     single d;
+    /# Dberia tirar error por variable sin declarar #/
+    e:=2;
     /# funcion que calcula 2^p #/
     ulongint fun myFunction (ulongint p)
     begin
@@ -15,7 +17,7 @@ begin
         end_if;
     end
 
-    u := myFunction(5);
+    x := myFunction(5);
 
-    outf( { Programa terminado } );
+    outf( {Programa terminado } );
 end

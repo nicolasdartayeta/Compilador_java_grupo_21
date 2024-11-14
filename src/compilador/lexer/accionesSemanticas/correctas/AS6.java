@@ -27,7 +27,7 @@ public class AS6 implements AccionSemantica {
 
         if (lexemaAux.charAt(0) == 's'){
             tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR_SINGLE);
-        } else if (lexemaAux.charAt(0) == 'u' || lexemaAux.charAt(0) == 'v' || lexemaAux.charAt(0) == 'w') {
+        } else if (lexemaAux.charAt(0) == 'x' || lexemaAux.charAt(0) == 'y' || lexemaAux.charAt(0) == 'z') {
             tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR_ULONGINT);
         } else if (TablaSimbolos.esUnTipo(lexemaAux)) {
             tokenId = TablaToken.getTokenID(TablaToken.IDENTIFICADOR_TIPO);

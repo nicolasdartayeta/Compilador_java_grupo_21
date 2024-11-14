@@ -73,6 +73,14 @@ public class TablaSimbolos {
         return tabla;
     }
 
+    public static void cambiarLexema(String lexemaViejo, String lexemaNuevo) {
+        CampoTablaSimbolos campo = tablaSimbolos.get(lexemaViejo);
+        if (campo != null) {
+            tablaSimbolos.remove(lexemaViejo);
+            tablaSimbolos.put(lexemaNuevo, campo);
+        }
+    }
+
     public static void agregarLexema(String lexema, CampoTablaSimbolos campoTablaSimbolos){
         tablaSimbolos.put(lexema, campoTablaSimbolos);
     };
@@ -86,7 +94,7 @@ public class TablaSimbolos {
         System.out.println("-----------------");
         System.out.println("Tabla de simbolos");
         System.out.println("-----------------------------------------------------------------------------");
-        System.out.printf("%-20s %-30s %-10s %-15s %-7s %-15s %-15s %-40s\n", "Simbolo", "Ambito", "Es Tipo", "Tipo", "Usos", "T. retorno", "T. parametro", "Campos");
+        System.out.printf("%-20s %-25s %-20s %-10s %-15s %-7s %-15s %-15s %-40s\n", "Simbolo", "Ambito", "Uso", "Es Tipo", "Tipo", "Usos", "T. retorno", "T. parametro", "Campos");
         System.out.println("-----------------------------------------------------------------------------");
 
         // Iterar sobre la tabla e imprimir cada entrada
@@ -94,9 +102,10 @@ public class TablaSimbolos {
             String simbolo = entry.getKey();
             CampoTablaSimbolos campos = entry.getValue();
 
-            System.out.printf("%-20s %-30s %-10s %-15s %-7d %-15s %-15s %-40s\n",
+            System.out.printf("%-20s %-25s %-20s %-10s %-15s %-7d %-15s %-15s %-40s\n",
                     simbolo,
                     campos.getAmbito(),
+                    campos.getUso(),
                     campos.esTipo(),
                     campos.getTipo(),
                     campos.getUsos(),
@@ -247,5 +256,16 @@ public class TablaSimbolos {
     public static List<CampoTablaSimbolos.Campo> getCamposTablaSimbolos(String lexema) {
         CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
         return campoTablaSimbolos.getCampos();
+    }
+
+    public static String getUso(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+
+        return campoTablaSimbolos.getUso();
+    }
+    public static void setUso(String lexema, String uso) {
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+
+        campoTablaSimbolos.setUso(uso);
     }
 }
