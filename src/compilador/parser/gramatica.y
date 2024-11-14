@@ -236,6 +236,7 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones {
                                                                                             $$.ival = $1.ival;
                                                                                             eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
+                                                                                            System.out.println("jeje " + listaExpresiones);
                                                                                             List<List<String>> expresiones = formatearLista(listaExpresiones);
                                                                                             System.out.println("jeje " + expresiones);
 
@@ -361,7 +362,7 @@ accion                      :   UP constante_entera { listaExpresiones.forEach((
                             ;
 
 lista_de_expresiones        :   lista_de_expresiones COMA expresion_aritmetica { listaExpresiones.add(((Token) $2.obj).getLexema()); }
-		                    |   expresion_aritmetica
+		                    |   expresion_aritmetica { listaExpresiones.add(","); }
 		                    ;
 
 expresion_aritmetica        :   expresion_aritmetica SUMA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
