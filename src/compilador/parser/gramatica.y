@@ -120,11 +120,16 @@ funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
                                                                                 returnEncontrado = false;
                                                                                 ambito.pop();
                                                                                 representacionPolaca.add("Fin " + aux.pop());
+                                                                                representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()));
                                                                              }
                             ;
 
 encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R {
-                                                                                                        representacionPolaca.add(representacionPolaca.size()-1,"Comienzo " + ((Token) $3.obj).getLexema().toString());
+                                                                                                        eliminarUltimosElementos(representacionPolaca, 1);
+                                                                                                        representacionPolaca.add("");
+                                                                                                        bfs.push(representacionPolaca.size()-1);
+                                                                                                        representacionPolaca.add("BI");
+                                                                                                        representacionPolaca.add(((Token) $3.obj).getLexema().toString());
                                                                                                         aux.push(((Token) $3.obj).getLexema().toString());
                                                                                                         $$.ival = $1.ival;
                                                                                                         String lexema = ((Token) $3.obj).getLexema().toString();
@@ -137,7 +142,6 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         TablaSimbolos.setCantidadDeParametros(lexema, 1);
                                                                                                         TablaSimbolos.setTipoParametro(lexema, $5.sval);
                                                                                                         TablaSimbolos.setTipoRetorno(lexema, $1.sval);
-                                                                                                        eliminarUltimosElementos(representacionPolaca, 1);
                                                                                                     }
                             |   tipo FUN PARENTESIS_L parametro PARENTESIS_R {
                                                                                 $$.ival = $1.ival;
@@ -167,7 +171,13 @@ sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { 
                                         |   sentencia_retorno { Parser.agregarEstructuraDetectadas($1.ival, "RET"); returnEncontrado = true; }
                                         ;
 
-sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion { $$.ival = $1.ival; }
+sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion { $$.ival = $1.ival;
+                                                                                                  Parser.agregarEstructuraDetectadas($1.ival, "FOR");
+                                                                                                  representacionPolaca.add(aux.pop());
+                                                                                                  representacionPolaca.add(aux.pop());
+                                                                                                  representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
+                                                                                                  representacionPolaca.add(String.valueOf(bfs.pop()));
+                                                                                                  representacionPolaca.add("BI");}
                                        |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                                        ;
 
