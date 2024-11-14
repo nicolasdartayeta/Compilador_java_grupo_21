@@ -5,6 +5,7 @@
     import compilador.lexer.CampoTablaSimbolos;
     import compilador.lexer.TablaToken;
     import java.util.ArrayList;
+    import java.util.Arrays;
     import java.util.List;
     import java.util.Stack;
 
@@ -99,8 +100,25 @@ lista_de_identificadores    :   lista_de_identificadores COMA identificador { li
 		                    |   identificador { $$.ival = $1.ival; listaIdentificadores.add($1.sval);}
 		                    ;
 
-identificador               :   identificador_simple { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
-                            |   identificador_compuesto { $$.ival = $1.ival; $$.sval = $1.sval; System.out.println("ID COMPUESTO: " + $1.sval); representacionPolaca.add($1.sval);}
+identificador               :   identificador_simple { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema();
+                                                       representacionPolaca.add(((Token) $1.obj).getLexema());
+                                                       String idActual = ((Token) $1.obj).getLexema();
+                                                       String idActualConAmbito = idActual + getAmbitoActual();
+                                                       if (TablaSimbolos.existeLexema(idActualConAmbito)){
+                                                           TablaSimbolos.aumentarUso(idActualConAmbito);
+                                                           TablaSimbolos.deleteEntrada(idActual);
+                                                       };}
+                            |   identificador_compuesto { $$.ival = $1.ival; $$.sval = $1.sval; System.out.println("ID COMPUESTO: " + $1.sval); representacionPolaca.add($1.sval);
+                                                         String idActual = $1.sval;
+                                                         ArrayList<String> idSimples = new ArrayList<>(Arrays.asList(idActual.split("\\.")));
+                                                         for (String idSimple : idSimples) {
+                                                            if (TablaSimbolos.existeLexema(idSimple)){
+                                                                TablaSimbolos.deleteEntrada(idSimple);
+                                                            };}
+                                                         String idActualConAmbito = idActual + getAmbitoActual();
+                                                         if (TablaSimbolos.existeLexema(idActualConAmbito)){
+                                                             TablaSimbolos.aumentarUso(idActualConAmbito);
+                                                         };}
                             ;
 
 identificador_simple        :   IDENTIFICADOR_GENERICO { $$.obj = ((Token) $1.obj); }
