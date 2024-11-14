@@ -125,6 +125,7 @@ funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
                             ;
 
 encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R {
+                                                                                                        String lexemaParametro = representacionPolaca.get(representacionPolaca.size()-1);
                                                                                                         eliminarUltimosElementos(representacionPolaca, 1);
                                                                                                         representacionPolaca.add("");
                                                                                                         bfs.push(representacionPolaca.size()-1);
@@ -136,9 +137,10 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
                                                                                                         agregarAmbitoAIdentificador(lexema);
                                                                                                         agregarUsoAIdentificador(lexema, "nombre de funcion");
-                                                                                                        ambito.push(":" + lexema);
                                                                                                         agregarAmbitoAIdentificador(representacionPolaca.get(representacionPolaca.size()-1));
-                                                                                                        TablaSimbolos.cambiarLexema(representacionPolaca.get(representacionPolaca.size()-1), representacionPolaca.get(representacionPolaca.size()-1) + getAmbitoActual());
+                                                                                                        ambito.push(":" + lexema);
+                                                                                                        agregarAmbitoAIdentificador(lexemaParametro);
+                                                                                                        TablaSimbolos.cambiarLexema(lexemaParametro, lexemaParametro + getAmbitoActual());
                                                                                                         TablaSimbolos.setCantidadDeParametros(lexema, 1);
                                                                                                         TablaSimbolos.setTipoParametro(lexema, $5.sval);
                                                                                                         TablaSimbolos.setTipoRetorno(lexema, $1.sval);
