@@ -183,7 +183,7 @@ sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecuta
                                        |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                                        ;
 
-sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); representacionPolaca.add(((Token) $1.obj).getLexema()); }
+sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); $$.ival = ((Token) $1.obj).getNumeroDeLinea(); representacionPolaca.add(((Token) $1.obj).getLexema()); }
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R error PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R  error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             ;
@@ -235,7 +235,21 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones {
                                                                                             $$.ival = $1.ival;
-                                                                                            representacionPolaca.add(((Token) $2.obj).getLexema());
+                                                                                            eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
+                                                                                            List<List<String>> expresiones = formatearLista(listaExpresiones);
+                                                                                            System.out.println("jeje " + expresiones);
+
+                                                                                            if (listaIdentificadores.size() == expresiones.size()) {
+                                                                                                for (int i = 0; i < listaIdentificadores.size(); i++){
+                                                                                                    representacionPolaca.add(listaIdentificadores.get(i));
+                                                                                                    expresiones.get(i).forEach((elemento)->representacionPolaca.add(elemento));
+                                                                                                    representacionPolaca.add(((Token) $2.obj).getLexema());
+                                                                                                }
+                                                                                            } else {
+                                                                                                System.out.println("NO COINCIDEN LAS LONGITUDES");
+                                                                                            }
+
+                                                                                            listaExpresiones.clear();
                                                                                             listaIdentificadores.clear();
                                                                                          }
                             ;
@@ -270,7 +284,7 @@ cuerpo_else                 :   ELSE bloque_de_sent_ejecutables
                             |   ELSE { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo deL ELSE de la sentencia de seleccion"); }
                             ;
 
-condicion                   :   expresion_aritmetica comparador expresion_aritmetica { representacionPolaca.add(((Token) $2.obj).getLexema()); }
+condicion                   :   expresion_aritmetica comparador expresion_aritmetica { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); representacionPolaca.add(((Token) $2.obj).getLexema()); }
                             |   expresion_aritmetica error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ lex.getNumeroDeLinea() + ": Falta comparador"); }
                             ;
 
@@ -294,7 +308,7 @@ sentencias_ejecutables      :   sentencias_ejecutables sentencia_ejecutable { $$
 		                    ;
 
 sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUNTO_Y_COMA{ $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "OUTF"); representacionPolaca.add(((Token) $3.obj).getLexema()); representacionPolaca.add(((Token) $1.obj).getLexema());}
-		                    |   OUTF PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "OUTF"); representacionPolaca.add(((Token) $1.obj).getLexema());}
+		                    |   OUTF PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); $$.ival = ((Token) $1.obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) $1.obj).getNumeroDeLinea(), "OUTF"); representacionPolaca.add(((Token) $1.obj).getLexema());}
 		                    |   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error PUNTO_Y_COMA{ $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             |   OUTF PARENTESIS_L expresion_aritmetica PARENTESIS_R error PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 		                    |   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R error END{ $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
@@ -341,40 +355,40 @@ inicio_for                  : FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea()
 asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema()); }
                             ;
 
-accion                      :   UP constante_entera { aux.push("UP"); aux.push(((Token) $2.obj).getLexema()); }
-                            |   DOWN constante_entera { aux.push("DOWN"); aux.push(((Token) $2.obj).getLexema()); }
+accion                      :   UP constante_entera { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); aux.push("UP"); aux.push(((Token) $2.obj).getLexema()); }
+                            |   DOWN constante_entera { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); aux.push("DOWN"); aux.push(((Token) $2.obj).getLexema()); }
                             |   constante_entera { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra reservada en la acción del encabezado FOR"); }
                             ;
 
-lista_de_expresiones        :   lista_de_expresiones COMA expresion_aritmetica
+lista_de_expresiones        :   lista_de_expresiones COMA expresion_aritmetica { listaExpresiones.add(((Token) $2.obj).getLexema()); }
 		                    |   expresion_aritmetica
 		                    ;
 
-expresion_aritmetica        :   expresion_aritmetica SUMA termino { representacionPolaca.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
-		                    |   expresion_aritmetica RESTA termino { representacionPolaca.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
+expresion_aritmetica        :   expresion_aritmetica SUMA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
+		                    |   expresion_aritmetica RESTA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
 		                    |   termino { $$.sval = $1.sval; }
 		                    |   error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
 		                    ;
 
-termino                     :   termino MULTIPLICACION factor { representacionPolaca.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
-		                    |   termino DIVISION factor { representacionPolaca.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
+termino                     :   termino MULTIPLICACION factor { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
+		                    |   termino DIVISION factor { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
 		                    |   factor { $$.sval = $1.sval; }
 		                    ;
 
-factor                      :   identificador { $$.sval = TablaSimbolos.getTipo($1.sval); System.out.println("AAAAAAAAAAAAAAAAA TIPO:" + TablaSimbolos.getTipo($1.sval)); }
+factor                      :   identificador { $$.sval = TablaSimbolos.getTipo($1.sval);}
                             |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
                             |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "single"; }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
 		                    ;
 
-constante_entera            :   CONSTANTE_DECIMAL { $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
-                            |   CONSTANTE_OCTAL { $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
+constante_entera            :   CONSTANTE_DECIMAL { $$.sval = ((Token) $1.obj).getLexema(); listaExpresiones.add(((Token) $1.obj).getLexema());}
+                            |   CONSTANTE_OCTAL { $$.sval = ((Token) $1.obj).getLexema(); listaExpresiones.add(((Token) $1.obj).getLexema());}
                             ;
 
 constante                   :   constante_entera { $$.sval = $1.sval;}
                             |   RESTA constante_entera { $$.sval = ((Token) $1.obj).getLexema() + $2.sval; agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes enteras negativas."); }
-                            |   CONSTANTE_SINGLE { $$.sval = ((Token) $1.obj).getLexema(); representacionPolaca.add(((Token) $1.obj).getLexema());}
+                            |   CONSTANTE_SINGLE { $$.sval = ((Token) $1.obj).getLexema(); listaExpresiones.add(((Token) $1.obj).getLexema());}
                             |   TOKERROR { $$.sval = ((Token) $1.obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
                             |   RESTA CONSTANTE_SINGLE {
                                                             System.out.println(((Token) $1.obj).getLexema() + ((Token) $2.obj).getLexema());
@@ -404,7 +418,7 @@ constante                   :   constante_entera { $$.sval = $1.sval;}
                                                                     TablaSimbolos.agregarLexema(lexemaNegativo, new CampoTablaSimbolos(false, TablaSimbolos.SINGLE));
                                                                     TablaSimbolos.aumentarUso(lexemaNegativo);
                                                                 }
-                                                                representacionPolaca.add("-"+ ((Token) $2.obj).getLexema());
+                                                                listaExpresiones.add("-"+ ((Token) $2.obj).getLexema());
                                                             }
                                                         }
                             |   RESTA TOKERROR { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
@@ -415,7 +429,7 @@ invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmet
                                                                                                     if (!TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()).equals($3.sval)) {
                                                                                                         agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Parametro real: " + $3.sval +". Parametro formal: " + TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()) + ".");
                                                                                                     }
-                                                                                                    representacionPolaca.add(((Token) $1.obj).getLexema()); representacionPolaca.add("BI");
+                                                                                                    listaExpresiones.add(((Token) $1.obj).getLexema()); listaExpresiones.add("BI");
 
                                                                                                 }
                             |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
@@ -457,7 +471,7 @@ public static final List<Token> tokensRecibidos = new ArrayList<>();
 public static final List<String> listaIdentificadores = new ArrayList<>();
 
 // Lista de expresiones
-public static final List<List<String>> listaExpresiones = new ArrayList<>();
+public static final List<String> listaExpresiones = new ArrayList<>();
 
 // Lista de tipos
 public static final List<String> listaTipos = new ArrayList<>();
@@ -521,6 +535,31 @@ public static void agregarError(List<String> listaErrores, String tipo, String e
     }
 
     listaErrores.add(String.format("%-20s", tipo) + "| "+ error);
+}
+
+public static List<List<String>> formatearLista(List<String> lista) {
+    String separador = ",";
+
+    List<List<String>> sublists = new ArrayList<>();
+    List<String> currentSublist = new ArrayList<>();
+
+    for (String item : lista) {
+        if (item.equals(separador)) {
+            // Add the current sublist to the list of sublists if it's not empty
+            if (!currentSublist.isEmpty()) {
+                sublists.add(new ArrayList<>(currentSublist));
+                currentSublist.clear();
+            }
+        } else {
+            // Add item to the current sublist
+            currentSublist.add(item);
+        }
+    }
+    // Add the last sublist if it has elements
+    if (!currentSublist.isEmpty()) {
+        sublists.add(currentSublist);
+    }
+    return sublists;
 }
 
 // Agregar los campos de una variable struct a la tabla de simbolos
