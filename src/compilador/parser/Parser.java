@@ -848,7 +848,7 @@ final static String yyrule[] = {
 "invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error PARENTESIS_R",
 };
 
-//#line 474 "gramatica.y"
+//#line 473 "gramatica.y"
 private static int cantidadIdEnListaId = 0;
 private static Lexer lex;
 private static ArrayList<String> representacionPolaca;
@@ -927,6 +927,20 @@ public static void agregarUsoAIdentificadores(List<String> identificadores, Stri
         TablaSimbolos.setUso(lexema, uso);
     }
 }
+
+//Para hacer chequeos de ambitos
+public static boolean estaAlAlcance(String lexema){
+    String ambitoActual = getAmbitoActual();
+    boolean declarada = false;
+    while (ambitoActual.length()> 1){
+        String idAmb = lexema + ambitoActual;
+        if (TablaSimbolos.existeLexema(idAmb)){
+            declarada = true;
+        }
+        ambitoActual = ambitoActual.substring(0,ambitoActual.lastIndexOf(':'));
+    }
+    return declarada;
+};
 
 // Agregar tipo a la tabla de simbolos para los identificadores que estan en la lista de identificadores
 public static void agregarTipoAIdentificadores(String tipo) {
@@ -1083,7 +1097,7 @@ private void yyerror(String string) {
   parsingConErrores = true;
   System.out.println("Error: " + string );
 }
-//#line 1014 "Parser.java"
+//#line 1028 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1295,7 +1309,7 @@ case 18:
                                                                                 Parser.agregarEstructuraDetectadas(val_peek(2).ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
                                                                                 for (int i = 0; i<listaIdentificadores.size();i++){
-                                                                                   if (TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual()) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
+                                                                                   if ((estaAlAlcance(listaIdentificadores.get(i))) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
                                                                                         agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ val_peek(2).ival + ": Variable ya declarada en el mismo ambito");
                                                                                    }else{
                                                                                         agregarTipoAIdentificadores(val_peek(2).sval);
@@ -1654,7 +1668,7 @@ case 98:
                                                                                             }
 
                                                                                             for (int i = 0; i< listaIdentificadores.size(); i++){
-                                                                                                if (!TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual())){
+                                                                                                if (!estaAlAlcance(listaIdentificadores.get(i))){
                                                                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ val_peek(2).ival + ": Variable no declarada");}
                                                                                                 };
 
@@ -1931,7 +1945,7 @@ case 166:
 break;
 case 167:
 //#line 407 "gramatica.y"
-{ if (TablaSimbolos.existeLexema(val_peek(0).sval + getAmbitoActual())) {
+{ if (estaAlAlcance(val_peek(0).sval)) {
                                                     yyval.sval = TablaSimbolos.getTipo(val_peek(0).sval + getAmbitoActual());
                                                 } else {
                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + val_peek(0).ival + ": Variable no declarada");
@@ -2019,23 +2033,22 @@ break;
 case 180:
 //#line 461 "gramatica.y"
 {
+                                                                                                    System.out.println( ((Token) val_peek(3).obj).getLexema()+getAmbitoActual());
                                                                                                     yyval.sval = TablaSimbolos.getTipoRetorno(((Token) val_peek(3).obj).getLexema());
                                                                                                     if (!TablaSimbolos.getTipoRetorno(((Token) val_peek(3).obj).getLexema()).equals(val_peek(1).sval)) {
-                                                                                                        agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(3).obj).getNumeroDeLinea()  + ": Parametro real: " + val_peek(1).sval +". Parametro formal: " + TablaSimbolos.getTipoRetorno(((Token) val_peek(3).obj).getLexema()) + ".");
-                                                                                                    }
+                                                                                                        agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(3).obj).getNumeroDeLinea()  + ": Parametro real: " + val_peek(1).sval +". Parametro formal: " + TablaSimbolos.getTipoRetorno(((Token) val_peek(3).obj).getLexema()) + ".");}
                                                                                                     listaExpresiones.add(((Token) val_peek(3).obj).getLexema()); listaExpresiones.add("BI");
-
-                                                                                                }
+                                                                                                    }
 break;
 case 181:
-//#line 469 "gramatica.y"
+//#line 468 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
 break;
 case 182:
-//#line 470 "gramatica.y"
+//#line 469 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(4).obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
 break;
-//#line 1961 "Parser.java"
+//#line 1974 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

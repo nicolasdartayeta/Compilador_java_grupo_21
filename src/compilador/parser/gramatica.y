@@ -46,7 +46,7 @@ sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                 Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
                                                                                 for (int i = 0; i<listaIdentificadores.size();i++){
-                                                                                   if (TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual()) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
+                                                                                   if ((estaAlAlcance(listaIdentificadores.get(i))) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
                                                                                         agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable ya declarada en el mismo ambito");
                                                                                    }else{
                                                                                         agregarTipoAIdentificadores($1.sval);
@@ -274,7 +274,7 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                             }
 
                                                                                             for (int i = 0; i< listaIdentificadores.size(); i++){
-                                                                                                if (!TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual())){
+                                                                                                if (!estaAlAlcance(listaIdentificadores.get(i))){
                                                                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable no declarada");}
                                                                                                 };
 
@@ -404,7 +404,7 @@ termino                     :   termino MULTIPLICACION factor { listaExpresiones
 		                    |   factor { $$.sval = $1.sval; }
 		                    ;
 
-factor                      :   identificador { if (TablaSimbolos.existeLexema($1.sval + getAmbitoActual())) {
+factor                      :   identificador { if (estaAlAlcance($1.sval)) {
                                                     $$.sval = TablaSimbolos.getTipo($1.sval + getAmbitoActual());
                                                 } else {
                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": Variable no declarada");
@@ -459,13 +459,12 @@ constante                   :   constante_entera { $$.sval = $1.sval;}
                             ;
 
 invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica PARENTESIS_R {
+                                                                                                    System.out.println( ((Token) $1.obj).getLexema()+getAmbitoActual());
                                                                                                     $$.sval = TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema());
                                                                                                     if (!TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()).equals($3.sval)) {
-                                                                                                        agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Parametro real: " + $3.sval +". Parametro formal: " + TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()) + ".");
-                                                                                                    }
+                                                                                                        agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Parametro real: " + $3.sval +". Parametro formal: " + TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()) + ".");}
                                                                                                     listaExpresiones.add(((Token) $1.obj).getLexema()); listaExpresiones.add("BI");
-
-                                                                                                }
+                                                                                                    }
                             |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
                             |   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
                             ;
@@ -549,6 +548,20 @@ public static void agregarUsoAIdentificadores(List<String> identificadores, Stri
         TablaSimbolos.setUso(lexema, uso);
     }
 }
+
+//Para hacer chequeos de ambitos
+public static boolean estaAlAlcance(String lexema){
+    String ambitoActual = getAmbitoActual();
+    boolean declarada = false;
+    while (ambitoActual.length()> 1){
+        String idAmb = lexema + ambitoActual;
+        if (TablaSimbolos.existeLexema(idAmb)){
+            declarada = true;
+        }
+        ambitoActual = ambitoActual.substring(0,ambitoActual.lastIndexOf(':'));
+    }
+    return declarada;
+};
 
 // Agregar tipo a la tabla de simbolos para los identificadores que estan en la lista de identificadores
 public static void agregarTipoAIdentificadores(String tipo) {

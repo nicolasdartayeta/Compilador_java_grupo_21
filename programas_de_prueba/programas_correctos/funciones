@@ -8,7 +8,9 @@ begin
     /# funcion que calcula 2^p #/
     ulongint fun myFunction (ulongint p)
     begin
-        ulongint x;
+        ulongint o;
+        d:=5.0;
+        h:= 10;
         if (p = 0) then
             ret(2);
         else
@@ -19,7 +21,7 @@ begin
     end
 
     z, y := 4, myFunction(5);
-
+    o:= 50;
     x := 4;
     outf( {Programa terminado } );
 end
