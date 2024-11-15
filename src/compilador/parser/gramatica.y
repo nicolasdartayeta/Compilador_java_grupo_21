@@ -45,15 +45,22 @@ sentencia                   :   sentencia_declarativa
 sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                 Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
-                                                                                agregarTipoAIdentificadores($1.sval);
-                                                                                agregarAmbitoAIdentificadores(listaIdentificadores);
-                                                                                agregarUsoAIdentificadores(listaIdentificadores, "nombre de variable");
-                                                                                listaIdentificadores.forEach((lexema)->TablaSimbolos.cambiarLexema(lexema, lexema + getAmbitoActual()));
-                                                                                if (TablaSimbolos.esUnTipo($1.sval) && TablaSimbolos.getTipo($1.sval).equals("STRUCT")) {
-                                                                                    for(String identificador: listaIdentificadores) {
-                                                                                        crearCampo($1.sval, identificador);
-                                                                                    }
+                                                                                for (int i = 0; i<listaIdentificadores.size();i++){
+                                                                                   if (TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual())){
+                                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable ya declarada en el mismo ambito");
+                                                                                   }else{
+                                                                                        agregarTipoAIdentificadores($1.sval);
+                                                                                        agregarAmbitoAIdentificadores(listaIdentificadores);
+                                                                                        agregarUsoAIdentificadores(listaIdentificadores, "nombre de variable");
+                                                                                        listaIdentificadores.forEach((lexema)->TablaSimbolos.cambiarLexema(lexema, lexema + getAmbitoActual()));
+                                                                                        if (TablaSimbolos.esUnTipo($1.sval) && TablaSimbolos.getTipo($1.sval).equals("STRUCT")) {
+                                                                                            for(String identificador: listaIdentificadores) {
+                                                                                                crearCampo($1.sval, identificador);
+                                                                                            }
+                                                                                        };
+                                                                                     };
                                                                                 };
+
                                                                                 listaIdentificadores.clear();
                                                                             }
                             |   tipo lista_de_identificadores error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
@@ -268,6 +275,11 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                                 System.out.println("NO COINCIDEN LAS LONGITUDES");
                                                                                             }
 
+                                                                                            for (int i = 0; i< listaIdentificadores.size(); i++){
+                                                                                                if (!TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual())){
+                                                                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable no declarada");}
+                                                                                                };
+
                                                                                             listaExpresiones.clear();
                                                                                             listaIdentificadores.clear();
                                                                                          }
@@ -394,7 +406,12 @@ termino                     :   termino MULTIPLICACION factor { listaExpresiones
 		                    |   factor { $$.sval = $1.sval; }
 		                    ;
 
-factor                      :   identificador { $$.sval = TablaSimbolos.getTipo($1.sval);}
+factor                      :   identificador { if (TablaSimbolos.existeLexema($1.sval + getAmbitoActual())) {
+                                                    $$.sval = TablaSimbolos.getTipo($1.sval + getAmbitoActual());
+                                                } else {
+                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": Variable no declarada");
+                                                    $$.sval = null;  // O cualquier valor predeterminado que necesites
+                                                };}
                             |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
                             |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "single"; }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
@@ -472,6 +489,7 @@ public static final Stack<String> aux = new Stack<>();
 // Tipo de mensajes
 public static final String ERROR_LEXICO = "ERROR_LEXICO";
 public static final String ERROR_SINTACTICO = "ERROR_SINTACTICO";
+public static final String ERROR_SEMANTICO = "ERROR_SEMANTICO";
 
 // Código ANSI para texto rojo
 public static final String ROJO = "\033[31m";
@@ -481,6 +499,7 @@ public static final String RESET = "\033[0m";
 // Flags
 public static boolean parsingConErrores = false;
 public static boolean lexingConErrores = false;
+public static boolean codIntermedioConErrores = false;
 private static boolean returnEncontrado = false;
 
 // Lista de tokens recibidos
@@ -501,6 +520,7 @@ public static final List<String> estructurasDetectadas = new ArrayList<>();
 // Listas de errores
 public static final List<String> erroresLexicos = new ArrayList<>();
 public static final List<String> erroresSintacticos = new ArrayList<>();
+public static final List<String> erroresSemanticos = new ArrayList<>();
 
 public static String getAmbitoActual() {
     StringBuilder ambitoActual = new StringBuilder();
@@ -551,6 +571,8 @@ public static void agregarError(List<String> listaErrores, String tipo, String e
         parsingConErrores = true;
     } else if (tipo.equals(Parser.ERROR_LEXICO)) {
         lexingConErrores = true;
+    } else if (tipo.equals(Parser.ERROR_SEMANTICO)){
+        codIntermedioConErrores = true;
     }
 
     listaErrores.add(String.format("%-20s", tipo) + "| "+ error);
@@ -654,6 +676,13 @@ public static void main(String[] args) {
     } else {
         System.out.println(Parser.VERDE + "NO SE ENCONTRARON ERRORES SINTACTICOS" + Parser.RESET);
     }
+
+    if (Parser.codIntermedioConErrores){
+            System.out.println(Parser.ROJO + "SE ENCONTRARON ERRORES SEMANTICOS" + Parser.RESET);
+            Parser.imprimirLista(erroresSemanticos);
+        } else {
+            System.out.println(Parser.VERDE + "NO SE ENCONTRARON ERRORES SEMANTICOS" + Parser.RESET);
+        }
 
     Parser.imprimirLista(estructurasDetectadas);
 
