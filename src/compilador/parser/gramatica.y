@@ -45,8 +45,9 @@ sentencia                   :   sentencia_declarativa
 sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                 Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
+
                                                                                 for (int i = 0; i<listaIdentificadores.size();i++){
-                                                                                   if ((estaAlAlcance(listaIdentificadores.get(i))) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
+                                                                                   if ((TablaSimbolos.existeLexema(listaIdentificadores.get(i)+ getAmbitoActual())) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
                                                                                         agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable ya declarada en el mismo ambito");
                                                                                    }else{
                                                                                         agregarTipoAIdentificadores($1.sval);
@@ -60,7 +61,6 @@ sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                         };
                                                                                      };
                                                                                 };
-
                                                                                 listaIdentificadores.clear();
                                                                             }
                             |   tipo lista_de_identificadores error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
@@ -274,7 +274,7 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                             }
 
                                                                                             for (int i = 0; i< listaIdentificadores.size(); i++){
-                                                                                                if (!estaAlAlcance(listaIdentificadores.get(i))){
+                                                                                                if (estaAlAlcance(listaIdentificadores.get(i)) == null){
                                                                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable no declarada");}
                                                                                                 };
 
@@ -404,8 +404,9 @@ termino                     :   termino MULTIPLICACION factor { listaExpresiones
 		                    |   factor { $$.sval = $1.sval; }
 		                    ;
 
-factor                      :   identificador { if (estaAlAlcance($1.sval)) {
-                                                    $$.sval = TablaSimbolos.getTipo($1.sval + getAmbitoActual());
+factor                      :   identificador { String ambitoEncontrado = estaAlAlcance($1.sval);
+                                                if (ambitoEncontrado != null) {
+                                                    $$.sval = TablaSimbolos.getTipo($1.sval + ambitoEncontrado);
                                                 } else {
                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": Variable no declarada");
                                                     $$.sval = null;  // O cualquier valor predeterminado que necesites
@@ -550,17 +551,16 @@ public static void agregarUsoAIdentificadores(List<String> identificadores, Stri
 }
 
 //Para hacer chequeos de ambitos
-public static boolean estaAlAlcance(String lexema){
+public static String estaAlAlcance(String lexema){
     String ambitoActual = getAmbitoActual();
-    boolean declarada = false;
     while (ambitoActual.length()> 1){
         String idAmb = lexema + ambitoActual;
         if (TablaSimbolos.existeLexema(idAmb)){
-            declarada = true;
+            return ambitoActual;
         }
         ambitoActual = ambitoActual.substring(0,ambitoActual.lastIndexOf(':'));
     }
-    return declarada;
+    return null;
 };
 
 // Agregar tipo a la tabla de simbolos para los identificadores que estan en la lista de identificadores

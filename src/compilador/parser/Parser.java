@@ -848,7 +848,7 @@ final static String yyrule[] = {
 "invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error PARENTESIS_R",
 };
 
-//#line 473 "gramatica.y"
+//#line 474 "gramatica.y"
 private static int cantidadIdEnListaId = 0;
 private static Lexer lex;
 private static ArrayList<String> representacionPolaca;
@@ -929,17 +929,16 @@ public static void agregarUsoAIdentificadores(List<String> identificadores, Stri
 }
 
 //Para hacer chequeos de ambitos
-public static boolean estaAlAlcance(String lexema){
+public static String estaAlAlcance(String lexema){
     String ambitoActual = getAmbitoActual();
-    boolean declarada = false;
     while (ambitoActual.length()> 1){
         String idAmb = lexema + ambitoActual;
         if (TablaSimbolos.existeLexema(idAmb)){
-            declarada = true;
+            return ambitoActual;
         }
         ambitoActual = ambitoActual.substring(0,ambitoActual.lastIndexOf(':'));
     }
-    return declarada;
+    return null;
 };
 
 // Agregar tipo a la tabla de simbolos para los identificadores que estan en la lista de identificadores
@@ -1097,7 +1096,7 @@ private void yyerror(String string) {
   parsingConErrores = true;
   System.out.println("Error: " + string );
 }
-//#line 1028 "Parser.java"
+//#line 1027 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1308,8 +1307,9 @@ case 18:
 {
                                                                                 Parser.agregarEstructuraDetectadas(val_peek(2).ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
+
                                                                                 for (int i = 0; i<listaIdentificadores.size();i++){
-                                                                                   if ((estaAlAlcance(listaIdentificadores.get(i))) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
+                                                                                   if ((TablaSimbolos.existeLexema(listaIdentificadores.get(i)+ getAmbitoActual())) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
                                                                                         agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ val_peek(2).ival + ": Variable ya declarada en el mismo ambito");
                                                                                    }else{
                                                                                         agregarTipoAIdentificadores(val_peek(2).sval);
@@ -1323,7 +1323,6 @@ case 18:
                                                                                         };
                                                                                      };
                                                                                 };
-
                                                                                 listaIdentificadores.clear();
                                                                             }
 break;
@@ -1668,7 +1667,7 @@ case 98:
                                                                                             }
 
                                                                                             for (int i = 0; i< listaIdentificadores.size(); i++){
-                                                                                                if (!estaAlAlcance(listaIdentificadores.get(i))){
+                                                                                                if (estaAlAlcance(listaIdentificadores.get(i)) == null){
                                                                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ val_peek(2).ival + ": Variable no declarada");}
                                                                                                 };
 
@@ -1945,55 +1944,56 @@ case 166:
 break;
 case 167:
 //#line 407 "gramatica.y"
-{ if (estaAlAlcance(val_peek(0).sval)) {
-                                                    yyval.sval = TablaSimbolos.getTipo(val_peek(0).sval + getAmbitoActual());
+{ String ambitoEncontrado = estaAlAlcance(val_peek(0).sval);
+                                                if (ambitoEncontrado != null) {
+                                                    yyval.sval = TablaSimbolos.getTipo(val_peek(0).sval + ambitoEncontrado);
                                                 } else {
                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + val_peek(0).ival + ": Variable no declarada");
                                                     yyval.sval = null;  /* O cualquier valor predeterminado que necesites*/
                                                 };}
 break;
 case 168:
-//#line 413 "gramatica.y"
+//#line 414 "gramatica.y"
 { yyval.sval = TablaSimbolos.getTipo(val_peek(0).sval); agregarUsoAIdentificador(val_peek(0).sval, "constante");}
 break;
 case 169:
-//#line 414 "gramatica.y"
+//#line 415 "gramatica.y"
 {yyval.ival = ((Token) val_peek(3).obj).getNumeroDeLinea();  yyval.sval = "single"; }
 break;
 case 170:
-//#line 415 "gramatica.y"
+//#line 416 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea() + ": Falta la expresión"); }
 break;
 case 171:
-//#line 416 "gramatica.y"
+//#line 417 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
 case 172:
-//#line 419 "gramatica.y"
-{ yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
-break;
-case 173:
 //#line 420 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
+case 173:
+//#line 421 "gramatica.y"
+{ yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
+break;
 case 174:
-//#line 423 "gramatica.y"
+//#line 424 "gramatica.y"
 { yyval.sval = val_peek(0).sval;}
 break;
 case 175:
-//#line 424 "gramatica.y"
+//#line 425 "gramatica.y"
 { yyval.sval = ((Token) val_peek(1).obj).getLexema() + val_peek(0).sval; agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes enteras negativas."); }
 break;
 case 176:
-//#line 425 "gramatica.y"
+//#line 426 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 177:
-//#line 426 "gramatica.y"
+//#line 427 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(0).obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
 break;
 case 178:
-//#line 427 "gramatica.y"
+//#line 428 "gramatica.y"
 {
                                                             System.out.println(((Token) val_peek(1).obj).getLexema() + ((Token) val_peek(0).obj).getLexema());
                                                             yyval.sval = ((Token) val_peek(1).obj).getLexema() + ((Token) val_peek(0).obj).getLexema();
@@ -2027,11 +2027,11 @@ case 178:
                                                         }
 break;
 case 179:
-//#line 458 "gramatica.y"
+//#line 459 "gramatica.y"
 { yyval.obj = ((Token) val_peek(1).obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
 break;
 case 180:
-//#line 461 "gramatica.y"
+//#line 462 "gramatica.y"
 {
                                                                                                     System.out.println( ((Token) val_peek(3).obj).getLexema()+getAmbitoActual());
                                                                                                     yyval.sval = TablaSimbolos.getTipoRetorno(((Token) val_peek(3).obj).getLexema());
@@ -2041,11 +2041,11 @@ case 180:
                                                                                                     }
 break;
 case 181:
-//#line 468 "gramatica.y"
+//#line 469 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
 break;
 case 182:
-//#line 469 "gramatica.y"
+//#line 470 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(4).obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
 break;
 //#line 1974 "Parser.java"
