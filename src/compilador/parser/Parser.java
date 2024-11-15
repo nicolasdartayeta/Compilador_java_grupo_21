@@ -848,7 +848,7 @@ final static String yyrule[] = {
 "invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error PARENTESIS_R",
 };
 
-//#line 476 "gramatica.y"
+//#line 474 "gramatica.y"
 private static int cantidadIdEnListaId = 0;
 private static Lexer lex;
 private static ArrayList<String> representacionPolaca;
@@ -1295,7 +1295,7 @@ case 18:
                                                                                 Parser.agregarEstructuraDetectadas(val_peek(2).ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
                                                                                 for (int i = 0; i<listaIdentificadores.size();i++){
-                                                                                   if (TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual())){
+                                                                                   if (TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual()) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
                                                                                         agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ val_peek(2).ival + ": Variable ya declarada en el mismo ambito");
                                                                                    }else{
                                                                                         agregarTipoAIdentificadores(val_peek(2).sval);
@@ -1307,7 +1307,7 @@ case 18:
                                                                                                 crearCampo(val_peek(2).sval, identificador);
                                                                                             }
                                                                                         };
-                                                                                    };
+                                                                                     };
                                                                                 };
 
                                                                                 listaIdentificadores.clear();
@@ -1641,9 +1641,7 @@ case 98:
 {
                                                                                             yyval.ival = val_peek(2).ival;
                                                                                             eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
-                                                                                            System.out.println("jeje " + listaExpresiones);
                                                                                             List<List<String>> expresiones = formatearLista(listaExpresiones);
-                                                                                            System.out.println("jeje " + expresiones);
 
                                                                                             if (listaIdentificadores.size() == expresiones.size()) {
                                                                                                 for (int i = 0; i < listaIdentificadores.size(); i++){
@@ -1652,7 +1650,7 @@ case 98:
                                                                                                     representacionPolaca.add(((Token) val_peek(1).obj).getLexema());
                                                                                                 }
                                                                                             } else {
-                                                                                                System.out.println("NO COINCIDEN LAS LONGITUDES");
+                                                                                                agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea() + ": No coincide la cantidad de variables con la cantidad de valores a asignar.");
                                                                                             }
 
                                                                                             for (int i = 0; i< listaIdentificadores.size(); i++){
@@ -1665,150 +1663,150 @@ case 98:
                                                                                          }
 break;
 case 99:
-//#line 288 "gramatica.y"
+//#line 286 "gramatica.y"
 { yyval.ival = val_peek(3).ival; Parser.agregarEstructuraDetectadas(val_peek(3).ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); }
 break;
 case 100:
-//#line 289 "gramatica.y"
+//#line 287 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(4).ival + ": Falta ';' al final de la sentencia de selección");}
 break;
 case 101:
-//#line 290 "gramatica.y"
+//#line 288 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(4).ival + ": Falta ';' al final de la sentencia"); }
 break;
 case 102:
-//#line 291 "gramatica.y"
+//#line 289 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(2).ival + ": Falta el END_IF en la sentencia de selección"); }
 break;
 case 103:
-//#line 292 "gramatica.y"
+//#line 290 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(5).obj).getNumeroDeLinea() + ": Falta el parentesis derecho en la condición"); }
 break;
 case 104:
-//#line 293 "gramatica.y"
+//#line 291 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(5).obj).getNumeroDeLinea() + ": Falta el parentesis izquierdo en la condición"); }
 break;
 case 105:
-//#line 294 "gramatica.y"
+//#line 292 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(4).obj).getNumeroDeLinea() + ": Faltan ambos parentesis en la condición"); }
 break;
 case 106:
-//#line 295 "gramatica.y"
+//#line 293 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(2).ival + ": Falta el cuerpo de la sentencia de seleccion"); }
 break;
 case 107:
-//#line 298 "gramatica.y"
+//#line 296 "gramatica.y"
 {yyval.ival = ((Token) val_peek(3).obj).getNumeroDeLinea();representacionPolaca.add("");bfs.push(representacionPolaca.size()-1); representacionPolaca.add("BF");}
 break;
 case 110:
-//#line 303 "gramatica.y"
+//#line 301 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(0).ival + ": Falta THEN en el cuerpo de la selección"); }
 break;
 case 111:
-//#line 304 "gramatica.y"
+//#line 302 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(1).ival + ": Falta THEN en el cuerpo de la selección"); }
 break;
 case 112:
-//#line 307 "gramatica.y"
+//#line 305 "gramatica.y"
 {yyval.ival = val_peek(0).ival;
                                                             representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
                                                             representacionPolaca.add("");bfs.push(representacionPolaca.size()-1);
                                                             representacionPolaca.add("BI"); }
 break;
 case 114:
-//#line 314 "gramatica.y"
+//#line 312 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(0).ival + ": Falta ELSE en el cuerpo de la selección"); }
 break;
 case 115:
-//#line 315 "gramatica.y"
+//#line 313 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(0).obj).getNumeroDeLinea() + ": Falta el cuerpo deL ELSE de la sentencia de seleccion"); }
 break;
 case 116:
-//#line 318 "gramatica.y"
+//#line 316 "gramatica.y"
 { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); representacionPolaca.add(((Token) val_peek(1).obj).getLexema()); }
 break;
 case 117:
-//#line 319 "gramatica.y"
+//#line 317 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ lex.getNumeroDeLinea() + ": Falta comparador"); }
 break;
 case 118:
-//#line 322 "gramatica.y"
+//#line 320 "gramatica.y"
 { yyval.obj = ((Token) val_peek(0).obj); }
 break;
 case 119:
-//#line 323 "gramatica.y"
+//#line 321 "gramatica.y"
 { yyval.obj = ((Token) val_peek(0).obj); }
 break;
 case 120:
-//#line 324 "gramatica.y"
+//#line 322 "gramatica.y"
 { yyval.obj = ((Token) val_peek(0).obj); }
 break;
 case 121:
-//#line 325 "gramatica.y"
+//#line 323 "gramatica.y"
 { yyval.obj = ((Token) val_peek(0).obj); }
 break;
 case 122:
-//#line 326 "gramatica.y"
+//#line 324 "gramatica.y"
 { yyval.obj = ((Token) val_peek(0).obj); }
 break;
 case 123:
-//#line 327 "gramatica.y"
+//#line 325 "gramatica.y"
 { yyval.obj = ((Token) val_peek(0).obj); }
 break;
 case 124:
-//#line 330 "gramatica.y"
+//#line 328 "gramatica.y"
 { yyval.ival = ((Token) val_peek(3).obj).getNumeroDeLinea();}
 break;
 case 125:
-//#line 331 "gramatica.y"
+//#line 329 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 break;
 case 126:
-//#line 332 "gramatica.y"
+//#line 330 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea() + ": Faltan sentencias ejecutables en el bloque"); }
 break;
 case 127:
-//#line 333 "gramatica.y"
+//#line 331 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 break;
 case 129:
-//#line 337 "gramatica.y"
+//#line 335 "gramatica.y"
 { yyval.ival = ((Token) val_peek(1).obj).getNumeroDeLinea();}
 break;
 case 131:
-//#line 341 "gramatica.y"
+//#line 339 "gramatica.y"
 { yyval.ival = ((Token) val_peek(4).obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) val_peek(4).obj).getNumeroDeLinea(), "OUTF"); representacionPolaca.add(((Token) val_peek(2).obj).getLexema()); representacionPolaca.add(((Token) val_peek(4).obj).getLexema());}
 break;
 case 132:
-//#line 342 "gramatica.y"
+//#line 340 "gramatica.y"
 { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); yyval.ival = ((Token) val_peek(4).obj).getNumeroDeLinea(); Parser.agregarEstructuraDetectadas(((Token) val_peek(4).obj).getNumeroDeLinea(), "OUTF"); representacionPolaca.add(((Token) val_peek(4).obj).getLexema());}
 break;
 case 133:
-//#line 343 "gramatica.y"
+//#line 341 "gramatica.y"
 { yyval.ival = ((Token) val_peek(5).obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(5).obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 break;
 case 134:
-//#line 344 "gramatica.y"
+//#line 342 "gramatica.y"
 { yyval.ival = ((Token) val_peek(5).obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(5).obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 break;
 case 135:
-//#line 345 "gramatica.y"
+//#line 343 "gramatica.y"
 { yyval.ival = ((Token) val_peek(5).obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(5).obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 break;
 case 136:
-//#line 346 "gramatica.y"
+//#line 344 "gramatica.y"
 { yyval.ival = ((Token) val_peek(5).obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(5).obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
 break;
 case 137:
-//#line 347 "gramatica.y"
+//#line 345 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(3).obj).getNumeroDeLinea() + ": Falta el parametro de la sentencia de salida"); }
 break;
 case 138:
-//#line 348 "gramatica.y"
+//#line 346 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(3).obj).getNumeroDeLinea() + ": Parametros incorrectos en la sentencia de salida"); }
 break;
 case 139:
-//#line 351 "gramatica.y"
+//#line 349 "gramatica.y"
 { Parser.agregarEstructuraDetectadas(val_peek(1).ival, "FOR");
                                                                             representacionPolaca.add(aux.pop());
                                                                             representacionPolaca.add(aux.pop());
@@ -1817,122 +1815,122 @@ case 139:
                                                                             representacionPolaca.add("BI");}
 break;
 case 140:
-//#line 357 "gramatica.y"
+//#line 355 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(1).ival + ": Falta el cuerpo del FOR"); }
 break;
 case 141:
-//#line 360 "gramatica.y"
+//#line 358 "gramatica.y"
 { yyval.ival = val_peek(5).ival;
                                                                                                                            representacionPolaca.add("");
                                                                                                                            bfs.push(representacionPolaca.size()-1);
                                                                                                                            representacionPolaca.add("BF");}
 break;
 case 142:
-//#line 364 "gramatica.y"
+//#line 362 "gramatica.y"
 {yyval.ival = val_peek(1).ival;
                                                                         representacionPolaca.add("");
                                                                         bfs.push(representacionPolaca.size()-1);
                                                                         representacionPolaca.add("BF");}
 break;
 case 143:
-//#line 368 "gramatica.y"
+//#line 366 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(0).ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
 break;
 case 144:
-//#line 369 "gramatica.y"
+//#line 367 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(4).ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
 break;
 case 145:
-//#line 370 "gramatica.y"
+//#line 368 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(4).ival + ": Falta un ';' en el encabezado del FOR"); }
 break;
 case 146:
-//#line 371 "gramatica.y"
+//#line 369 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(4).ival + ": Falta el parentesis derecho en la segunda condicion del encabezado del FOR"); }
 break;
 case 147:
-//#line 372 "gramatica.y"
+//#line 370 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(3).ival + ": Falta ambos parentesis izquierdos del encabezado del FOR"); }
 break;
 case 148:
-//#line 375 "gramatica.y"
+//#line 373 "gramatica.y"
 { yyval.ival = val_peek(6).ival ;
                                                                                                                         representacionPolaca.remove(representacionPolaca.size()-1);}
 break;
 case 149:
-//#line 377 "gramatica.y"
+//#line 375 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(5).ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
 break;
 case 150:
-//#line 378 "gramatica.y"
+//#line 376 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(5).ival + ": Falta la acción en el encabezado del FOR"); }
 break;
 case 151:
-//#line 379 "gramatica.y"
+//#line 377 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(5).ival + ": Falta un ';' en el encabezado del FOR"); }
 break;
 case 152:
-//#line 380 "gramatica.y"
+//#line 378 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(5).ival + ": Falta un ';' en el encabezado del FOR"); }
 break;
 case 153:
-//#line 383 "gramatica.y"
+//#line 381 "gramatica.y"
 {yyval.ival = ((Token) val_peek(0).obj).getNumeroDeLinea(); bfs.push(representacionPolaca.size());}
 break;
 case 154:
-//#line 386 "gramatica.y"
+//#line 384 "gramatica.y"
 { representacionPolaca.add(((Token) val_peek(1).obj).getLexema()); }
 break;
 case 155:
-//#line 389 "gramatica.y"
+//#line 387 "gramatica.y"
 { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); aux.push("UP"); aux.push(((Token) val_peek(0).obj).getLexema()); }
 break;
 case 156:
-//#line 390 "gramatica.y"
+//#line 388 "gramatica.y"
 { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); aux.push("DOWN"); aux.push(((Token) val_peek(0).obj).getLexema()); }
 break;
 case 157:
-//#line 391 "gramatica.y"
+//#line 389 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(0).obj).getNumeroDeLinea() + ": Falta palabra reservada en la acción del encabezado FOR"); }
 break;
 case 158:
-//#line 394 "gramatica.y"
+//#line 392 "gramatica.y"
 { listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); }
 break;
 case 159:
-//#line 395 "gramatica.y"
+//#line 393 "gramatica.y"
 { listaExpresiones.add(","); }
 break;
 case 160:
-//#line 398 "gramatica.y"
+//#line 396 "gramatica.y"
 { listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;}
 break;
 case 161:
-//#line 399 "gramatica.y"
+//#line 397 "gramatica.y"
 { listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;}
 break;
 case 162:
-//#line 400 "gramatica.y"
+//#line 398 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
 case 163:
-//#line 401 "gramatica.y"
+//#line 399 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
 break;
 case 164:
-//#line 404 "gramatica.y"
+//#line 402 "gramatica.y"
 { listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;}
 break;
 case 165:
-//#line 405 "gramatica.y"
+//#line 403 "gramatica.y"
 { listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;}
 break;
 case 166:
-//#line 406 "gramatica.y"
+//#line 404 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
 case 167:
-//#line 409 "gramatica.y"
+//#line 407 "gramatica.y"
 { if (TablaSimbolos.existeLexema(val_peek(0).sval + getAmbitoActual())) {
                                                     yyval.sval = TablaSimbolos.getTipo(val_peek(0).sval + getAmbitoActual());
                                                 } else {
@@ -1941,47 +1939,47 @@ case 167:
                                                 };}
 break;
 case 168:
-//#line 415 "gramatica.y"
+//#line 413 "gramatica.y"
 { yyval.sval = TablaSimbolos.getTipo(val_peek(0).sval); agregarUsoAIdentificador(val_peek(0).sval, "constante");}
 break;
 case 169:
-//#line 416 "gramatica.y"
+//#line 414 "gramatica.y"
 {yyval.ival = ((Token) val_peek(3).obj).getNumeroDeLinea();  yyval.sval = "single"; }
 break;
 case 170:
-//#line 417 "gramatica.y"
+//#line 415 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea() + ": Falta la expresión"); }
 break;
 case 171:
-//#line 418 "gramatica.y"
+//#line 416 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
 case 172:
-//#line 421 "gramatica.y"
+//#line 419 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 173:
-//#line 422 "gramatica.y"
+//#line 420 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 174:
-//#line 425 "gramatica.y"
+//#line 423 "gramatica.y"
 { yyval.sval = val_peek(0).sval;}
 break;
 case 175:
-//#line 426 "gramatica.y"
+//#line 424 "gramatica.y"
 { yyval.sval = ((Token) val_peek(1).obj).getLexema() + val_peek(0).sval; agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes enteras negativas."); }
 break;
 case 176:
-//#line 427 "gramatica.y"
+//#line 425 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 177:
-//#line 428 "gramatica.y"
+//#line 426 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(0).obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
 break;
 case 178:
-//#line 429 "gramatica.y"
+//#line 427 "gramatica.y"
 {
                                                             System.out.println(((Token) val_peek(1).obj).getLexema() + ((Token) val_peek(0).obj).getLexema());
                                                             yyval.sval = ((Token) val_peek(1).obj).getLexema() + ((Token) val_peek(0).obj).getLexema();
@@ -2015,11 +2013,11 @@ case 178:
                                                         }
 break;
 case 179:
-//#line 460 "gramatica.y"
+//#line 458 "gramatica.y"
 { yyval.obj = ((Token) val_peek(1).obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
 break;
 case 180:
-//#line 463 "gramatica.y"
+//#line 461 "gramatica.y"
 {
                                                                                                     yyval.sval = TablaSimbolos.getTipoRetorno(((Token) val_peek(3).obj).getLexema());
                                                                                                     if (!TablaSimbolos.getTipoRetorno(((Token) val_peek(3).obj).getLexema()).equals(val_peek(1).sval)) {
@@ -2030,14 +2028,14 @@ case 180:
                                                                                                 }
 break;
 case 181:
-//#line 471 "gramatica.y"
+//#line 469 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
 break;
 case 182:
-//#line 472 "gramatica.y"
+//#line 470 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(4).obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
 break;
-//#line 1963 "Parser.java"
+//#line 1961 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

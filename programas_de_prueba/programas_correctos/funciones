@@ -2,7 +2,7 @@ funciones
 
 begin
     single d;
-    /# Dberia tirar error por variable sin declarar #/
+    /# Deberia tirar error por variable sin declarar #/
     e:=2;
 
     /# funcion que calcula 2^p #/
@@ -18,7 +18,7 @@ begin
         end_if;
     end
 
-    z, y := 4, 5;
+    z, y := 4, myFunction(5);
 
     x := 4;
     outf( {Programa terminado } );

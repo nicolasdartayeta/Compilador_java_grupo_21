@@ -46,7 +46,7 @@ sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                 Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
                                                                                 for (int i = 0; i<listaIdentificadores.size();i++){
-                                                                                   if (TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual())){
+                                                                                   if (TablaSimbolos.existeLexema(listaIdentificadores.get(i)+getAmbitoActual()) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
                                                                                         agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable ya declarada en el mismo ambito");
                                                                                    }else{
                                                                                         agregarTipoAIdentificadores($1.sval);
@@ -261,9 +261,7 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones {
                                                                                             $$.ival = $1.ival;
                                                                                             eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
-                                                                                            System.out.println("jeje " + listaExpresiones);
                                                                                             List<List<String>> expresiones = formatearLista(listaExpresiones);
-                                                                                            System.out.println("jeje " + expresiones);
 
                                                                                             if (listaIdentificadores.size() == expresiones.size()) {
                                                                                                 for (int i = 0; i < listaIdentificadores.size(); i++){
@@ -272,7 +270,7 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                                     representacionPolaca.add(((Token) $2.obj).getLexema());
                                                                                                 }
                                                                                             } else {
-                                                                                                System.out.println("NO COINCIDEN LAS LONGITUDES");
+                                                                                                agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": No coincide la cantidad de variables con la cantidad de valores a asignar.");
                                                                                             }
 
                                                                                             for (int i = 0; i< listaIdentificadores.size(); i++){
