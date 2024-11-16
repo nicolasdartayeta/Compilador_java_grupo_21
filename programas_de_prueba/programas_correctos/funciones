@@ -23,6 +23,7 @@ begin
     end
     z, y := 4, myFunction(5);
     o := 50;
+    d:= 20.1;
     x := 4;
     outf( {Programa terminado } );
 end

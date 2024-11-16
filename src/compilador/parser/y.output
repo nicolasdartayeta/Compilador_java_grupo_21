@@ -227,9 +227,9 @@
  178            | RESTA CONSTANTE_SINGLE
  179            | RESTA TOKERROR
 
- 180  invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica PARENTESIS_R
- 181                       | IDENTIFICADOR_FUN PARENTESIS_L PARENTESIS_R
- 182                       | IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error PARENTESIS_R
+ 180  invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica PARENTESIS_R
+ 181                       | IDENTIFICADOR_GENERICO PARENTESIS_L PARENTESIS_R
+ 182                       | IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica error PARENTESIS_R
 
 state 0
 	$accept : . programa $end  (0)
@@ -393,8 +393,7 @@ state 12
 	inicio_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R  (107)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -852,12 +851,40 @@ state 39
 
 
 state 40
-	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L expresion_aritmetica PARENTESIS_R  (180)
-	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L PARENTESIS_R  (181)
-	invocacion_a_funcion : IDENTIFICADOR_FUN . PARENTESIS_L expresion_aritmetica error PARENTESIS_R  (182)
+	identificador_simple : IDENTIFICADOR_GENERICO .  (41)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO . PARENTESIS_L expresion_aritmetica PARENTESIS_R  (180)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO . PARENTESIS_L PARENTESIS_R  (181)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO . PARENTESIS_L expresion_aritmetica error PARENTESIS_R  (182)
 
 	PARENTESIS_L  shift 90
-	.  error
+	error  reduce 41
+	IDENTIFICADOR_GENERICO  reduce 41
+	IDENTIFICADOR_ULONGINT  reduce 41
+	IDENTIFICADOR_SINGLE  reduce 41
+	CONSTANTE_DECIMAL  reduce 41
+	CONSTANTE_OCTAL  reduce 41
+	SUMA  reduce 41
+	RESTA  reduce 41
+	MULTIPLICACION  reduce 41
+	DIVISION  reduce 41
+	MAYOR_O_IGUAL  reduce 41
+	MENOR_O_IGUAL  reduce 41
+	MAYOR  reduce 41
+	MENOR  reduce 41
+	IGUAL  reduce 41
+	DESIGUAL  reduce 41
+	PARENTESIS_R  reduce 41
+	COMA  reduce 41
+	PUNTO  reduce 41
+	PUNTO_Y_COMA  reduce 41
+	FOR  reduce 41
+	UP  reduce 41
+	DOWN  reduce 41
+	IF  reduce 41
+	THEN  reduce 41
+	BEGIN  reduce 41
+	OUTF  reduce 41
+	RET  reduce 41
 
 
 state 41
@@ -897,8 +924,7 @@ state 45
 	inicio_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R  (107)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1063,8 +1089,7 @@ state 56
 	sentencia_salida : OUTF PARENTESIS_L . error PUNTO_Y_COMA  (138)
 
 	error  shift 110
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1177,8 +1202,7 @@ state 64
 	sentencia_asignacion : lista_de_identificadores ASIGNACION . lista_de_expresiones  (98)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1412,8 +1436,7 @@ state 79
 	encabezado_for : encabezado_for_obligatorio PARENTESIS_L . condicion PARENTESIS_R PARENTESIS_R  (145)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1449,8 +1472,7 @@ state 81
 	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA . PARENTESIS_L condicion  (147)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1641,13 +1663,12 @@ state 89
 
 
 state 90
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . expresion_aritmetica PARENTESIS_R  (180)
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . PARENTESIS_R  (181)
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L . expresion_aritmetica error PARENTESIS_R  (182)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L . expresion_aritmetica PARENTESIS_R  (180)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L . PARENTESIS_R  (181)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L . expresion_aritmetica error PARENTESIS_R  (182)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1726,8 +1747,7 @@ state 95
 	factor : TOS PARENTESIS_L . PARENTESIS_R  (170)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1759,8 +1779,7 @@ state 96
 state 97
 	expresion_aritmetica : expresion_aritmetica SUMA . termino  (160)
 
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1784,8 +1803,7 @@ state 97
 state 98
 	expresion_aritmetica : expresion_aritmetica RESTA . termino  (161)
 
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1846,8 +1864,7 @@ state 105
 	condicion : expresion_aritmetica comparador . expresion_aritmetica  (116)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1910,8 +1927,7 @@ state 107
 state 108
 	termino : termino MULTIPLICACION . factor  (164)
 
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -1934,8 +1950,7 @@ state 108
 state 109
 	termino : termino DIVISION . factor  (165)
 
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -2154,8 +2169,7 @@ state 127
 	inicio_seleccion : IF . PARENTESIS_L condicion PARENTESIS_R  (107)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -2508,8 +2522,7 @@ state 152
 	encabezado_for : encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L . condicion  (147)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -2546,8 +2559,7 @@ state 154
 	encabezado_for_obligatorio : inicio_for PARENTESIS_L asignacion_enteros . PUNTO_Y_COMA condicion accion  (152)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -2585,8 +2597,7 @@ state 156
 	encabezado_for_obligatorio : inicio_for asignacion_enteros PUNTO_Y_COMA . condicion PUNTO_Y_COMA accion  (149)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -2712,7 +2723,7 @@ state 161
 
 
 state 162
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L PARENTESIS_R .  (181)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L PARENTESIS_R .  (181)
 
 	.  reduce 181
 
@@ -2720,8 +2731,8 @@ state 162
 state 163
 	expresion_aritmetica : expresion_aritmetica . SUMA termino  (160)
 	expresion_aritmetica : expresion_aritmetica . RESTA termino  (161)
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica . PARENTESIS_R  (180)
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica . error PARENTESIS_R  (182)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica . PARENTESIS_R  (180)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica . error PARENTESIS_R  (182)
 
 	error  shift 227
 	SUMA  shift 97
@@ -3033,8 +3044,7 @@ state 191
 	lista_de_expresiones : lista_de_expresiones COMA . expresion_aritmetica  (158)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -3061,8 +3071,7 @@ state 192
 	inicio_seleccion : IF PARENTESIS_L . condicion PARENTESIS_R  (107)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -3126,8 +3135,7 @@ state 194
 	sentencia_retorno : RET PARENTESIS_L . expresion_aritmetica PARENTESIS_R error END  (69)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -3407,8 +3415,7 @@ state 219
 	encabezado_for_obligatorio : inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA . condicion accion  (152)
 
 	error  shift 39
-	IDENTIFICADOR_GENERICO  shift 1
-	IDENTIFICADOR_FUN  shift 40
+	IDENTIFICADOR_GENERICO  shift 40
 	IDENTIFICADOR_ULONGINT  shift 2
 	IDENTIFICADOR_SINGLE  shift 3
 	CONSTANTE_DECIMAL  shift 41
@@ -3476,14 +3483,14 @@ state 226
 
 
 state 227
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error . PARENTESIS_R  (182)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica error . PARENTESIS_R  (182)
 
 	PARENTESIS_R  shift 272
 	.  error
 
 
 state 228
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica PARENTESIS_R .  (180)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica PARENTESIS_R .  (180)
 
 	.  reduce 180
 
@@ -3988,7 +3995,7 @@ state 271
 
 
 state 272
-	invocacion_a_funcion : IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error PARENTESIS_R .  (182)
+	invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica error PARENTESIS_R .  (182)
 
 	.  reduce 182
 
