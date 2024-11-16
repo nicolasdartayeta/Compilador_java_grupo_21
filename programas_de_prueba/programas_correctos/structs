@@ -15,6 +15,6 @@ begin
 
     myStructB d; 
 
-    d.e:=5.0;
+    d.e:=5.0 + 4;
     outf( {Programa terminado} );
 end

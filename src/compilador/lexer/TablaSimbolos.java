@@ -2,6 +2,7 @@ package compilador.lexer;
 
 import compilador.parser.Parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -267,5 +268,15 @@ public class TablaSimbolos {
         CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
 
         campoTablaSimbolos.setUso(uso);
+    }
+
+    public static List<String> getEntradasPorTipo(String tipo) {
+        List<String> entradasPorTipo = new ArrayList<>();
+        for (String lexema : tablaSimbolos.keySet()) {
+            if (tablaSimbolos.get(lexema).getTipo().equals(tipo)) {
+                entradasPorTipo.add(lexema);
+            }
+        }
+        return entradasPorTipo;
     }
 }

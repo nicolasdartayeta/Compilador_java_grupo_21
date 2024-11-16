@@ -27,7 +27,7 @@ package compilador.parser;
     import java.util.Arrays;
     import java.util.List;
     import java.util.Stack;
-
+    import compilador.generadorCodigo.GeneradorAssembler;
 //#line 28 "Parser.java"
 
 
@@ -1092,6 +1092,11 @@ public static void main(String[] args) {
     TablaSimbolos.imprimirTabla();
 
     imprimirPolaca(representacionPolaca);
+
+    if (!lexingConErrores && !parsingConErrores && !codIntermedioConErrores) {
+        GeneradorAssembler gen = new GeneradorAssembler(representacionPolaca, "out.asm");
+        gen.generarCodigoAssembler();
+    }
 }
 
 private int yylex() {
@@ -1110,7 +1115,7 @@ private void yyerror(String string) {
   parsingConErrores = true;
   System.out.println("Error: " + string );
 }
-//#line 1041 "Parser.java"
+//#line 1046 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1792,7 +1797,7 @@ case 116:
 break;
 case 117:
 //#line 357 "gramatica.y"
-{ listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); representacionPolaca.add(((Token) val_peek(1).obj).getLexema()); }
+{ listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); representacionPolaca.add(((Token) val_peek(1).obj).getLexema()); if (!(val_peek(2).sval).equals(val_peek(1).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
 break;
 case 118:
 //#line 358 "gramatica.y"
@@ -1987,11 +1992,11 @@ case 160:
 break;
 case 161:
 //#line 452 "gramatica.y"
-{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;}
+{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval; if (!(val_peek(2).sval).equals(val_peek(1).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
 break;
 case 162:
 //#line 453 "gramatica.y"
-{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;}
+{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval; if (!(val_peek(2).sval).equals(val_peek(1).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
 break;
 case 163:
 //#line 454 "gramatica.y"
@@ -2003,11 +2008,11 @@ case 164:
 break;
 case 165:
 //#line 458 "gramatica.y"
-{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;}
+{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval; if (!(val_peek(2).sval).equals(val_peek(1).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
 break;
 case 166:
 //#line 459 "gramatica.y"
-{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;}
+{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval; if (!(val_peek(2).sval).equals(val_peek(1).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
 break;
 case 167:
 //#line 460 "gramatica.y"
@@ -2131,7 +2136,7 @@ case 183:
 //#line 538 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(4).obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
 break;
-//#line 2057 "Parser.java"
+//#line 2062 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

@@ -1,27 +1,39 @@
 package compilador.generadorCodigo;
 
+import compilador.lexer.TablaSimbolos;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
-import compilador.lexer.TablaSimbolos;
 
-public class GeneracionAssembler {
-    private static ArrayList<String> polaca;
+public class GeneradorAssembler {
+    private ArrayList<String> polaca;
     private BufferedWriter writer;
     private static Stack<String> pila = new Stack<>();
     private int contadorAux = 0;
 
-    public GeneracionAssembler(ArrayList<String> representacionPolaca, String rutaArchivo) throws IOException {
+    public GeneradorAssembler(ArrayList<String> representacionPolaca, String rutaArchivo){
         this.polaca = representacionPolaca;
-        this.writer = new BufferedWriter(new FileWriter(rutaArchivo));
+        try {
+            this.writer = new BufferedWriter(new FileWriter(rutaArchivo));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void generarCodigoAssembler() throws IOException{
-        generarHeader();
-        for (String token: polaca){
-            procesarToken(token);
+        try {
+            generarHeader();
+            generarData();
+            for (String token: polaca){
+                procesarToken(token);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -39,8 +51,19 @@ public class GeneracionAssembler {
     }
 
 
-    private String getTipo(String op1, String op2, String operador){
+    private String getTipo(String op1, String op2, String operador) {
+        return null;
+    }
+    private void generarCodigo() {
+    }
 
+    private void generarData() {
+        List<String> tiposAAgregar = Arrays.asList(TablaSimbolos.SINGLE, TablaSimbolos.ULONGINT);
+
+        for (String tipo : tiposAAgregar) {
+            List<String> entradasTablaSimbolos = TablaSimbolos.getEntradasPorTipo(tipo);
+            System.out.println(entradasTablaSimbolos);
+        }
     }
 
     private void operacionSuma(String op1, String op2) throws IOException{
@@ -53,7 +76,7 @@ public class GeneracionAssembler {
 
     private String crearVariableAux() throws IOException {
         String varAux = "@aux" + (++contadorAux);
-        TablaSimbolos.agregarLexema(varAux);//Agregar auxiliar a la tabla de simbolos
+        //TablaSimbolos.agregarLexema(varAux);//Agregar auxiliar a la tabla de simbolos
         return varAux;
     }
 
