@@ -180,7 +180,6 @@ encabezado_funcion          :   nombre_funcion PARENTESIS_L parametro PARENTESIS
                                                                                         aux.push(nombreFuncion);
                                                                                         String ambitoActual = getAmbitoActual();
                                                                                         TablaSimbolos.setTipoParametro(nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':')), $3.sval);
-                                                                                        TablaSimbolos.setTipoRetorno(nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':')), $1.sval);
                                                                                         TablaSimbolos.setCantidadDeParametros(nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':')), 1);
                                                                                         agregarAmbitoAIdentificador(lexemaParametro);
                                                                                         TablaSimbolos.cambiarLexema(lexemaParametro, lexemaParametro + getAmbitoActual());
