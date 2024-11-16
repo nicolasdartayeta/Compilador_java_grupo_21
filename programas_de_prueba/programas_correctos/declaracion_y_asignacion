@@ -9,9 +9,8 @@ begin
     single b;
 
     b := 3.2s-4;
+    z := 3;
+    e, f := 6, z;
 
-    e, f := 6, Z;
-
-    E:= 8;
     outf( { Programa terminado } );
 end

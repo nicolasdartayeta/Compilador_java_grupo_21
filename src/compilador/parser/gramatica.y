@@ -43,17 +43,19 @@ sentencia                   :   sentencia_declarativa
                             ;
 
 sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
+                                                                                System.out.println(getAmbitoActual());
                                                                                 Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
+                                                                                agregarTipoAIdentificadores($1.sval);
+                                                                                agregarAmbitoAIdentificadores(listaIdentificadores);
+                                                                                agregarUsoAIdentificadores(listaIdentificadores, "nombre de variable");
 
-                                                                                for (int i = 0; i<listaIdentificadores.size();i++){
+                                                                                for (int i = 0; i < listaIdentificadores.size(); i++) {
+                                                                                   System.out.println((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())));
                                                                                    if ((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
-                                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable ya declarada en el mismo ambito");
-                                                                                   }else{
-                                                                                        agregarTipoAIdentificadores($1.sval);
-                                                                                        agregarAmbitoAIdentificadores(listaIdentificadores);
-                                                                                        agregarUsoAIdentificadores(listaIdentificadores, "nombre de variable");
-                                                                                        listaIdentificadores.forEach((lexema)->TablaSimbolos.cambiarLexema(lexema, lexema + getAmbitoActual()));
+                                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + listaIdentificadores.get(i) +" ya declarada en el mismo ambito");
+                                                                                   } else {
+                                                                                        TablaSimbolos.cambiarLexema(listaIdentificadores.get(i), listaIdentificadores.get(i) + getAmbitoActual());
                                                                                         if (TablaSimbolos.esUnTipo($1.sval) && TablaSimbolos.getTipo($1.sval).equals("STRUCT")) {
                                                                                             for(String identificador: listaIdentificadores) {
                                                                                                 crearCampo($1.sval, identificador);
@@ -263,7 +265,8 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                             $$.ival = $1.ival;
                                                                                             eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
                                                                                             List<List<String>> expresiones = formatearLista(listaExpresiones);
-
+                                                                                            System.out.println("listaIdentificadores    " + listaIdentificadores);
+                                                                                            System.out.println("expresiones    " + expresiones);
                                                                                             if (listaIdentificadores.size() == expresiones.size()) {
                                                                                                 for (int i = 0; i < listaIdentificadores.size(); i++){
                                                                                                     String identificador = listaIdentificadores.get(i);
@@ -288,16 +291,25 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                                 agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": No coincide la cantidad de variables con la cantidad de valores a asignar.");
                                                                                             }
 
-                                                                                            for (int i = 0; i< listaIdentificadores.size(); i++){
-                                                                                                if (estaAlAlcance(listaIdentificadores.get(i)) == null){
-                                                                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + listaIdentificadores.get(i) +" no declarada");}
-                                                                                                else{
-                                                                                                    if (TablaSimbolos.existeLexema((listaIdentificadores.get(i)))) {
-                                                                                                        TablaSimbolos.aumentarUso(listaIdentificadores.get(i)+estaAlAlcance(listaIdentificadores.get(i)));
-                                                                                                        TablaSimbolos.eliminarLexema(listaIdentificadores.get(i));}}}
+                                                                                            for (int i = 0; i < listaIdentificadores.size(); i++) {
+                                                                                                String ambito = estaAlAlcance(listaIdentificadores.get(i));
+                                                                                                String identificador = listaIdentificadores.get(i);
+                                                                                                if (ambito == null) {
+                                                                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + identificador +" no declarada");
+                                                                                                } else {
+                                                                                                    TablaSimbolos.aumentarUso(identificador + ambito);
+                                                                                                    TablaSimbolos.eliminarLexema(identificador);
+                                                                                                    String tipoVariable = TablaSimbolos.getTipo(identificador + ambito);
+                                                                                                    String tipoExpresion = listaTipoExpresiones.get(i);
+                                                                                                    if (!tipoVariable.equals(tipoExpresion)){
+                                                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Incompatibilidad de tipos. Se quiere asignar " + tipoExpresion +" a " + tipoVariable);
+                                                                                                    }
+                                                                                                }
+                                                                                            }
 
                                                                                             listaExpresiones.clear();
                                                                                             listaIdentificadores.clear();
+                                                                                            listaTipoExpresiones.clear();
                                                                                          }
                             ;
 
@@ -396,10 +408,10 @@ encabezado_for_obligatorio  :   inicio_for PARENTESIS_L asignacion_enteros PUNTO
                             |   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un ';' en el encabezado del FOR"); }
                             ;
 
-inicio_for                  : FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea(); bfs.push(representacionPolaca.size());}
+inicio_for                  :   FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea(); bfs.push(representacionPolaca.size());}
                             ;
 
-asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema()); TablaSimbolos.imprimirTabla();
+asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema());
                                                                             System.out.println(listaIdentificadores);
                                                                             // Si la variable empieza con x, y, z, s puede ser que este siendo declarada al usarse, hay que chequear y agregarla a la tabla de simbolos de ser necesario.
                                                                             String identificador = $1.sval;
@@ -422,8 +434,8 @@ accion                      :   UP constante_entera { listaExpresiones.forEach((
                             |   constante_entera { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta palabra reservada en la acción del encabezado FOR"); }
                             ;
 
-lista_de_expresiones        :   lista_de_expresiones COMA expresion_aritmetica { listaExpresiones.add(((Token) $2.obj).getLexema()); }
-		                    |   expresion_aritmetica { listaExpresiones.add(","); }
+lista_de_expresiones        :   lista_de_expresiones COMA expresion_aritmetica { listaExpresiones.add(((Token) $2.obj).getLexema()); listaTipoExpresiones.add($3.sval); }
+		                    |   expresion_aritmetica { listaExpresiones.add(","); listaTipoExpresiones.add($1.sval); }
 		                    ;
 
 expresion_aritmetica        :   expresion_aritmetica SUMA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;}
@@ -443,7 +455,9 @@ factor                      :   identificador { String ambitoEncontrado = estaAl
                                                 } else {
                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": Variable " + $1.sval + " no declarada");
                                                     $$.sval = null;  // O cualquier valor predeterminado que necesites
-                                                };}
+                                                };
+                                                listaExpresiones.add($1.sval);
+                                                }
                             |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
                             |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "single"; }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
@@ -552,6 +566,8 @@ public static final List<String> listaIdentificadores = new ArrayList<>();
 // Lista de expresiones
 public static final List<String> listaExpresiones = new ArrayList<>();
 
+// Lista del tipo al que se evaluan expresiones
+public static final List<String> listaTipoExpresiones = new ArrayList<>();
 // Lista de tipos
 public static final List<String> listaTipos = new ArrayList<>();
 
@@ -665,6 +681,7 @@ public static void crearCampo(String tipo, String lexema){
         CampoTablaSimbolos nuevoCampo = new CampoTablaSimbolos(false, campo.tipo());
         TablaSimbolos.agregarLexema(nombreCampo, nuevoCampo);
         agregarAmbitoAIdentificador(nombreCampo);
+        TablaSimbolos.setUso(nombreCampo, "nombre de variable");
     }
 }
 
