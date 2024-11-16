@@ -399,7 +399,22 @@ encabezado_for_obligatorio  :   inicio_for PARENTESIS_L asignacion_enteros PUNTO
 inicio_for                  : FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea(); bfs.push(representacionPolaca.size());}
                             ;
 
-asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema()); }
+asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema()); TablaSimbolos.imprimirTabla();
+                                                                            System.out.println(listaIdentificadores);
+                                                                            // Si la variable empieza con x, y, z, s puede ser que este siendo declarada al usarse, hay que chequear y agregarla a la tabla de simbolos de ser necesario.
+                                                                            String identificador = $1.sval;
+                                                                            char primerCaracter = identificador.charAt(0);
+                                                                            if (primerCaracter == 'x' || primerCaracter == 'y' || primerCaracter == 'z' || primerCaracter == 's') {
+                                                                                if (!TablaSimbolos.existeLexema(identificador + getAmbitoActual())) {
+                                                                                    TablaSimbolos.cambiarLexema(identificador, identificador + getAmbitoActual());
+                                                                                    agregarUsoAIdentificador(identificador + getAmbitoActual(), "nombre de variable");
+                                                                                } else {
+                                                                                    TablaSimbolos.aumentarUso(identificador + getAmbitoActual());
+                                                                                }
+
+                                                                                TablaSimbolos.eliminarLexema(identificador);
+                                                                            }
+                                                                            }
                             ;
 
 accion                      :   UP constante_entera { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); aux.push("UP"); aux.push(((Token) $2.obj).getLexema()); }
@@ -426,7 +441,7 @@ factor                      :   identificador { String ambitoEncontrado = estaAl
                                                 if (ambitoEncontrado != null) {
                                                     $$.sval = TablaSimbolos.getTipo($1.sval + ambitoEncontrado);
                                                 } else {
-                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": Variable no declarada");
+                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": Variable " + $1.sval + " no declarada");
                                                     $$.sval = null;  // O cualquier valor predeterminado que necesites
                                                 };}
                             |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
