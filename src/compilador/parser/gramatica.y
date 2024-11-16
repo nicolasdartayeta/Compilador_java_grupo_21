@@ -47,7 +47,7 @@ sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
 
                                                                                 for (int i = 0; i<listaIdentificadores.size();i++){
-                                                                                   if ((TablaSimbolos.existeLexema(listaIdentificadores.get(i)+ getAmbitoActual())) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
+                                                                                   if ((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
                                                                                         agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable ya declarada en el mismo ambito");
                                                                                    }else{
                                                                                         agregarTipoAIdentificadores($1.sval);
@@ -162,13 +162,14 @@ encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L par
                                                                                                         TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
                                                                                                         agregarAmbitoAIdentificador(lexema);
                                                                                                         agregarUsoAIdentificador(lexema, "nombre de funcion");
-                                                                                                        agregarAmbitoAIdentificador(representacionPolaca.get(representacionPolaca.size()-1));
+                                                                                                        TablaSimbolos.setTipoParametro(lexema, $5.sval);
+                                                                                                        TablaSimbolos.setTipoRetorno(lexema, $1.sval);
+                                                                                                        TablaSimbolos.setCantidadDeParametros(lexema, 1);
+                                                                                                        String ambitoDeLaFuncion = getAmbitoActual();
+                                                                                                        TablaSimbolos.cambiarLexema(lexema, lexema + ambitoDeLaFuncion);
                                                                                                         ambito.push(":" + lexema);
                                                                                                         agregarAmbitoAIdentificador(lexemaParametro);
                                                                                                         TablaSimbolos.cambiarLexema(lexemaParametro, lexemaParametro + getAmbitoActual());
-                                                                                                        TablaSimbolos.setCantidadDeParametros(lexema, 1);
-                                                                                                        TablaSimbolos.setTipoParametro(lexema, $5.sval);
-                                                                                                        TablaSimbolos.setTipoRetorno(lexema, $1.sval);
                                                                                                     }
                             |   tipo FUN PARENTESIS_L parametro PARENTESIS_R {
                                                                                 $$.ival = $1.ival;
@@ -265,9 +266,23 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
 
                                                                                             if (listaIdentificadores.size() == expresiones.size()) {
                                                                                                 for (int i = 0; i < listaIdentificadores.size(); i++){
-                                                                                                    representacionPolaca.add(listaIdentificadores.get(i));
+                                                                                                    String identificador = listaIdentificadores.get(i);
+                                                                                                    representacionPolaca.add(identificador);
                                                                                                     expresiones.get(i).forEach((elemento)->representacionPolaca.add(elemento));
                                                                                                     representacionPolaca.add(((Token) $2.obj).getLexema());
+
+                                                                                                    // Si la variable empieza con x, y, z, s puede ser que este siendo declarada al usarse, hay que chequear y agregarla a la tabla de simbolos de ser necesario.
+                                                                                                    char primerCaracter = identificador.charAt(0);
+                                                                                                    if (primerCaracter == 'x' || primerCaracter == 'y' || primerCaracter == 'z' || primerCaracter == 's') {
+                                                                                                        if (!TablaSimbolos.existeLexema(identificador + getAmbitoActual())) {
+                                                                                                            TablaSimbolos.cambiarLexema(identificador, identificador + getAmbitoActual());
+                                                                                                            agregarUsoAIdentificador(identificador + getAmbitoActual(), "nombre de variable");
+                                                                                                        } else {
+                                                                                                            TablaSimbolos.aumentarUso(identificador + getAmbitoActual());
+                                                                                                        }
+
+                                                                                                        TablaSimbolos.eliminarLexema(identificador);
+                                                                                                    }
                                                                                                 }
                                                                                             } else {
                                                                                                 agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": No coincide la cantidad de variables con la cantidad de valores a asignar.");
@@ -275,7 +290,7 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
 
                                                                                             for (int i = 0; i< listaIdentificadores.size(); i++){
                                                                                                 if (estaAlAlcance(listaIdentificadores.get(i)) == null){
-                                                                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable no declarada");}
+                                                                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + listaIdentificadores.get(i) +" no declarada");}
                                                                                                 };
 
                                                                                             listaExpresiones.clear();
@@ -459,15 +474,25 @@ constante                   :   constante_entera { $$.sval = $1.sval;}
                             |   RESTA TOKERROR { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
                             ;
 
-invocacion_a_funcion        :   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica PARENTESIS_R {
-                                                                                                    System.out.println( ((Token) $1.obj).getLexema()+getAmbitoActual());
-                                                                                                    $$.sval = TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema());
-                                                                                                    if (!TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()).equals($3.sval)) {
-                                                                                                        agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Parametro real: " + $3.sval +". Parametro formal: " + TablaSimbolos.getTipoRetorno(((Token) $1.obj).getLexema()) + ".");}
-                                                                                                    listaExpresiones.add(((Token) $1.obj).getLexema()); listaExpresiones.add("BI");
-                                                                                                    }
-                            |   IDENTIFICADOR_FUN PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
-                            |   IDENTIFICADOR_FUN PARENTESIS_L expresion_aritmetica error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
+invocacion_a_funcion        :   IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica PARENTESIS_R {
+                                                                                                        String lexemaFuncion = ((Token) $1.obj).getLexema();
+                                                                                                        TablaSimbolos.eliminarLexema(lexemaFuncion);
+                                                                                                        String ambitoFuncion = estaAlAlcance(lexemaFuncion);
+                                                                                                        if (ambitoFuncion != null) {
+                                                                                                            String lexemaFuncionConAmbito = lexemaFuncion + ambitoFuncion;
+                                                                                                            String tipoParametroFormal = TablaSimbolos.getTipoRetorno(lexemaFuncionConAmbito);
+                                                                                                            $$.sval = tipoParametroFormal;
+                                                                                                            String tipoParametroReal = $3.sval;
+                                                                                                            if (!tipoParametroFormal.equals(tipoParametroReal)) {
+                                                                                                                agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Parametro real: " + tipoParametroReal +". Parametro formal: " + tipoParametroFormal + ".");}
+                                                                                                            listaExpresiones.add(lexemaFuncion);
+                                                                                                            listaExpresiones.add("BI");
+                                                                                                        } else {
+                                                                                                            agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Funcion " + lexemaFuncion +" no esta el alcance");
+                                                                                                        }
+                                                                                                       }
+                            |   IDENTIFICADOR_GENERICO PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
+                            |   IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica error PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
                             ;
 
 %%

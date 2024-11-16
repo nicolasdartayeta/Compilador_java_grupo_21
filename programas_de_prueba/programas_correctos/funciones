@@ -11,6 +11,7 @@ begin
         ulongint o;
         d:=5.0;
         h:= 10;
+        x := 2;
 
         if (p = 0) then
             ret(2);
@@ -21,7 +22,7 @@ begin
         end_if;
     end
     z, y := 4, myFunction(5);
-    o:= 50;
+    o := 50;
     x := 4;
     outf( {Programa terminado } );
 end
