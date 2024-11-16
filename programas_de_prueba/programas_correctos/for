@@ -1,7 +1,6 @@
 programa_for
 
 begin
-    ulongint x;
     ulongint j;
     for(x := 10; x >= 0; down 1)
     begin
