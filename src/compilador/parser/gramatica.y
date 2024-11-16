@@ -285,13 +285,16 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                                     }
                                                                                                 }
                                                                                             } else {
-                                                                                                agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": No coincide la cantidad de variables con la cantidad de valores a asignar.");
+                                                                                                agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": No coincide la cantidad de variables con la cantidad de valores a asignar.");
                                                                                             }
 
                                                                                             for (int i = 0; i< listaIdentificadores.size(); i++){
                                                                                                 if (estaAlAlcance(listaIdentificadores.get(i)) == null){
                                                                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + listaIdentificadores.get(i) +" no declarada");}
-                                                                                                };
+                                                                                                else{
+                                                                                                    if (TablaSimbolos.existeLexema((listaIdentificadores.get(i)))) {
+                                                                                                        TablaSimbolos.aumentarUso(listaIdentificadores.get(i)+estaAlAlcance(listaIdentificadores.get(i)));
+                                                                                                        TablaSimbolos.eliminarLexema(listaIdentificadores.get(i));}}}
 
                                                                                             listaExpresiones.clear();
                                                                                             listaIdentificadores.clear();
