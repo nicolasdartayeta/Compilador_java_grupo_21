@@ -13,6 +13,10 @@ begin
         h:= 10;
         x := 2;
 
+        ulongint fun mySubFunction(ulongint g)
+        begin
+            ret(3);
+        end
         if (p = 0) then
             ret(2);
         else
@@ -22,6 +26,19 @@ begin
         end_if;
     end
     z, y := 4, myFunction(5);
+
+    ulongint fun myFunction2 (single h)
+    begin
+        ulongint r;
+        r:= mySubFunction(20);
+        ret(r);
+    end
+
+    single fun myFunction2 (ulongint ñ)
+    begin
+        ret(3.14);
+    end
+
     o := 50;
     d:= 20.1;
     x := 4;
