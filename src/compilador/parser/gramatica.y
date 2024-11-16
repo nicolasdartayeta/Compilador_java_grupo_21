@@ -109,14 +109,17 @@ lista_de_identificadores    :   lista_de_identificadores COMA identificador { li
 		                    |   identificador { $$.ival = $1.ival; listaIdentificadores.add($1.sval);}
 		                    ;
 
-identificador               :   identificador_simple { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); $$.sval = ((Token) $1.obj).getLexema();
-                                                       representacionPolaca.add(((Token) $1.obj).getLexema());
-                                                       String idActual = ((Token) $1.obj).getLexema();
-                                                       String idActualConAmbito = idActual + getAmbitoActual();
-                                                       if (TablaSimbolos.existeLexema(idActualConAmbito)){
+identificador               :   identificador_simple {
+                                                        $$.ival = ((Token) $1.obj).getNumeroDeLinea();
+                                                        $$.sval = ((Token) $1.obj).getLexema();
+                                                        representacionPolaca.add(((Token) $1.obj).getLexema());
+                                                        String idActual = ((Token) $1.obj).getLexema();
+                                                        String idActualConAmbito = idActual + getAmbitoActual();
+                                                        if (TablaSimbolos.existeLexema(idActualConAmbito)){
                                                            TablaSimbolos.aumentarUso(idActualConAmbito);
                                                            TablaSimbolos.deleteEntrada(idActual);
-                                                       };}
+                                                        };
+                                                     }
                             |   identificador_compuesto { $$.ival = $1.ival; $$.sval = $1.sval; System.out.println("ID COMPUESTO: " + $1.sval); representacionPolaca.add($1.sval);
                                                          String idActual = $1.sval;
                                                          ArrayList<String> idSimples = new ArrayList<>(Arrays.asList(idActual.split("\\.")));
@@ -151,35 +154,44 @@ funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
                                                                              }
                             ;
 
-encabezado_funcion          :   tipo FUN IDENTIFICADOR_GENERICO PARENTESIS_L parametro PARENTESIS_R {
-                                                                                                        String lexemaParametro = representacionPolaca.get(representacionPolaca.size()-1);
-                                                                                                        eliminarUltimosElementos(representacionPolaca, 1);
-                                                                                                        representacionPolaca.add("");
-                                                                                                        bfs.push(representacionPolaca.size()-1);
-                                                                                                        representacionPolaca.add("BI");
-                                                                                                        representacionPolaca.add(((Token) $3.obj).getLexema().toString());
-                                                                                                        aux.push(((Token) $3.obj).getLexema().toString());
-                                                                                                        $$.ival = $1.ival;
-                                                                                                        String lexema = ((Token) $3.obj).getLexema().toString();
-                                                                                                        TablaSimbolos.cambiarTipo(lexema, TablaSimbolos.FUN);
-                                                                                                        agregarAmbitoAIdentificador(lexema);
-                                                                                                        agregarUsoAIdentificador(lexema, "nombre de funcion");
-                                                                                                        TablaSimbolos.setTipoParametro(lexema, $5.sval);
-                                                                                                        TablaSimbolos.setTipoRetorno(lexema, $1.sval);
-                                                                                                        TablaSimbolos.setCantidadDeParametros(lexema, 1);
-                                                                                                        String ambitoDeLaFuncion = getAmbitoActual();
-                                                                                                        TablaSimbolos.cambiarLexema(lexema, lexema + ambitoDeLaFuncion);
-                                                                                                        ambito.push(":" + lexema);
-                                                                                                        agregarAmbitoAIdentificador(lexemaParametro);
-                                                                                                        TablaSimbolos.cambiarLexema(lexemaParametro, lexemaParametro + getAmbitoActual());
-                                                                                                    }
+nombre_funcion              :   tipo FUN IDENTIFICADOR_GENERICO {
+                                                                    $$.ival = $1.ival;
+                                                                    String nombreFuncion = ((Token) $3.obj).getLexema();
+                                                                    $$.sval = nombreFuncion;
+                                                                    TablaSimbolos.cambiarTipo(nombreFuncion, TablaSimbolos.FUN);
+                                                                    agregarAmbitoAIdentificador(nombreFuncion);
+                                                                    agregarUsoAIdentificador(nombreFuncion, "nombre de funcion");
+                                                                    TablaSimbolos.setTipoRetorno(nombreFuncion, $1.sval);
+                                                                    String ambitoDeLaFuncion = getAmbitoActual();
+                                                                    TablaSimbolos.cambiarLexema(nombreFuncion, nombreFuncion + ambitoDeLaFuncion);
+                                                                    ambito.push(":" + nombreFuncion);
+                                                                }
+                            ;
+
+encabezado_funcion          :   nombre_funcion PARENTESIS_L parametro PARENTESIS_R {
+                                                                                        $$.ival = $1.ival;
+                                                                                        String nombreFuncion = $1.sval;
+                                                                                        String lexemaParametro = representacionPolaca.get(representacionPolaca.size()-1);
+                                                                                        eliminarUltimosElementos(representacionPolaca, 1);
+                                                                                        representacionPolaca.add("");
+                                                                                        bfs.push(representacionPolaca.size()-1);
+                                                                                        representacionPolaca.add("BI");
+                                                                                        representacionPolaca.add(nombreFuncion);
+                                                                                        aux.push(nombreFuncion);
+                                                                                        String ambitoActual = getAmbitoActual();
+                                                                                        TablaSimbolos.setTipoParametro(nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':')), $3.sval);
+                                                                                        TablaSimbolos.setTipoRetorno(nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':')), $1.sval);
+                                                                                        TablaSimbolos.setCantidadDeParametros(nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':')), 1);
+                                                                                        agregarAmbitoAIdentificador(lexemaParametro);
+                                                                                        TablaSimbolos.cambiarLexema(lexemaParametro, lexemaParametro + getAmbitoActual());
+                                                                                    }
                             |   tipo FUN PARENTESIS_L parametro PARENTESIS_R {
                                                                                 $$.ival = $1.ival;
                                                                                 agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador de la funcion");
                                                                              }
                             ;
 
-parametro                   :   tipo identificador { $$.sval = $1.sval; TablaSimbolos.cambiarTipo($2.sval, $1.sval); agregarUsoAIdentificador($2.sval, "nombre de parametro"); }
+parametro                   :   tipo identificador { $$.sval = $1.sval; TablaSimbolos.imprimirTabla();TablaSimbolos.cambiarTipo($2.sval, $1.sval); agregarUsoAIdentificador($2.sval, "nombre de parametro"); }
                             |   identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el tipo del parametro de la funcion"); }
                             |   tipo { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador del parametro de la funcion"); }
                             |   tipo identificador error {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": La funcion no puede tener mas de un parametro");}

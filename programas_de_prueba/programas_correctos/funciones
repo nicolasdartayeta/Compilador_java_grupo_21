@@ -26,8 +26,9 @@ begin
         end_if;
     end
     z, y := 4, myFunction(5);
+    d := 3.2s3;
 
-    ulongint fun myFunction2 (single h)
+    ulongint fun myFunction2 (single d)
     begin
         ulongint r;
         r:= mySubFunction(20);
