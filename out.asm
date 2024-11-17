@@ -9,12 +9,12 @@ includelib \masm32\lib\kernel32.lib
 
 .data
 	_a_main dw 0
-	@aux1 dd 0
+	@aux1 dw 0
 .code
 start:
-MOV EAX, 4.4
-ADD EAX, 5.0
-MOV @aux1, EAX
+FLD 5.0
+FADD 4.4
+FSTP @aux1
 FLD @aux1
 FSTP _a_main
 invoke ExitProcess, 0

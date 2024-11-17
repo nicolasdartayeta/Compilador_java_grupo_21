@@ -113,18 +113,16 @@ public class GeneradorAssembler {
         } else {
             switch (token) {
                 case "+":
-                    //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                    operacionSumaEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
+                    suma();
                     break;
                 case ":=":
                     asignacion();
                     break;
                 case "-":
-                    //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                    operacionRestaEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
+                    resta();
                     break;
                 case "*":
-                    operacionMultiplicacionEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
+                    multiplicacion();
                     break;
                 case "BI":
                     code.append("JMP ").append(formatearOperando(pila.pop())).append("\n");
@@ -140,6 +138,54 @@ public class GeneradorAssembler {
                     pila.push(token);
                     break;
             }
+        }
+    }
+
+    private void multiplicacion() throws IOException {
+        String op1 = pila.pop();
+        String op2 = pila.pop();
+
+        String tipoOperando = TablaSimbolos.getTipo(op1);
+
+        op1 = formatearOperando(op1);
+        op2 = formatearOperando(op2);
+
+        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+            operacionMultiplicacionFlotante(op1, op2);
+        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+            operacionMultiplicacionEntera(op1, op2);
+        }
+    }
+
+    private void suma() throws IOException {
+        String op1 = pila.pop();
+        String op2 = pila.pop();
+
+        String tipoOperando = TablaSimbolos.getTipo(op1);
+
+        op1 = formatearOperando(op1);
+        op2 = formatearOperando(op2);
+
+        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+            operacionSumaFlotante(op1, op2);
+        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+            operacionSumaEntera(op1, op2);
+        }
+    }
+
+    private void resta() throws IOException {
+        String op1 = pila.pop();
+        String op2 = pila.pop();
+
+        String tipoOperando = TablaSimbolos.getTipo(op1);
+
+        op1 = formatearOperando(op1);
+        op2 = formatearOperando(op2);
+
+        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+            operacionRestaFlotante(op1, op2);
+        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+            operacionRestaFlotante(op1, op2);
         }
     }
 
@@ -261,7 +307,7 @@ public class GeneradorAssembler {
     private void generarSalida(String op1) throws IOException{
         String tipo = TablaSimbolos.getTipo(op1);
         if (tipo.equals(TablaSimbolos.SINGLE)){
-            writer.write()
+            writer.write("");
         }
     }
     private String formatearOperando(String op) {
