@@ -50,7 +50,7 @@ public class GeneradorAssembler {
         }
     }
 
-    public void generarCodigoAssembler(){
+    public void generarCodigoAssembler() throws IOException{
         try {
             generarHeader();
             generarData();
@@ -93,6 +93,8 @@ public class GeneradorAssembler {
                     break;
                 case "BF":
                     break;
+                case "tos":
+                    realizarConversion(pila.pop());
                 default:
                     pila.push(token);
                     break;
@@ -206,9 +208,14 @@ public class GeneradorAssembler {
         writer.write("MOV EAX, _" + op1 + "\n");
         writer.write("CMP EAX, _" + op2 + "\n");
         writer.write("PUSHF" + "\n"); //Almacena flags en la pila
-
-
-
+    }
+    private void realizarConversion(String op1){
+        if (TablaSimbolos.getTipo(op1) == TablaSimbolos.ULONGINT){
+            TablaSimbolos.cambiarTipo(op1,TablaSimbolos.SINGLE);
+            pila.push(op1);
+        } else {
+            System.out.println("La conversion debe ser de un tipo ULONGINT a un tipo SINGLE");
+        }
     }
     private void generarSalto(){
 

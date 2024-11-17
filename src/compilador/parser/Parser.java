@@ -23,6 +23,8 @@ package compilador.parser;
     import compilador.lexer.TablaSimbolos;
     import compilador.lexer.CampoTablaSimbolos;
     import compilador.lexer.TablaToken;
+
+    import java.io.IOException;
     import java.util.ArrayList;
     import java.util.Arrays;
     import java.util.List;
@@ -1059,7 +1061,7 @@ public static <T> void appendListToList(List<T> lista1, List<T> lista2) {
 }
 
 
-public static void main(String[] args) {
+public static void main(String[] args) throws IOException {
     ambito.push(":main");
     representacionPolaca = new ArrayList<String>();
     Lexer lexer = new Lexer(args[0]);
