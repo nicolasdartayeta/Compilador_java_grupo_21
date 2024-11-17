@@ -11,7 +11,7 @@ includelib \masm32\lib\kernel32.lib
 	 _a_main dd 0
 .code
 start:
-MOV EAX, _5
-MOV _a_main,  EAX
+MOV EAX, _*
+MOV _4,  EAX
 invoke ExitProcess, 0
 end start
