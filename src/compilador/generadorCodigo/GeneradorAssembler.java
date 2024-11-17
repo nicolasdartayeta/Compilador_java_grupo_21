@@ -16,9 +16,33 @@ public class GeneradorAssembler {
     private final BufferedWriter writer;
     private static Stack<String> pila = new Stack<>();
     private int contadorAux = 0;
+    // Pila de ambitos
+    private final Stack<String> ambito = new Stack<>();
+
+    private String getAmbitoActual() {
+        StringBuilder ambitoActual = new StringBuilder();
+        for (String elemento: ambito) {
+            ambitoActual.append(elemento);
+        }
+        return ambitoActual.toString();
+    }
+
+    //Para hacer chequeos de ambitos
+    private String estaAlAlcance(String lexema){
+        String ambitoActual = getAmbitoActual();
+        while (ambitoActual.length()> 1){
+            String idAmb = lexema + ambitoActual;
+            if (TablaSimbolos.existeLexema(idAmb)){
+                return ambitoActual;
+            }
+            ambitoActual = ambitoActual.substring(0,ambitoActual.lastIndexOf(':'));
+        }
+        return null;
+    };
 
     public GeneradorAssembler(ArrayList<String> representacionPolaca, String rutaArchivo){
         this.polaca = representacionPolaca;
+        this.ambito.push(":main");
         try {
             this.writer = new BufferedWriter(new FileWriter(rutaArchivo));
         } catch (IOException e) {
@@ -40,21 +64,29 @@ public class GeneradorAssembler {
     }
 
     private void procesarToken(String token) throws  IOException{
+        String ambito = estaAlAlcance(token);
+        if (ambito != null){
 
-        switch(token){
-            case "+":
-                //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                operacionSumaEntera(pila.pop(),pila.pop());
-                break;
-            case "-":
-                //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                operacionRestaEntera(pila.pop(),pila.pop());
-                break;
-            case "BI":
-                writer.write("JMP " + pila.pop() + "\n");
-                break;
-            case BF:
-
+            pila.push(token + ambito);
+        } else {
+            switch (token) {
+                case "+":
+                    //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
+                    operacionSumaEntera(pila.pop(), pila.pop());
+                    break;
+                case "-":
+                    //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
+                    operacionRestaEntera(pila.pop(), pila.pop());
+                    break;
+                case "BI":
+                    writer.write("JMP " + pila.pop() + "\n");
+                    break;
+                case "BF":
+                    break;
+                default:
+                    pila.push(token);
+                    break;
+            }
         }
     }
 
