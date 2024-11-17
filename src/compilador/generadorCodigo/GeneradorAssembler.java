@@ -69,6 +69,8 @@ public class GeneradorAssembler {
             System.out.println("Procesando token: " + token);
             procesarToken(token);
         }
+        writer.write("invoke ExitProcess, 0\n");
+        writer.write("end start");
     }
 
     private void procesarToken(String token) throws  IOException{
