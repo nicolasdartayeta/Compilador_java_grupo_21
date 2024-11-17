@@ -139,15 +139,16 @@ public class GeneradorAssembler {
             List<String> lexemas = TablaSimbolos.getEntradasPorUso(uso);
             for (String lexema : lexemas) {
                 String tipo = TablaSimbolos.getTipo(lexema);
+                lexema = lexema.replace(':', '_');
                 switch (tipo) {
                     case TablaSimbolos.SINGLE:
-                        writer.write("\t" + lexema + " dw 0\n");
+                        writer.write("\t _" + lexema + " dw 0\n");
                         break;
                     case TablaSimbolos.ULONGINT:
-                        writer.write("\t" + lexema+" dd 0\n");
+                        writer.write("\t _" + lexema+" dd 0\n");
                         break;
                     case TablaToken.INLINE_STRING:
-                        writer.write("\t" + lexema+" db \"" + lexema + "\", 0\n");
+                        writer.write("\t _" + lexema+" db \"" + lexema + "\", 0\n");
                         break;
                     default:
                         break;
@@ -248,6 +249,7 @@ public class GeneradorAssembler {
     private void generarHeader() throws IOException{
         writer.write(".386\n");
         writer.write(".model flat, stdcall\n");
+        writer.write(".STACK 200h\n");
         writer.write("option casemap :none\n\n");
         writer.write("include \\masm32\\include\\windows.inc\n");
         writer.write("include \\masm32\\include\\kernel32.inc\n");
