@@ -2,5 +2,5 @@ pruebaASM
 
 begin
     ulongint a;
-    a := 5 * 4;
+    a := 5;
 end
