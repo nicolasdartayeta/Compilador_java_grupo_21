@@ -82,6 +82,7 @@ public class GeneradorAssembler {
                     operacionSumaEntera(pila.pop(), pila.pop());
                     break;
                 case ":=":
+                    System.out.println(pila);
                     asignacion();
                     break;
                 case "-":
@@ -102,8 +103,25 @@ public class GeneradorAssembler {
         }
     }
 
-    private void asignacion() {
+    private void asignacion() throws IOException {
         // Ver si es asignacion entera o flotante
+        String valorAAsignar = pila.pop();
+        String variableAsignada = pila.pop();
+
+        String tipoVaribale = TablaSimbolos.getTipo(variableAsignada);
+
+        if (tipoVaribale != null){
+            switch (tipoVaribale){
+                case TablaSimbolos.SINGLE:
+                    asignacionFlotante(valorAAsignar, variableAsignada);
+                    break;
+                case TablaSimbolos.ULONGINT:
+                    asignacionEntera(valorAAsignar, variableAsignada);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 
