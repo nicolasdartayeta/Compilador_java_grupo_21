@@ -1011,11 +1011,15 @@ public static List<List<String>> formatearLista(List<String> lista) {
 public static void crearCampo(String tipo, String lexema){
     List<CampoTablaSimbolos.Campo> campos = TablaSimbolos.getCamposTablaSimbolos(tipo);
     for (CampoTablaSimbolos.Campo campo: campos){
-        String nombreCampo = lexema + "." + campo.nombre() + getAmbitoActual();
-        CampoTablaSimbolos nuevoCampo = new CampoTablaSimbolos(false, campo.tipo());
-        TablaSimbolos.agregarLexema(nombreCampo, nuevoCampo);
-        agregarAmbitoAIdentificador(nombreCampo);
-        TablaSimbolos.setUso(nombreCampo, "nombre de variable");
+        if (TablaSimbolos.esUnTipo(campo.tipo())){
+            crearCampo(campo.tipo(), lexema + "." + campo.nombre());
+        } else {
+            String nombreCampo = lexema + "." + campo.nombre() + getAmbitoActual();
+            CampoTablaSimbolos nuevoCampo = new CampoTablaSimbolos(false, campo.tipo());
+            TablaSimbolos.agregarLexema(nombreCampo, nuevoCampo);
+            agregarAmbitoAIdentificador(nombreCampo);
+            TablaSimbolos.setUso(nombreCampo, "nombre de variable");
+        }
     }
 }
 
@@ -1117,7 +1121,7 @@ private void yyerror(String string) {
   parsingConErrores = true;
   System.out.println("Error: " + string );
 }
-//#line 1046 "Parser.java"
+//#line 1050 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -2138,7 +2142,7 @@ case 183:
 //#line 538 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(4).obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
 break;
-//#line 2062 "Parser.java"
+//#line 2066 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

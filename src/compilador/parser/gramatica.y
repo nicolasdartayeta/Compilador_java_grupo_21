@@ -688,11 +688,15 @@ public static List<List<String>> formatearLista(List<String> lista) {
 public static void crearCampo(String tipo, String lexema){
     List<CampoTablaSimbolos.Campo> campos = TablaSimbolos.getCamposTablaSimbolos(tipo);
     for (CampoTablaSimbolos.Campo campo: campos){
-        String nombreCampo = lexema + "." + campo.nombre() + getAmbitoActual();
-        CampoTablaSimbolos nuevoCampo = new CampoTablaSimbolos(false, campo.tipo());
-        TablaSimbolos.agregarLexema(nombreCampo, nuevoCampo);
-        agregarAmbitoAIdentificador(nombreCampo);
-        TablaSimbolos.setUso(nombreCampo, "nombre de variable");
+        if (TablaSimbolos.esUnTipo(campo.tipo())){
+            crearCampo(campo.tipo(), lexema + "." + campo.nombre());
+        } else {
+            String nombreCampo = lexema + "." + campo.nombre() + getAmbitoActual();
+            CampoTablaSimbolos nuevoCampo = new CampoTablaSimbolos(false, campo.tipo());
+            TablaSimbolos.agregarLexema(nombreCampo, nuevoCampo);
+            agregarAmbitoAIdentificador(nombreCampo);
+            TablaSimbolos.setUso(nombreCampo, "nombre de variable");
+        }
     }
 }
 

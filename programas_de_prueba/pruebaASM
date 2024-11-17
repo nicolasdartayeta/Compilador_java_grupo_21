@@ -1,0 +1,6 @@
+pruebaASM
+
+begin
+    ulongint a;
+    a := 5;
+end
