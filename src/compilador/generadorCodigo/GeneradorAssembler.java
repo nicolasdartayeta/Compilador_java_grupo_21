@@ -79,7 +79,7 @@ public class GeneradorAssembler {
         code.append("end start");
     }
 
-    private void procesarToken(String token) throws  IOException{
+    private void procesarToken(String token){
         String ambito = estaAlAlcance(token);
         if (ambito != null){
             pila.push(token + ambito);
@@ -118,7 +118,7 @@ public class GeneradorAssembler {
         }
     }
 
-    private void asignacion() throws IOException {
+    private void asignacion() {
         // Ver si es asignacion entera o flotante
         String valorAAsignar = pila.pop();
         String variableAsignada = pila.pop();
@@ -172,35 +172,35 @@ public class GeneradorAssembler {
         }
     }
 
-    private void operacionSumaEntera(String op1, String op2) throws IOException{
+    private void operacionSumaEntera(String op1, String op2){
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
         code.append("MOV EAX, ").append(op1).append("\n");
         code.append("ADD EAX, ").append(op2).append("\n");
         code.append("MOV ").append(aux).append(", EAX\n");
         pila.push(aux);
     }
-    private void operacionSumaFlotante(String op2, String op1) throws IOException{
+    private void operacionSumaFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         code.append("FLD ").append(op1).append("\n");
         code.append("FADD ").append(op2).append("\n");
         code.append("FSTP ").append(aux).append("\n");
         pila.push(aux);
     }
-    private void operacionRestaEntera(String op2, String op1) throws IOException{
+    private void operacionRestaEntera(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
         code.append("MOV EAX, ").append(op1).append("\n");
         code.append("SUB EAX, ").append(op2).append("\n");
         code.append("MOV ").append(aux).append(", EAX\n");
         pila.push(aux);
     }
-    private void operacionRestaFlotante(String op2, String op1) throws IOException{
+    private void operacionRestaFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         code.append("FLD ").append(op1).append("\n");
         code.append("FSUB ").append(op2).append("\n");
         code.append("FSTP ").append(aux).append("\n");
         pila.push(aux);
     }
-    private void operacionMultiplicacionEntera(String op2, String op1) throws IOException{
+    private void operacionMultiplicacionEntera(String op2, String op1){
         String auxLow = crearVariableAux(TablaSimbolos.ULONGINT);   // Parte baja (32 bits)
         String auxHigh = crearVariableAux(TablaSimbolos.ULONGINT); // Parte alta (32 bits)
         code.append("MOV EAX, ").append(op1).append("\n");
@@ -209,14 +209,14 @@ public class GeneradorAssembler {
         code.append("MOV ").append(auxHigh).append(", EDX\n");
         pila.push(auxLow);
     }
-    private void operacionMultiplicacionFlotante(String op2, String op1) throws IOException{
+    private void operacionMultiplicacionFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         code.append("FLD ").append(op1).append("\n");
         code.append("FMUL ").append(op2).append("\n");
         code.append("FSTP ").append(aux).append("\n");
         pila.push(aux);
     }
-    private void operacionDivisionEntera(String op2, String op1) throws IOException{
+    private void operacionDivisionEntera(String op2, String op1){
         String auxCociente = crearVariableAux(TablaSimbolos.ULONGINT);
         String auxResto = crearVariableAux(TablaSimbolos.ULONGINT); //Chequear si se utilizara
         code.append("MOV EAX, ").append(op1).append("\n");
@@ -225,22 +225,22 @@ public class GeneradorAssembler {
         code.append("MOV ").append(auxResto).append(", EDX\n");
         pila.push(auxCociente);
     }
-    private void operacionDivisionFlotante(String op2, String op1) throws IOException{
+    private void operacionDivisionFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         code.append("FLD ").append(op1).append("\n");
         code.append("FDIV ").append(op2).append("\n");
         code.append("FSTP ").append(aux).append("\n");
         pila.push(aux);
     }
-    private void asignacionEntera(String op2, String op1) throws IOException{
+    private void asignacionEntera(String op2, String op1){
         code.append("MOV EAX, ").append(op2).append("\n");
         code.append("MOV ").append(op1).append(",  EAX\n");
     }
-    private void asignacionFlotante(String op2, String op1) throws IOException{
+    private void asignacionFlotante(String op2, String op1){
         code.append("FLD ").append(op2).append("\n");
         code.append("FSTP ").append(op1).append("\n");
     }
-    private void comparacionMayorEntera(String op2, String op1) throws IOException{
+    private void comparacionMayorEntera(String op2, String op1){
         code.append("MOV EAX, ").append(op1).append("\n");
         code.append("CMP EAX, ").append(op2).append("\n");
         code.append("PUSHF" + "\n"); //Almacena flags en la pila
@@ -256,15 +256,23 @@ public class GeneradorAssembler {
     private void generarSalto(){
 
     }
-    private String crearVariableAux(String tipo) throws IOException {
+    private String crearVariableAux(String tipo){
         String varAux = "@aux" + (++contadorAux);
         //TablaSimbolos.agregarLexema(varAux,tipo);//Agregar auxiliar a la tabla de simbolos
         return varAux;
     }
-    private void generarSalida(String op1) throws IOException{
+    private void generarSalida(String op1){
         String tipo = TablaSimbolos.getTipo(op1);
+        op1 = formatearOperando(op1);
         if (tipo.equals(TablaSimbolos.SINGLE)){
-            writer.write()
+            String float64 = op1 + "_64";
+            code.append("fld DWORD PTR [").append(op1).append("]\n");
+            code.append("fstp QWORD PTR [").append(float64).append("]\n");
+            code.append("invoke printf, cfm$(\"%.20Lf\\n\"), ").append(float64).append("\n");
+        } else if (tipo.equals(TablaSimbolos.ULONGINT)) {
+            code.append("invoke printf, cfm$(\"%u\\n\"), ").append(op1).append("\n");
+        } else if (tipo.equals("INLINE_STRING")){
+            code.append("invoke printf, ADDR").append("\n");
         }
     }
     private String formatearOperando(String op) {
@@ -280,10 +288,12 @@ public class GeneradorAssembler {
         writer.write(".386\n");
         writer.write(".model flat, stdcall\n");
         writer.write(".STACK 200h\n");
-        writer.write("option casemap :none\n\n");
-        writer.write("include \\masm32\\include\\windows.inc\n");
-        writer.write("include \\masm32\\include\\kernel32.inc\n");
-        writer.write("includelib \\masm32\\lib\\kernel32.lib\n\n");
+        writer.write("option casemap :none\n");
+        writer.write("include \\masm32\\include\\masm32rt.inc\n");
+        writer.write("includelib \\masm32\\lib\\kernel32.lib\n");
+        writer.write("includelib \\masm32\\lib\\masm32.lib\n");
+        writer.write("dll_dllcrt0 PROTO C\n");
+        writer.write("printf PROTO C : VARARG\n");
         //writer.write("    resultado DWORD ?\n");
 
     }
