@@ -1,5 +1,6 @@
 package compilador.generadorCodigo;
 
+import compilador.lexer.CampoTablaSimbolos;
 import compilador.lexer.TablaSimbolos;
 import compilador.lexer.TablaToken;
 
@@ -57,9 +58,9 @@ public class GeneradorAssembler {
     public void generarCodigoAssembler(){
         try {
             generarHeader();
-            generarData();
             generarCodigo();
-
+            generarData();
+            TablaSimbolos.imprimirTabla();
             writer.write(data.toString());
             writer.write(code.toString());
             writer.close();
@@ -68,11 +69,37 @@ public class GeneradorAssembler {
         }
     }
 
+    private void generarData() throws IOException {
+        data.append(".data\n");
+        List<String> usosAAgregar = List.of("nombre de variable");
+
+        for (String uso : usosAAgregar) {
+            List<String> lexemas = TablaSimbolos.getEntradasPorUso(uso);
+            System.out.println(lexemas);
+            for (String lexema : lexemas) {
+                String tipo = TablaSimbolos.getTipo(lexema);
+                lexema = formatearOperando(lexema);
+                switch (tipo) {
+                    case TablaSimbolos.SINGLE:
+                        data.append("\t").append(lexema).append(" dw 0\n");
+                        break;
+                    case TablaSimbolos.ULONGINT:
+                        data.append("\t").append(lexema).append(" dd 0\n");
+                        break;
+                    case TablaToken.INLINE_STRING:
+                        data.append("\t").append(lexema).append(" db \"").append(lexema).append("\", 0\n");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
     private void generarCodigo() throws IOException {
         code.append(".code\n");
         code.append("start:\n");
         for (String token: polaca){
-            System.out.println("Procesando token: " + token);
             procesarToken(token);
         }
         code.append("invoke ExitProcess, 0\n");
@@ -86,19 +113,16 @@ public class GeneradorAssembler {
         } else {
             switch (token) {
                 case "+":
-                    //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                    operacionSumaEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
+                    suma();
                     break;
                 case ":=":
-                    System.out.println(pila);
                     asignacion();
                     break;
                 case "-":
-                    //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                    operacionRestaEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
+                    resta();
                     break;
                 case "*":
-                    operacionMultiplicacionEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
+                    multiplicacion();
                     break;
                 case "BI":
                     code.append("JMP ").append(formatearOperando(pila.pop())).append("\n");
@@ -118,6 +142,55 @@ public class GeneradorAssembler {
         }
     }
 
+    private void multiplicacion() throws IOException {
+        String op1 = pila.pop();
+        String op2 = pila.pop();
+
+        String tipoOperando = TablaSimbolos.getTipo(op1);
+
+        op1 = formatearOperando(op1);
+        op2 = formatearOperando(op2);
+
+        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+            operacionMultiplicacionFlotante(op1, op2);
+        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+            operacionMultiplicacionEntera(op1, op2);
+        }
+    }
+
+    private void suma() throws IOException {
+        String op1 = pila.pop();
+        String op2 = pila.pop();
+
+        String tipoOperando = TablaSimbolos.getTipo(op1);
+
+        op1 = formatearOperando(op1);
+        op2 = formatearOperando(op2);
+
+        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+            operacionSumaFlotante(op1, op2);
+        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+            operacionSumaEntera(op1, op2);
+        }
+    }
+
+    private void resta() throws IOException {
+        String op1 = pila.pop();
+        String op2 = pila.pop();
+
+        String tipoOperando = TablaSimbolos.getTipo(op1);
+
+        op1 = formatearOperando(op1);
+        op2 = formatearOperando(op2);
+
+        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+            operacionRestaFlotante(op1, op2);
+        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+            operacionRestaFlotante(op1, op2);
+        }
+    }
+
+    private void asignacion() throws IOException {
     private void asignacion() {
         // Ver si es asignacion entera o flotante
         String valorAAsignar = pila.pop();
@@ -142,108 +215,78 @@ public class GeneradorAssembler {
         }
     }
 
-    private String getTipo(String op1, String op2, String operador) {
-        return null;
-    }
-
-    private void generarData() throws IOException {
-        data.append(".data\n");
-        List<String> usosAAgregar = List.of("nombre de variable");
-
-        for (String uso : usosAAgregar) {
-            List<String> lexemas = TablaSimbolos.getEntradasPorUso(uso);
-            for (String lexema : lexemas) {
-                String tipo = TablaSimbolos.getTipo(lexema);
-                lexema = lexema.replace(':', '_');
-                switch (tipo) {
-                    case TablaSimbolos.SINGLE:
-                        data.append("\t _").append(lexema).append(" dw 0\n");
-                        break;
-                    case TablaSimbolos.ULONGINT:
-                        data.append("\t _").append(lexema).append(" dd 0\n");
-                        break;
-                    case TablaToken.INLINE_STRING:
-                        data.append("\t _").append(lexema).append(" db \"").append(lexema).append("\", 0\n");
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    }
-
-    private void operacionSumaEntera(String op1, String op2){
+    private void operacionSumaEntera(String op1, String op2) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("ADD EAX, ").append(op2).append("\n");
-        code.append("MOV ").append(aux).append(", EAX\n");
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tADD EAX, ").append(op2).append("\n");
+        code.append("\tMOV ").append(aux).append(", EAX\n");
         pila.push(aux);
     }
     private void operacionSumaFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        code.append("FLD ").append(op1).append("\n");
-        code.append("FADD ").append(op2).append("\n");
-        code.append("FSTP ").append(aux).append("\n");
+        code.append("\tFLD ").append(op1).append("\n");
+        code.append("\tFADD ").append(op2).append("\n");
+        code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
     private void operacionRestaEntera(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("SUB EAX, ").append(op2).append("\n");
-        code.append("MOV ").append(aux).append(", EAX\n");
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tSUB EAX, ").append(op2).append("\n");
+        code.append("\tMOV ").append(aux).append(", EAX\n");
         pila.push(aux);
     }
     private void operacionRestaFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        code.append("FLD ").append(op1).append("\n");
-        code.append("FSUB ").append(op2).append("\n");
-        code.append("FSTP ").append(aux).append("\n");
+        code.append("\tFLD ").append(op1).append("\n");
+        code.append("\tFSUB ").append(op2).append("\n");
+        code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
     private void operacionMultiplicacionEntera(String op2, String op1){
         String auxLow = crearVariableAux(TablaSimbolos.ULONGINT);   // Parte baja (32 bits)
         String auxHigh = crearVariableAux(TablaSimbolos.ULONGINT); // Parte alta (32 bits)
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("MUL ").append(op2).append("\n");
-        code.append("MOV ").append(auxLow).append(", EAX\n"); //Chequear si esta bien
-        code.append("MOV ").append(auxHigh).append(", EDX\n");
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tMUL ").append(op2).append("\n");
+        code.append("\tMOV ").append(auxLow).append(", EAX\n"); //Chequear si esta bien
+        code.append("\tMOV ").append(auxHigh).append(", EDX\n");
         pila.push(auxLow);
     }
     private void operacionMultiplicacionFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        code.append("FLD ").append(op1).append("\n");
-        code.append("FMUL ").append(op2).append("\n");
-        code.append("FSTP ").append(aux).append("\n");
+        code.append("\tFLD ").append(op1).append("\n");
+        code.append("\tFMUL ").append(op2).append("\n");
+        code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
     private void operacionDivisionEntera(String op2, String op1){
         String auxCociente = crearVariableAux(TablaSimbolos.ULONGINT);
         String auxResto = crearVariableAux(TablaSimbolos.ULONGINT); //Chequear si se utilizara
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("DIV ").append(op2).append("\n");
-        code.append("MOV ").append(auxCociente).append(", EAX\n");
-        code.append("MOV ").append(auxResto).append(", EDX\n");
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tDIV ").append(op2).append("\n");
+        code.append("\tMOV ").append(auxCociente).append(", EAX\n");
+        code.append("\tMOV ").append(auxResto).append(", EDX\n");
         pila.push(auxCociente);
     }
     private void operacionDivisionFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        code.append("FLD ").append(op1).append("\n");
-        code.append("FDIV ").append(op2).append("\n");
-        code.append("FSTP ").append(aux).append("\n");
+        code.append("\tFLD ").append(op1).append("\n");
+        code.append("\tFDIV ").append(op2).append("\n");
+        code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
-    private void asignacionEntera(String op2, String op1){
-        code.append("MOV EAX, ").append(op2).append("\n");
-        code.append("MOV ").append(op1).append(",  EAX\n");
+    private void asignacionEntera(String op2, String op1) throws IOException{
+        code.append("\tMOV EAX, ").append(op2).append("\n");
+        code.append("\tMOV ").append(op1).append(",  EAX\n");
     }
-    private void asignacionFlotante(String op2, String op1){
-        code.append("FLD ").append(op2).append("\n");
-        code.append("FSTP ").append(op1).append("\n");
+    private void asignacionFlotante(String op2, String op1) throws IOException{
+        code.append("\tFLD ").append(op2).append("\n");
+        code.append("\tFSTP ").append(op1).append("\n");
     }
-    private void comparacionMayorEntera(String op2, String op1){
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("CMP EAX, ").append(op2).append("\n");
-        code.append("PUSHF" + "\n"); //Almacena flags en la pila
+    private void comparacionMayorEntera(String op2, String op1) throws IOException{
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tCMP EAX, ").append(op2).append("\n");
+        code.append("\tPUSHF" + "\n"); //Almacena flags en la pila
     }
     private void realizarConversion(String op1){
         if (TablaSimbolos.getTipo(op1) == TablaSimbolos.ULONGINT){
@@ -256,9 +299,11 @@ public class GeneradorAssembler {
     private void generarSalto(){
 
     }
-    private String crearVariableAux(String tipo){
+    private String crearVariableAux (String tipo){
         String varAux = "@aux" + (++contadorAux);
-        //TablaSimbolos.agregarLexema(varAux,tipo);//Agregar auxiliar a la tabla de simbolos
+        CampoTablaSimbolos campoVarAux = new CampoTablaSimbolos(false, tipo);
+        campoVarAux.setUso("nombre de variable");
+        TablaSimbolos.agregarLexema(varAux, campoVarAux);//Agregar auxiliar a la tabla de simbolos
         return varAux;
     }
     private void generarSalida(String op1){
@@ -277,7 +322,6 @@ public class GeneradorAssembler {
     }
     private String formatearOperando(String op) {
         String opFormateado = op;
-        System.out.println(TablaSimbolos.getUso(opFormateado));
         if ((!TablaSimbolos.getUso(opFormateado).equals("constante")) && (opFormateado.charAt(0) != '@')){
             opFormateado= "_" + opFormateado;
             opFormateado = opFormateado.replace(':','_');
