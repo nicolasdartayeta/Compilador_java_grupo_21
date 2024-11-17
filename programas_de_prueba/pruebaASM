@@ -3,4 +3,6 @@ pruebaASM
 begin
     single a;
     a := 5.0 + 4.4;
+
+    x := 6*8;
 end

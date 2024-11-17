@@ -215,76 +215,76 @@ public class GeneradorAssembler {
 
     private void operacionSumaEntera(String op1, String op2) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("ADD EAX, ").append(op2).append("\n");
-        code.append("MOV ").append(aux).append(", EAX\n");
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tADD EAX, ").append(op2).append("\n");
+        code.append("\tMOV ").append(aux).append(", EAX\n");
         pila.push(aux);
     }
     private void operacionSumaFlotante(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        code.append("FLD ").append(op1).append("\n");
-        code.append("FADD ").append(op2).append("\n");
-        code.append("FSTP ").append(aux).append("\n");
+        code.append("\tFLD ").append(op1).append("\n");
+        code.append("\tFADD ").append(op2).append("\n");
+        code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
     private void operacionRestaEntera(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("SUB EAX, ").append(op2).append("\n");
-        code.append("MOV ").append(aux).append(", EAX\n");
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tSUB EAX, ").append(op2).append("\n");
+        code.append("\tMOV ").append(aux).append(", EAX\n");
         pila.push(aux);
     }
     private void operacionRestaFlotante(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        code.append("FLD ").append(op1).append("\n");
-        code.append("FSUB ").append(op2).append("\n");
-        code.append("FSTP ").append(aux).append("\n");
+        code.append("\tFLD ").append(op1).append("\n");
+        code.append("\tFSUB ").append(op2).append("\n");
+        code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
     private void operacionMultiplicacionEntera(String op2, String op1) throws IOException{
         String auxLow = crearVariableAux(TablaSimbolos.ULONGINT);   // Parte baja (32 bits)
         String auxHigh = crearVariableAux(TablaSimbolos.ULONGINT); // Parte alta (32 bits)
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("MUL ").append(op2).append("\n");
-        code.append("MOV ").append(auxLow).append(", EAX\n"); //Chequear si esta bien
-        code.append("MOV ").append(auxHigh).append(", EDX\n");
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tMUL ").append(op2).append("\n");
+        code.append("\tMOV ").append(auxLow).append(", EAX\n"); //Chequear si esta bien
+        code.append("\tMOV ").append(auxHigh).append(", EDX\n");
         pila.push(auxLow);
     }
     private void operacionMultiplicacionFlotante(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        code.append("FLD ").append(op1).append("\n");
-        code.append("FMUL ").append(op2).append("\n");
-        code.append("FSTP ").append(aux).append("\n");
+        code.append("\tFLD ").append(op1).append("\n");
+        code.append("\tFMUL ").append(op2).append("\n");
+        code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
     private void operacionDivisionEntera(String op2, String op1) throws IOException{
         String auxCociente = crearVariableAux(TablaSimbolos.ULONGINT);
         String auxResto = crearVariableAux(TablaSimbolos.ULONGINT); //Chequear si se utilizara
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("DIV ").append(op2).append("\n");
-        code.append("MOV ").append(auxCociente).append(", EAX\n");
-        code.append("MOV ").append(auxResto).append(", EDX\n");
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tDIV ").append(op2).append("\n");
+        code.append("\tMOV ").append(auxCociente).append(", EAX\n");
+        code.append("\tMOV ").append(auxResto).append(", EDX\n");
         pila.push(auxCociente);
     }
     private void operacionDivisionFlotante(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        code.append("FLD ").append(op1).append("\n");
-        code.append("FDIV ").append(op2).append("\n");
-        code.append("FSTP ").append(aux).append("\n");
+        code.append("\tFLD ").append(op1).append("\n");
+        code.append("\tFDIV ").append(op2).append("\n");
+        code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
     private void asignacionEntera(String op2, String op1) throws IOException{
-        code.append("MOV EAX, ").append(op2).append("\n");
-        code.append("MOV ").append(op1).append(",  EAX\n");
+        code.append("\tMOV EAX, ").append(op2).append("\n");
+        code.append("\tMOV ").append(op1).append(",  EAX\n");
     }
     private void asignacionFlotante(String op2, String op1) throws IOException{
-        code.append("FLD ").append(op2).append("\n");
-        code.append("FSTP ").append(op1).append("\n");
+        code.append("\tFLD ").append(op2).append("\n");
+        code.append("\tFSTP ").append(op1).append("\n");
     }
     private void comparacionMayorEntera(String op2, String op1) throws IOException{
-        code.append("MOV EAX, ").append(op1).append("\n");
-        code.append("CMP EAX, ").append(op2).append("\n");
-        code.append("PUSHF" + "\n"); //Almacena flags en la pila
+        code.append("\tMOV EAX, ").append(op1).append("\n");
+        code.append("\tCMP EAX, ").append(op2).append("\n");
+        code.append("\tPUSHF" + "\n"); //Almacena flags en la pila
     }
     private void realizarConversion(String op1){
         if (TablaSimbolos.getTipo(op1) == TablaSimbolos.ULONGINT){
