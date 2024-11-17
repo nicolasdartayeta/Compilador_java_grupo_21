@@ -100,7 +100,7 @@ public class GeneradorAssembler {
                     realizarConversion(formatearOperando(pila.pop()));
                     break;
                 case "outf":
-                    procesar
+                    generarSalida(pila.pop());
                     break;
                 default:
                     pila.push(token);
@@ -159,7 +159,6 @@ public class GeneradorAssembler {
             }
         }
     }
-
     private void operacionSumaEntera(String op1, String op2) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
         writer.write("MOV EAX, _" + op1 + "\n");
@@ -248,6 +247,12 @@ public class GeneradorAssembler {
         String varAux = "@aux" + (++contadorAux);
         //TablaSimbolos.agregarLexema(varAux,tipo);//Agregar auxiliar a la tabla de simbolos
         return varAux;
+    }
+    private void generarSalida(String op1) throws IOException{
+        String tipo = TablaSimbolos.getTipo(op1);
+        if (tipo.equals(TablaSimbolos.SINGLE)){
+            writer.write()
+        }
     }
     private String formatearOperando(String op) {
         String opFormateado = op;
