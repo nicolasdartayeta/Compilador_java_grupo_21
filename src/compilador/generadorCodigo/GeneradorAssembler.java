@@ -98,6 +98,10 @@ public class GeneradorAssembler {
                     break;
                 case "tos":
                     realizarConversion(formatearOperando(pila.pop()));
+                    break;
+                case "outf":
+                    procesar
+                    break;
                 default:
                     pila.push(token);
                     break;
@@ -125,7 +129,6 @@ public class GeneradorAssembler {
             }
         }
     }
-
 
     private String getTipo(String op1, String op2, String operador) {
         return null;
