@@ -41,12 +41,17 @@ public class GeneradorAssembler {
 
         switch(token){
             case "+":
-                String op2 = pila.pop();
-                String op1 = pila.pop();
                 //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                operacionSumaEntera(op1,op2);
+                operacionSumaEntera(pila.pop(),pila.pop());
                 break;
             case "-":
+                //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
+                operacionRestaEntera(pila.pop(),pila.pop());
+                break;
+            case "BI":
+                writer.write("JMP " + pila.pop() + "\n");
+                break;
+            case BF:
 
         }
     }
@@ -72,28 +77,28 @@ public class GeneradorAssembler {
         writer.write("MOV " + aux + ", EAX\n");
         pila.push(aux);
     }
-    private void operacionSumaFlotante(String op1, String op2) throws IOException{
+    private void operacionSumaFlotante(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         writer.write("FLD _" + op1 + "\n");
         writer.write("FADD _" + op2 + "\n");
         writer.write("FSTP _" + aux + "\n");
         pila.push(aux);
     }
-    private void operacionRestaEntera(String op1, String op2) throws IOException{
+    private void operacionRestaEntera(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
         writer.write("MOV EAX, _" + op1 + "\n");
         writer.write("SUB EAX, _" + op2 + "\n");
         writer.write("MOV " + aux + ", EAX\n");
         pila.push(aux);
     }
-    private void operacionRestaFlotante(String op1, String op2) throws IOException{
+    private void operacionRestaFlotante(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         writer.write("FLD _" + op1 + "\n");
         writer.write("FSUB _" + op2 + "\n");
         writer.write("FSTP _" + aux + "\n");
         pila.push(aux);
     }
-    private void operacionMultiplicacionEntera(String op1, String op2) throws IOException{
+    private void operacionMultiplicacionEntera(String op2, String op1) throws IOException{
         String auxLow = crearVariableAux(TablaSimbolos.ULONGINT);   // Parte baja (32 bits)
         String auxHigh = crearVariableAux(TablaSimbolos.ULONGINT); // Parte alta (32 bits)
         writer.write("MOV EAX, _" + op1 + "\n");
@@ -102,14 +107,14 @@ public class GeneradorAssembler {
         writer.write("MOV " +  auxHigh + ", EDX\n");
         pila.push(auxLow);
     }
-    private void operacionMultiplicacionFlotante(String op1, String op2) throws IOException{
+    private void operacionMultiplicacionFlotante(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         writer.write("FLD _" + op1 + "\n");
         writer.write("FMUL _" + op2 + "\n");
         writer.write("FSTP " + aux + "\n");
         pila.push(aux);
     }
-    private void operacionDivisionEntera(String op1, String op2) throws IOException{
+    private void operacionDivisionEntera(String op2, String op1) throws IOException{
         String auxCociente = crearVariableAux(TablaSimbolos.ULONGINT);
         String auxResto = crearVariableAux(TablaSimbolos.ULONGINT); //Chequear si se utilizara
         writer.write("MOV EAX, _" + op1 + "\n");
@@ -118,24 +123,27 @@ public class GeneradorAssembler {
         writer.write("MOV " + auxResto + ", EDX\n");
         pila.push(auxCociente);
     }
-    private void operacionDivisionFlotante(String op1, String op2) throws IOException{
+    private void operacionDivisionFlotante(String op2, String op1) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         writer.write("FLD _" + op1 + "\n");
         writer.write("FDIV _" + op2 + "\n");
         writer.write("FSTP _" + aux + "\n");
         pila.push(aux);
     }
-    private void asignacionEntera(String op1, String op2) throws IOException{
+    private void asignacionEntera(String op2, String op1) throws IOException{
         writer.write("MOV EAX, _" + op2 + "\n");
         writer.write("MOV _" + op1 + ",  EAX\n");
     }
-    private void asignacionFlotante(String op1, String op2) throws IOException{
+    private void asignacionFlotante(String op2, String op1) throws IOException{
         writer.write("FLD _" + op2 + "\n");
         writer.write("FSTP _" + op1 + "\n");
     }
-    private void comparacionMayorEntera(String op1, String op2) throws IOException{
+    private void comparacionMayorEntera(String op2, String op1) throws IOException{
         writer.write("MOV EAX, _" + op1 + "\n");
         writer.write("CMP EAX, _" + op2 + "\n");
+        writer.write("PUSHF" + "\n"); //Almacena flags en la pila
+
+
 
     }
     private void generarSalto(){
