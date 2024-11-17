@@ -288,8 +288,11 @@ public class GeneradorAssembler {
     }
     private void realizarConversion(String op1){
         if (TablaSimbolos.getTipo(op1) == TablaSimbolos.ULONGINT){
-            TablaSimbolos.cambiarTipo(op1,TablaSimbolos.SINGLE);
-            pila.push(op1);
+            op1 = formatearOperando(op1);
+            String aux = crearVariableAux(TablaSimbolos.SINGLE);
+            code.append("\tFILD ").append(op1).append("\n");
+            code.append("\tFSTP ").append(aux).append("\n");
+            pila.push(aux);
         } else {
             System.out.println("La conversion debe ser de un tipo ULONGINT a un tipo SINGLE");
         }
