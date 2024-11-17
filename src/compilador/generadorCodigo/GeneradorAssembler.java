@@ -258,6 +258,12 @@ public class GeneradorAssembler {
         TablaSimbolos.agregarLexema(varAux, campoVarAux);//Agregar auxiliar a la tabla de simbolos
         return varAux;
     }
+    private void generarSalida(String op1) throws IOException{
+        String tipo = TablaSimbolos.getTipo(op1);
+        if (tipo.equals(TablaSimbolos.SINGLE)){
+            writer.write()
+        }
+    }
     private String formatearOperando(String op) {
         String opFormateado = op;
         if ((!TablaSimbolos.getUso(opFormateado).equals("constante")) && (opFormateado.charAt(0) != '@')){
