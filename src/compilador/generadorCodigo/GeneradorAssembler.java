@@ -55,7 +55,7 @@ public class GeneradorAssembler {
         }
     }
 
-    public void generarCodigoAssembler() throws IOException{
+    public void generarCodigoAssembler(){
         try {
             generarHeader();
             generarCodigo();
@@ -130,10 +130,13 @@ public class GeneradorAssembler {
                 case "BF":
                     break;
                 case "tos":
-                    realizarConversion(formatearOperando(pila.pop()));
+                    realizarConversion(pila.pop());
                     break;
                 case "outf":
                     generarSalida(pila.pop());
+                    break;
+                case "ret":
+
                     break;
                 default:
                     pila.push(token);

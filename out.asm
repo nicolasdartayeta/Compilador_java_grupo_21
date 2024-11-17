@@ -8,11 +8,15 @@ includelib \masm32\lib\masm32.lib
 dll_dllcrt0 PROTO C
 printf PROTO C : VARARG
 .data
-	 _a_main dd 0
+	_a_main dd 0
+	@aux1 dd 0
 .code
 start:
-MOV EAX, 5
-MOV _a_main,  EAX
-invoke printf, cfm$("%u\n"), 20
+	MOV EAX, 5
+	MOV _a_main,  EAX
+	MOV EAX, 10
+	ADD EAX, _a_main
+	MOV @aux1, EAX
+invoke printf, cfm$("%u\n"), @aux1
 invoke ExitProcess, 0
 end start

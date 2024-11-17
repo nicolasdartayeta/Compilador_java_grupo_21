@@ -3,5 +3,5 @@ pruebaASM
 begin
     ulongint a;
     a := 5;
-    outf(20);
+    outf(a+10);
 end
