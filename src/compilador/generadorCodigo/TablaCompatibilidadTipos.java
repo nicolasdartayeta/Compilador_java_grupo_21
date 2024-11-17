@@ -12,6 +12,4 @@ public class TablaCompatibilidadTipos {
 
     private static final String[][] compatibilidadSuma= {{"ulongint","single"},
                                                          {"single","single"}};
-
-    private
 }

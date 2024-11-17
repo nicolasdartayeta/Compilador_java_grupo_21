@@ -99,7 +99,6 @@ public class GeneradorAssembler {
         writer.write("MOV EAX, _" + op1 + "\n");
         writer.write("MUL _" + op2 + "\n");
         writer.write("MOV " + auxLow + ", EAX\n"); //Chequear si esta bien
-        //Hacer chequeo overflow
         writer.write("MOV " +  auxHigh + ", EDX\n");
         pila.push(auxLow);
     }
@@ -113,7 +112,6 @@ public class GeneradorAssembler {
     private void operacionDivisionEntera(String op1, String op2) throws IOException{
         String auxCociente = crearVariableAux(TablaSimbolos.ULONGINT);
         String auxResto = crearVariableAux(TablaSimbolos.ULONGINT); //Chequear si se utilizara
-        //Chequear division por cero
         writer.write("MOV EAX, _" + op1 + "\n");
         writer.write("DIV _" + op2 + "\n");
         writer.write("MOV " + auxCociente + ", EAX\n");
@@ -122,19 +120,32 @@ public class GeneradorAssembler {
     }
     private void operacionDivisionFlotante(String op1, String op2) throws IOException{
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
-        //Falta chequear division por cero
         writer.write("FLD _" + op1 + "\n");
         writer.write("FDIV _" + op2 + "\n");
         writer.write("FSTP _" + aux + "\n");
         pila.push(aux);
     }
+    private void asignacionEntera(String op1, String op2) throws IOException{
+        writer.write("MOV EAX, _" + op2 + "\n");
+        writer.write("MOV _" + op1 + ",  EAX\n");
+    }
+    private void asignacionFlotante(String op1, String op2) throws IOException{
+        writer.write("FLD _" + op2 + "\n");
+        writer.write("FSTP _" + op1 + "\n");
+    }
+    private void comparacionMayorEntera(String op1, String op2) throws IOException{
+        writer.write("MOV EAX, _" + op1 + "\n");
+        writer.write("CMP EAX, _" + op2 + "\n");
 
+    }
+    private void generarSalto(){
+
+    }
     private String crearVariableAux(String tipo) throws IOException {
         String varAux = "@aux" + (++contadorAux);
         //TablaSimbolos.agregarLexema(varAux,tipo);//Agregar auxiliar a la tabla de simbolos
         return varAux;
     }
-
     private void generarHeader() throws IOException{
         writer.write(".386\n");
         writer.write(".model flat, stdcall\n");
