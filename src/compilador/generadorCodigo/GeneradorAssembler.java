@@ -55,7 +55,7 @@ public class GeneradorAssembler {
         }
     }
 
-    public void generarCodigoAssembler(){
+    public void generarCodigoAssembler() throws IOException{
         try {
             generarHeader();
             generarCodigo();
@@ -142,7 +142,7 @@ public class GeneradorAssembler {
         }
     }
 
-    private void multiplicacion() throws IOException {
+    private void multiplicacion(){
         String op1 = pila.pop();
         String op2 = pila.pop();
 
@@ -158,7 +158,7 @@ public class GeneradorAssembler {
         }
     }
 
-    private void suma() throws IOException {
+    private void suma(){
         String op1 = pila.pop();
         String op2 = pila.pop();
 
@@ -174,7 +174,7 @@ public class GeneradorAssembler {
         }
     }
 
-    private void resta() throws IOException {
+    private void resta() {
         String op1 = pila.pop();
         String op2 = pila.pop();
 
@@ -189,8 +189,6 @@ public class GeneradorAssembler {
             operacionRestaFlotante(op1, op2);
         }
     }
-
-    private void asignacion() throws IOException {
     private void asignacion() {
         // Ver si es asignacion entera o flotante
         String valorAAsignar = pila.pop();
@@ -215,7 +213,7 @@ public class GeneradorAssembler {
         }
     }
 
-    private void operacionSumaEntera(String op1, String op2) throws IOException{
+    private void operacionSumaEntera(String op1, String op2){
         String aux = crearVariableAux(TablaSimbolos.ULONGINT);
         code.append("\tMOV EAX, ").append(op1).append("\n");
         code.append("\tADD EAX, ").append(op2).append("\n");
@@ -275,15 +273,15 @@ public class GeneradorAssembler {
         code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
-    private void asignacionEntera(String op2, String op1) throws IOException{
+    private void asignacionEntera(String op2, String op1) {
         code.append("\tMOV EAX, ").append(op2).append("\n");
         code.append("\tMOV ").append(op1).append(",  EAX\n");
     }
-    private void asignacionFlotante(String op2, String op1) throws IOException{
+    private void asignacionFlotante(String op2, String op1) {
         code.append("\tFLD ").append(op2).append("\n");
         code.append("\tFSTP ").append(op1).append("\n");
     }
-    private void comparacionMayorEntera(String op2, String op1) throws IOException{
+    private void comparacionMayorEntera(String op2, String op1) {
         code.append("\tMOV EAX, ").append(op1).append("\n");
         code.append("\tCMP EAX, ").append(op2).append("\n");
         code.append("\tPUSHF" + "\n"); //Almacena flags en la pila
