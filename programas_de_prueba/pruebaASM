@@ -1,6 +1,6 @@
 pruebaASM
 
 begin
-    ulongint a;
-    a := 5;
+    single a;
+    a := 5.0 + 4.4;
 end

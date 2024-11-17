@@ -1,5 +1,6 @@
 package compilador.generadorCodigo;
 
+import compilador.lexer.CampoTablaSimbolos;
 import compilador.lexer.TablaSimbolos;
 import compilador.lexer.TablaToken;
 
@@ -57,9 +58,9 @@ public class GeneradorAssembler {
     public void generarCodigoAssembler(){
         try {
             generarHeader();
-            generarData();
             generarCodigo();
-
+            generarData();
+            TablaSimbolos.imprimirTabla();
             writer.write(data.toString());
             writer.write(code.toString());
             writer.close();
@@ -68,11 +69,37 @@ public class GeneradorAssembler {
         }
     }
 
+    private void generarData() throws IOException {
+        data.append(".data\n");
+        List<String> usosAAgregar = List.of("nombre de variable");
+
+        for (String uso : usosAAgregar) {
+            List<String> lexemas = TablaSimbolos.getEntradasPorUso(uso);
+            System.out.println(lexemas);
+            for (String lexema : lexemas) {
+                String tipo = TablaSimbolos.getTipo(lexema);
+                lexema = formatearOperando(lexema);
+                switch (tipo) {
+                    case TablaSimbolos.SINGLE:
+                        data.append("\t").append(lexema).append(" dw 0\n");
+                        break;
+                    case TablaSimbolos.ULONGINT:
+                        data.append("\t").append(lexema).append(" dd 0\n");
+                        break;
+                    case TablaToken.INLINE_STRING:
+                        data.append("\t").append(lexema).append(" db \"").append(lexema).append("\", 0\n");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
     private void generarCodigo() throws IOException {
         code.append(".code\n");
         code.append("start:\n");
         for (String token: polaca){
-            System.out.println("Procesando token: " + token);
             procesarToken(token);
         }
         code.append("invoke ExitProcess, 0\n");
@@ -90,7 +117,6 @@ public class GeneradorAssembler {
                     operacionSumaEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
                     break;
                 case ":=":
-                    System.out.println(pila);
                     asignacion();
                     break;
                 case "-":
@@ -137,37 +163,6 @@ public class GeneradorAssembler {
                     break;
                 default:
                     break;
-            }
-        }
-    }
-
-
-    private String getTipo(String op1, String op2, String operador) {
-        return null;
-    }
-
-    private void generarData() throws IOException {
-        data.append(".data\n");
-        List<String> usosAAgregar = List.of("nombre de variable");
-
-        for (String uso : usosAAgregar) {
-            List<String> lexemas = TablaSimbolos.getEntradasPorUso(uso);
-            for (String lexema : lexemas) {
-                String tipo = TablaSimbolos.getTipo(lexema);
-                lexema = lexema.replace(':', '_');
-                switch (tipo) {
-                    case TablaSimbolos.SINGLE:
-                        data.append("\t _").append(lexema).append(" dw 0\n");
-                        break;
-                    case TablaSimbolos.ULONGINT:
-                        data.append("\t _").append(lexema).append(" dd 0\n");
-                        break;
-                    case TablaToken.INLINE_STRING:
-                        data.append("\t _").append(lexema).append(" db \"").append(lexema).append("\", 0\n");
-                        break;
-                    default:
-                        break;
-                }
             }
         }
     }
@@ -258,12 +253,13 @@ public class GeneradorAssembler {
     }
     private String crearVariableAux(String tipo) throws IOException {
         String varAux = "@aux" + (++contadorAux);
-        //TablaSimbolos.agregarLexema(varAux,tipo);//Agregar auxiliar a la tabla de simbolos
+        CampoTablaSimbolos campoVarAux = new CampoTablaSimbolos(false, tipo);
+        campoVarAux.setUso("nombre de variable");
+        TablaSimbolos.agregarLexema(varAux, campoVarAux);//Agregar auxiliar a la tabla de simbolos
         return varAux;
     }
     private String formatearOperando(String op) {
         String opFormateado = op;
-        System.out.println(TablaSimbolos.getUso(opFormateado));
         if ((!TablaSimbolos.getUso(opFormateado).equals("constante")) && (opFormateado.charAt(0) != '@')){
             opFormateado= "_" + opFormateado;
             opFormateado = opFormateado.replace(':','_');
