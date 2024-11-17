@@ -310,11 +310,6 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                                 } else {
                                                                                                     TablaSimbolos.aumentarUso(identificador + ambito);
                                                                                                     TablaSimbolos.eliminarLexema(identificador);
-                                                                                                    String tipoVariable = TablaSimbolos.getTipo(identificador + ambito);
-                                                                                                    String tipoExpresion = listaTipoExpresiones.get(i);
-                                                                                                    if (!tipoVariable.equals(tipoExpresion)){
-                                                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Incompatibilidad de tipos. Se quiere asignar " + tipoExpresion +" a " + tipoVariable);
-                                                                                                    }
                                                                                                 }
                                                                                             }
 
@@ -354,7 +349,7 @@ cuerpo_else                 :   ELSE bloque_de_sent_ejecutables
                             |   ELSE { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta el cuerpo deL ELSE de la sentencia de seleccion"); }
                             ;
 
-condicion                   :   expresion_aritmetica comparador expresion_aritmetica { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); representacionPolaca.add(((Token) $2.obj).getLexema()); if (!($1.sval).equals($2.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
+condicion                   :   expresion_aritmetica comparador expresion_aritmetica { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); representacionPolaca.add(((Token) $2.obj).getLexema()); }
                             |   expresion_aritmetica error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ lex.getNumeroDeLinea() + ": Falta comparador"); }
                             ;
 
@@ -449,14 +444,14 @@ lista_de_expresiones        :   lista_de_expresiones COMA expresion_aritmetica {
 		                    |   expresion_aritmetica { listaExpresiones.add(","); listaTipoExpresiones.add($1.sval); }
 		                    ;
 
-expresion_aritmetica        :   expresion_aritmetica SUMA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval; if (!($1.sval).equals($2.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
-		                    |   expresion_aritmetica RESTA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval; if (!($1.sval).equals($2.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
+expresion_aritmetica        :   expresion_aritmetica SUMA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;  if (!($1.sval).equals($3.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);};}
+		                    |   expresion_aritmetica RESTA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;  if (!($1.sval).equals($3.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);};}
 		                    |   termino { $$.sval = $1.sval; }
 		                    |   error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
 		                    ;
 
-termino                     :   termino MULTIPLICACION factor { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval; if (!($1.sval).equals($2.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
-		                    |   termino DIVISION factor { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval; if (!($1.sval).equals($2.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos");};}
+termino                     :   termino MULTIPLICACION factor { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;  if (!($1.sval).equals($3.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);};}
+		                    |   termino DIVISION factor { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;  if (!($1.sval).equals($3.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);};}
 		                    |   factor { $$.sval = $1.sval; }
 		                    ;
 
