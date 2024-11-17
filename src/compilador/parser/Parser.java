@@ -1097,7 +1097,7 @@ public static void main(String[] args) {
 
     imprimirPolaca(representacionPolaca);
 
-    if (!lexingConErrores && !parsingConErrores && !codIntermedioConErrores) {
+    if (!lexingConErrores && !parsingConErrores && !codIntermedioConErrores)  {
         GeneradorAssembler gen = new GeneradorAssembler(representacionPolaca, "out.asm");
         gen.generarCodigoAssembler();
     }
