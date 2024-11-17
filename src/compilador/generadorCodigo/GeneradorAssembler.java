@@ -81,7 +81,7 @@ public class GeneradorAssembler {
             switch (token) {
                 case "+":
                     //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                    operacionSumaEntera(pila.pop(), pila.pop());
+                    operacionSumaEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
                     break;
                 case ":=":
                     System.out.println(pila);
@@ -89,15 +89,19 @@ public class GeneradorAssembler {
                     break;
                 case "-":
                     //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
-                    operacionRestaEntera(pila.pop(), pila.pop());
+                    operacionRestaEntera(formatearOperando(pila.pop()), formatearOperando(pila.pop()));
                     break;
                 case "BI":
-                    writer.write("JMP " + pila.pop() + "\n");
+                    writer.write("JMP " + formatearOperando(pila.pop()) + "\n");
                     break;
                 case "BF":
                     break;
                 case "tos":
-                    realizarConversion(pila.pop());
+                    realizarConversion(formatearOperando(pila.pop()));
+                    break;
+                case "outf":
+                    procesar
+                    break;
                 default:
                     pila.push(token);
                     break;
@@ -107,8 +111,8 @@ public class GeneradorAssembler {
 
     private void asignacion() throws IOException {
         // Ver si es asignacion entera o flotante
-        String valorAAsignar = pila.pop();
-        String variableAsignada = pila.pop();
+        String valorAAsignar = formatearOperando(pila.pop());
+        String variableAsignada = formatearOperando(pila.pop());
 
         String tipoVaribale = TablaSimbolos.getTipo(variableAsignada);
 
@@ -245,6 +249,14 @@ public class GeneradorAssembler {
         String varAux = "@aux" + (++contadorAux);
         //TablaSimbolos.agregarLexema(varAux,tipo);//Agregar auxiliar a la tabla de simbolos
         return varAux;
+    }
+    private String formatearOperando(String op) {
+        String opFormateado = op;
+        if ((TablaSimbolos.getUso(op) != "constante") && (opFormateado.charAt(0) != '@')){
+            opFormateado= "_"+opFormateado;
+            opFormateado.replaceAll(":","_");
+        }
+        return opFormateado;
     }
     private void generarHeader() throws IOException{
         writer.write(".386\n");
