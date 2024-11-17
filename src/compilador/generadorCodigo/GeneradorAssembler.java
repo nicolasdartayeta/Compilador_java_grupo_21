@@ -54,25 +54,35 @@ public class GeneradorAssembler {
         try {
             generarHeader();
             generarData();
-            for (String token: polaca){
-                procesarToken(token);
-            }
+            generarCodigo();
+
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    private void generarCodigo() throws IOException {
+        writer.write(".code\n");
+        writer.write("start:\n");
+        for (String token: polaca){
+            System.out.println("Procesando token: " + token);
+            procesarToken(token);
+        }
+    }
+
     private void procesarToken(String token) throws  IOException{
         String ambito = estaAlAlcance(token);
         if (ambito != null){
-
             pila.push(token + ambito);
         } else {
             switch (token) {
                 case "+":
                     //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
                     operacionSumaEntera(pila.pop(), pila.pop());
+                    break;
+                case ":=":
+                    asignacion();
                     break;
                 case "-":
                     //Chequear si la suma va a ser entera o flotante y llamar a funcion correspondiente
@@ -88,6 +98,10 @@ public class GeneradorAssembler {
                     break;
             }
         }
+    }
+
+    private void asignacion() {
+        // Ver si es asignacion entera o flotante
     }
 
 
@@ -212,7 +226,6 @@ public class GeneradorAssembler {
         writer.write("include \\masm32\\include\\kernel32.inc\n");
         writer.write("includelib \\masm32\\lib\\kernel32.lib\n\n");
         //writer.write("    resultado DWORD ?\n");
-        //writer.write(".code\n");
-        //writer.write("start:\n");
+
     }
 }
