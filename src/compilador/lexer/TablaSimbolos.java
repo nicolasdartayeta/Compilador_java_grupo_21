@@ -270,10 +270,11 @@ public class TablaSimbolos {
         campoTablaSimbolos.setUso(uso);
     }
 
-    public static List<String> getEntradasPorTipo(String tipo) {
+    public static List<String> getEntradasPorUso(String tipo) {
         List<String> entradasPorTipo = new ArrayList<>();
         for (String lexema : tablaSimbolos.keySet()) {
-            if (tablaSimbolos.get(lexema).getTipo().equals(tipo)) {
+            String tipoLexema = tablaSimbolos.get(lexema).getUso();
+            if (tipoLexema != null && tipoLexema.equals(tipo)) {
                 entradasPorTipo.add(lexema);
             }
         }

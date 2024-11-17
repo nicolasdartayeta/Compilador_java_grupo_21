@@ -1,6 +1,7 @@
 package compilador.generadorCodigo;
 
 import compilador.lexer.TablaSimbolos;
+import compilador.lexer.TablaToken;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -25,13 +26,14 @@ public class GeneradorAssembler {
         }
     }
 
-    public void generarCodigoAssembler() throws IOException{
+    public void generarCodigoAssembler(){
         try {
             generarHeader();
             generarData();
             for (String token: polaca){
                 procesarToken(token);
             }
+            writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -57,12 +59,28 @@ public class GeneradorAssembler {
     private void generarCodigo() {
     }
 
-    private void generarData() {
-        List<String> tiposAAgregar = Arrays.asList(TablaSimbolos.SINGLE, TablaSimbolos.ULONGINT);
+    private void generarData() throws IOException {
+        writer.write(".data\n");
+        List<String> usosAAgregar = Arrays.asList("nombre de variable");
 
-        for (String tipo : tiposAAgregar) {
-            List<String> entradasTablaSimbolos = TablaSimbolos.getEntradasPorTipo(tipo);
-            System.out.println(entradasTablaSimbolos);
+        for (String uso : usosAAgregar) {
+            List<String> lexemas = TablaSimbolos.getEntradasPorUso(uso);
+            for (String lexema : lexemas) {
+                String tipo = TablaSimbolos.getTipo(lexema);
+                switch (tipo) {
+                    case TablaSimbolos.SINGLE:
+                        writer.write("\t" + lexema + " dw 0\n");
+                        break;
+                    case TablaSimbolos.ULONGINT:
+                        writer.write("\t" + lexema+" dd 0\n");
+                        break;
+                    case TablaToken.INLINE_STRING:
+                        writer.write("\t" + lexema+" db \"" + lexema + "\", 0\n");
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 
@@ -87,9 +105,8 @@ public class GeneradorAssembler {
         writer.write("include \\masm32\\include\\windows.inc\n");
         writer.write("include \\masm32\\include\\kernel32.inc\n");
         writer.write("includelib \\masm32\\lib\\kernel32.lib\n\n");
-        writer.write(".data\n");
-        writer.write("    resultado DWORD ?\n");
-        writer.write(".code\n");
-        writer.write("start:\n");
+        //writer.write("    resultado DWORD ?\n");
+        //writer.write(".code\n");
+        //writer.write("start:\n");
     }
 }

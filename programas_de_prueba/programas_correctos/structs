@@ -1,4 +1,4 @@
-structs
+estructs
 
 begin
     typedef Struct <ulongint, single> [
@@ -15,6 +15,6 @@ begin
 
     myStructB d; 
 
-    d.e:=5.0 + 4;
+    d.e:=5.0;
     outf( {Programa terminado} );
 end
