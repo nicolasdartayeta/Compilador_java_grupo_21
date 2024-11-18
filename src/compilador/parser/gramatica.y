@@ -394,6 +394,7 @@ sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Pars
                                                                             representacionPolaca.add(aux.pop());
                                                                             representacionPolaca.add(aux.pop());
                                                                             representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
+                                                                            System.out.println("jiji" + bfs.peek());
                                                                             representacionPolaca.add(String.valueOf(bfs.pop()));
                                                                             representacionPolaca.add("BI");
                                                                             representacionPolaca.add("_L" + representacionPolaca.size());
@@ -401,14 +402,18 @@ sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Pars
                             |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                             ;
 
-encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R { $$.ival = $1.ival;
-                                                                                                                           representacionPolaca.add("");
-                                                                                                                           bfs.push(representacionPolaca.size()-1);
-                                                                                                                           representacionPolaca.add("BF");}
-                            |   encabezado_for_obligatorio PARENTESIS_R {$$.ival = $1.ival;
-                                                                        representacionPolaca.add("");
-                                                                        bfs.push(representacionPolaca.size()-1);
-                                                                        representacionPolaca.add("BF");}
+encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R {
+                                                                                                                            $$.ival = $1.ival;
+                                                                                                                            representacionPolaca.add("");
+                                                                                                                            bfs.push(representacionPolaca.size()-1);
+                                                                                                                            representacionPolaca.add("BF");
+                                                                                                                        }
+                            |   encabezado_for_obligatorio PARENTESIS_R {
+                                                                            $$.ival = $1.ival;
+                                                                            representacionPolaca.add("");
+                                                                            bfs.push(representacionPolaca.size()-1);
+                                                                            representacionPolaca.add("BF");
+                                                                        }
                             |   encabezado_for_obligatorio { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
                             |   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
                             |   encabezado_for_obligatorio PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un ';' en el encabezado del FOR"); }
@@ -424,10 +429,13 @@ encabezado_for_obligatorio  :   inicio_for PARENTESIS_L asignacion_enteros PUNTO
                             |   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un ';' en el encabezado del FOR"); }
                             ;
 
-inicio_for                  :   FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea(); bfs.push(representacionPolaca.size());}
+inicio_for                  :   FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea();}
                             ;
 
-asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema());
+asignacion_enteros          :   identificador ASIGNACION constante_entera {
+                                                                            representacionPolaca.add(listaExpresiones.get(0));
+                                                                            listaExpresiones.clear();
+                                                                            representacionPolaca.add(((Token) $2.obj).getLexema());
                                                                             // Si la variable empieza con x, y, z, s puede ser que este siendo declarada al usarse, hay que chequear y agregarla a la tabla de simbolos de ser necesario.
                                                                             String identificador = $1.sval;
                                                                             char primerCaracter = identificador.charAt(0);
@@ -441,6 +449,8 @@ asignacion_enteros          :   identificador ASIGNACION constante_entera { repr
 
                                                                                 TablaSimbolos.eliminarLexema(identificador);
                                                                             }
+                                                                            representacionPolaca.add("_L" + representacionPolaca.size());
+                                                                            bfs.push(representacionPolaca.size()-1);
                                                                             }
                             ;
 
