@@ -8,14 +8,15 @@ includelib \masm32\lib\masm32.lib
 dll_dllcrt0 PROTO C
 printf PROTO C : VARARG
 .data
+	@f64printVariable REAL8 0.0
 	_a_main REAL4 0.0
 	_5f0s3 REAL4 5.0e3
 .code
 start:
 	FLD _5f0s3
 	FSTP _a_main
-fld DWORD PTR [_a_main]
-fstp QWORD PTR [_a_main]
-invoke printf, cfm$("%.20Lf\n"), _a_main
+	fld _a_main
+	fstp @f64printVariable
+	invoke printf, cfm$("%.20Lf\n"), @f64printVariable
 invoke ExitProcess, 0
 end start

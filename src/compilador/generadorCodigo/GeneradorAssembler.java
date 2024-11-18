@@ -21,6 +21,7 @@ public class GeneradorAssembler {
     private final Stack<String> ambito = new Stack<>();
     private StringBuilder code;
     private StringBuilder data;
+    private String f64printVariable = "@f64printVariable";
 
     private String getAmbitoActual() {
         StringBuilder ambitoActual = new StringBuilder();
@@ -97,6 +98,9 @@ public class GeneradorAssembler {
                     switch (tipo) {
                         case TablaSimbolos.SINGLE:
                             data.append("\t").append(lexema).append(" REAL4 0.0\n");
+                            break;
+                        case "DOUBLE":
+                            data.append("\t").append(lexema).append(" REAL8 0.0\n");
                             break;
                         case TablaSimbolos.ULONGINT:
                             data.append("\t").append(lexema).append(" dd 0\n");
@@ -358,14 +362,18 @@ public class GeneradorAssembler {
         String tipo = TablaSimbolos.getTipo(op1);
         op1 = formatearOperando(op1);
         if (tipo.equals(TablaSimbolos.SINGLE)){
-            String float64 = op1 + "_64";
-            code.append("fld DWORD PTR [").append(op1).append("]\n");
-            code.append("fstp QWORD PTR [").append(float64).append("]\n");
-            code.append("invoke printf, cfm$(\"%.20Lf\\n\"), ").append(float64).append("\n");
+            if (!TablaSimbolos.existeLexema(f64printVariable)){
+                CampoTablaSimbolos campoVarAux = new CampoTablaSimbolos(false, "DOUBLE");
+                campoVarAux.setUso("nombre de variable");
+                TablaSimbolos.agregarLexema(f64printVariable, campoVarAux);
+            }
+            code.append("\tfld ").append(op1).append("\n");
+            code.append("\tfstp ").append(f64printVariable).append("\n");
+            code.append("\tinvoke printf, cfm$(\"%.20Lf\\n\"), ").append(f64printVariable).append("\n");
         } else if (tipo.equals(TablaSimbolos.ULONGINT)) {
-            code.append("invoke printf, cfm$(\"%u\\n\"), ").append(op1).append("\n");
+            code.append("\tinvoke printf, cfm$(\"%u\\n\"), ").append(op1).append("\n");
         } else if (tipo.equals("INLINE_STRING")){
-            code.append("invoke printf, ADDR ").append(op1).append("\n");
+            code.append("\tinvoke printf, ADDR ").append(op1).append("\n");
         }
     }
     private String formatearOperando(String op) {
