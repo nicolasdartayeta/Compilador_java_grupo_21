@@ -4,7 +4,7 @@ begin
     single a;
     a := 1.0s3;
 
-    if (a < 5) then
+    if (a > 5.0) then
         a := a * 3.0s1;
     else
         a := a * 5.0s1;

@@ -182,7 +182,56 @@ public class GeneradorAssembler {
         String opDerecha = pila.pop();
         String opIzquierda = pila.pop();
 
-        
+        String tipoOperacion = TablaSimbolos.getTipo(opIzquierda);
+
+        if (tipoOperacion.equals(TablaSimbolos.SINGLE)){
+            code.append("\tFLD ").append(formatearOperando(opIzquierda)).append("\n");      // Cargar operando1 en ST(0)
+            code.append("\tFLD ").append(formatearOperando(opDerecha)).append("\n");
+            code.append("\tFCOMP\n");
+
+            switch(operadorComparacion) {
+                case "<":
+                    code.append("\tJG ");
+                    break;
+                case "<=":
+                    code.append("\tJG ");
+                    break;
+                case ">":
+                    code.append("\tJLE ");
+                    break;
+                case ">=":
+                    code.append("\tJL ");
+                    break;
+                case "!=":
+                    code.append("\tJE ");
+                    break;
+            }
+        } else if (tipoOperacion.equals(TablaSimbolos.ULONGINT)) {
+            code.append("\tMOV EAX, ").append(formatearOperando(opIzquierda)).append("\n");
+            code.append("\tMOV EAX, ").append(formatearOperando(opDerecha)).append("\n");
+            code.append("\tCMP EAX, EBX").append(formatearOperando(opIzquierda)).append(" ").append(formatearOperando(opDerecha)).append("\n");
+
+            switch(operadorComparacion) {
+                case "<":
+                    code.append("\tJAE ");
+                    break;
+                case "<=":
+                    code.append("\tJA ");
+                    break;
+                case ">":
+                    code.append("\tJBE ");
+                    break;
+                case ">=":
+                    code.append("\tJB ");
+                    break;
+                case "!=":
+                    code.append("\tJE ");
+                    break;
+            }
+        }
+
+
+        code.append("Label").append(direccionSalto).append("\n");
     }
 
     private void multiplicacion(){
@@ -356,13 +405,9 @@ public class GeneradorAssembler {
         code.append("\tFLD ").append(op2).append("\n");
         code.append("\tFSTP ").append(op1).append("\n");
     }
-    private void comparacionMayorEntera(String op2, String op1) {
-        code.append("\tMOV EAX, ").append(op1).append("\n");
-        code.append("\tCMP EAX, ").append(op2).append("\n");
-        code.append("\tPUSHF" + "\n"); //Almacena flags en la pila
-    }
+
     private void realizarConversion(String op1){
-        if (TablaSimbolos.getTipo(op1) == TablaSimbolos.ULONGINT){
+        if (TablaSimbolos.getTipo(op1).equals(TablaSimbolos.ULONGINT)){
             op1 = formatearOperando(op1);
             String aux = crearVariableAux(TablaSimbolos.SINGLE);
             code.append("\tFILD ").append(op1).append("\n");
@@ -402,7 +447,9 @@ public class GeneradorAssembler {
     }
     private String formatearOperando(String op) {
         String opFormateado = op;
-        if ((opFormateado.charAt(0) != '@')){
+        if (Character.isDigit(op.charAt(0)) || (op.charAt(0) == '-' && Character.isDigit(op.charAt(1)))) {
+            opFormateado = formatearLexemaSingle(opFormateado);
+        } else if ((opFormateado.charAt(0) != '@')){
             opFormateado= "_" + opFormateado;
             opFormateado = opFormateado.replace(':','_');
         }

@@ -13,12 +13,17 @@ printf PROTO C : VARARG
 	@aux2 REAL4 0.0
 	@aux1 REAL4 0.0
 	_5f0s1 REAL4 5.0e1
+	_5f0 REAL4 5.0
 	_3f0s1 REAL4 3.0e1
 	_1f0s3 REAL4 1.0e3
 .code
 start:
 	FLD _1f0s3
 	FSTP _a_main
+	FLD _a_main
+	FLD _5f0
+	FCOMP
+	JLE Label15
 	FLD _a_main
 	FMUL _3f0s1
 	FSTP @aux1

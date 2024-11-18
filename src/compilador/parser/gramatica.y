@@ -393,8 +393,12 @@ sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUN
 sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Parser.agregarEstructuraDetectadas($1.ival, "FOR");
                                                                             representacionPolaca.add(aux.pop());
                                                                             representacionPolaca.add(aux.pop());
+                                                                            System.out.println("jiji" + bfs.peek());  //ACAAAA
+                                                                            if (dobleCondicion.pop()){
+                                                                                representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2));
+                                                                            }
                                                                             representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
-                                                                            System.out.println("jiji" + bfs.peek());
+
                                                                             representacionPolaca.add(String.valueOf(bfs.pop()));
                                                                             representacionPolaca.add("BI");
                                                                             representacionPolaca.add("_L" + representacionPolaca.size());
@@ -403,16 +407,15 @@ sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Pars
                             ;
 
 encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R PARENTESIS_R {
+                                                                                                                            dobleCondicion.push(true);
                                                                                                                             $$.ival = $1.ival;
                                                                                                                             representacionPolaca.add("");
                                                                                                                             bfs.push(representacionPolaca.size()-1);
                                                                                                                             representacionPolaca.add("BF");
                                                                                                                         }
                             |   encabezado_for_obligatorio PARENTESIS_R {
+                                                                            dobleCondicion.push(false);
                                                                             $$.ival = $1.ival;
-                                                                            representacionPolaca.add("");
-                                                                            bfs.push(representacionPolaca.size()-1);
-                                                                            representacionPolaca.add("BF");
                                                                         }
                             |   encabezado_for_obligatorio { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
                             |   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
@@ -422,7 +425,11 @@ encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTES
                             ;
 
 encabezado_for_obligatorio  :   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { $$.ival = $1.ival ;
-                                                                                                                        representacionPolaca.remove(representacionPolaca.size()-1);} /* Se borra el ultimo elemento ya que se registra en la polaca la constante de la accion aunque se vaya a insertar luego  */
+                                                                                                                        representacionPolaca.remove(representacionPolaca.size()-1); /* Se borra el ultimo elemento ya que se registra en la polaca la constante de la accion aunque se vaya a insertar luego  */
+                                                                                                                        representacionPolaca.add("");
+                                                                                                                        bfs.push(representacionPolaca.size()-1);
+                                                                                                                        representacionPolaca.add("BF");
+                                                                                                                        }
                             |   inicio_for asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
                             |   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta la acción en el encabezado del FOR"); }
                             |   inicio_for PARENTESIS_L asignacion_enteros condicion PUNTO_Y_COMA accion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un ';' en el encabezado del FOR"); }
@@ -564,6 +571,9 @@ public static final Stack<String> ambito = new Stack<>();
 
 // Pila para bifurcaciones
 public static final Stack<Integer> bfs = new Stack<>();
+
+// Pila para encabezados con dos condiciones
+public static final Stack<Boolean> dobleCondicion = new Stack<>();
 
 // Pila para almacenar acción del for
 public static final Stack<String> aux = new Stack<>();
