@@ -19,6 +19,7 @@ public class GeneradorAssembler {
     private int contadorAux = 0;
     // Pila de ambitos
     private final Stack<String> ambito = new Stack<>();
+    private final Stack<String> pilaBifurcaciones = new Stack<>();
     private StringBuilder code;
     private StringBuilder data;
     private String f64printVariable = "@f64printVariable";
@@ -76,7 +77,6 @@ public class GeneradorAssembler {
 
         for (String usoAAgregar : usosAAgregar) {
             List<String> lexemas = TablaSimbolos.getEntradasPorUso(usoAAgregar);
-            System.out.println(lexemas);
             for (String lexema : lexemas) {
                 String tipo = TablaSimbolos.getTipo(lexema);
                 String uso = TablaSimbolos.getUso(lexema);
@@ -124,14 +124,14 @@ public class GeneradorAssembler {
     private void generarCodigo() throws IOException {
         code.append(".code\n");
         code.append("start:\n");
-        for (String token: polaca){
-            procesarToken(token);
+        for (int i = 0; i < polaca.size(); i++) {
+            procesarToken(polaca.get(i), i);
         }
         code.append("invoke ExitProcess, 0\n");
         code.append("end start");
     }
 
-    private void procesarToken(String token){
+    private void procesarToken(String token, int indice){
         String ambito = estaAlAlcance(token);
         if (ambito != null){
             pila.push(token + ambito);
@@ -150,9 +150,10 @@ public class GeneradorAssembler {
                     multiplicacion();
                     break;
                 case "BI":
-                    code.append("JMP ").append(pila.pop()).append("\n");
+                    code.append("\tJMP Label").append(pila.pop()).append("\n");
                     break;
                 case "BF":
+                    bifurcacionFalso();
                     break;
                 case "tos":
                     realizarConversion(pila.pop());
@@ -161,13 +162,27 @@ public class GeneradorAssembler {
                     generarSalida(pila.pop());
                     break;
                 case "ret":
-
                     break;
                 default:
-                    pila.push(token);
+                    if (token.startsWith("_L")){
+                        String label = "Label" + token.substring(2) + ":";
+                        code.append(label).append("\n");
+                    } else {
+                        pila.push(token);
+                    }
                     break;
             }
         }
+    }
+
+    private void bifurcacionFalso() {
+        System.out.println(pila);
+        String direccionSalto = pila.pop();
+        String operadorComparacion = pila.pop();
+        String opDerecha = pila.pop();
+        String opIzquierda = pila.pop();
+
+        
     }
 
     private void multiplicacion(){
@@ -255,7 +270,6 @@ public class GeneradorAssembler {
         String tipoVaribale = TablaSimbolos.getTipo(variableAsignada);
 
         variableAsignada = formatearOperando(variableAsignada);
-        System.out.println(tipoVaribale + TablaSimbolos.getUso(valorAAsignar));
         if (tipoVaribale.equals(TablaSimbolos.SINGLE) && TablaSimbolos.getUso(valorAAsignar).equals("constante")){
             valorAAsignar = formatearLexemaSingle(valorAAsignar);
         } else {
@@ -377,8 +391,8 @@ public class GeneradorAssembler {
                 campoVarAux.setUso("nombre de variable");
                 TablaSimbolos.agregarLexema(f64printVariable, campoVarAux);
             }
-            code.append("\tfld ").append(op1).append("\n");
-            code.append("\tfstp ").append(f64printVariable).append("\n");
+            code.append("\tFLD ").append(op1).append("\n");
+            code.append("\tFSTP ").append(f64printVariable).append("\n");
             code.append("\tinvoke printf, cfm$(\"%.20Lf\\n\"), ").append(f64printVariable).append("\n");
         } else if (tipo.equals(TablaSimbolos.ULONGINT)) {
             code.append("\tinvoke printf, cfm$(\"%u\\n\"), ").append(op1).append("\n");

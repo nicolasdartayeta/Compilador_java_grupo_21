@@ -218,7 +218,9 @@ sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecuta
                                                                                                   representacionPolaca.add(aux.pop());
                                                                                                   representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
                                                                                                   representacionPolaca.add(String.valueOf(bfs.pop()));
-                                                                                                  representacionPolaca.add("BI");}
+                                                                                                  representacionPolaca.add("BI");
+                                                                                                  representacionPolaca.add("_L" + representacionPolaca.size());
+                                                                                              }
                                        |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                                        ;
 
@@ -227,7 +229,7 @@ sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R  error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             ;
 
-sentencia_seleccion_en_funcion  :   inicio_seleccion cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); }
+sentencia_seleccion_en_funcion  :   inicio_seleccion cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); representacionPolaca.add("_L" + representacionPolaca.size()); }
                                 |   inicio_seleccion cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia de selección");}
                                 |   inicio_seleccion cuerpo_if_en_funcion END_IF error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
                                 |   inicio_seleccion cuerpo_if_en_funcion PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el END_IF en la sentencia de selección"); }
@@ -246,7 +248,9 @@ cuerpo_if_en_funcion        :   THEN cuerpo_then_en_funcion cuerpo_else_en_funci
 cuerpo_then_en_funcion      : bloque_de_sent_ejecutables_en_funcion {$$.ival = $1.ival;
                                                         representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
                                                         representacionPolaca.add("");bfs.push(representacionPolaca.size()-1);
-                                                        representacionPolaca.add("BI"); }
+                                                        representacionPolaca.add("BI");
+                                                        representacionPolaca.add("_L" + representacionPolaca.size());
+                                                        }
                             ;
 
 cuerpo_else_en_funcion      :   ELSE bloque_de_sent_ejecutables_en_funcion
@@ -274,10 +278,13 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones {
                                                                                             $$.ival = $1.ival;
+                                                                                            System.out.println("POLACA: ");
+                                                                                            imprimirPolaca(representacionPolaca);
                                                                                             eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
+                                                                                            System.out.println("POLACA: ");
+                                                                                            imprimirPolaca(representacionPolaca);
                                                                                             List<List<String>> expresiones = formatearLista(listaExpresiones);
                                                                                             System.out.println("listaIdentificadores    " + listaIdentificadores);
-                                                                                            System.out.println("expresiones    " + expresiones);
                                                                                             if (listaIdentificadores.size() == expresiones.size()) {
                                                                                                 for (int i = 0; i < listaIdentificadores.size(); i++){
                                                                                                     String identificador = listaIdentificadores.get(i);
@@ -319,7 +326,7 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                          }
                             ;
 
-sentencia_seleccion         :   inicio_seleccion cuerpo_if END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); }
+sentencia_seleccion         :   inicio_seleccion cuerpo_if END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); representacionPolaca.add("_L" + representacionPolaca.size()); }
                             |   inicio_seleccion cuerpo_if END_IF error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia de selección");}
                             |   inicio_seleccion cuerpo_if END_IF error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
                             |   inicio_seleccion cuerpo_if PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el END_IF en la sentencia de selección"); }
@@ -341,7 +348,8 @@ cuerpo_if                   :   THEN cuerpo_then cuerpo_else
 cuerpo_then                 : bloque_de_sent_ejecutables {$$.ival = $1.ival;
                                                             representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
                                                             representacionPolaca.add("");bfs.push(representacionPolaca.size()-1);
-                                                            representacionPolaca.add("BI"); }
+                                                            representacionPolaca.add("BI");
+                                                            representacionPolaca.add("_L" + representacionPolaca.size());}
                             ;
 
 cuerpo_else                 :   ELSE bloque_de_sent_ejecutables
@@ -387,7 +395,9 @@ sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Pars
                                                                             representacionPolaca.add(aux.pop());
                                                                             representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
                                                                             representacionPolaca.add(String.valueOf(bfs.pop()));
-                                                                            representacionPolaca.add("BI");}
+                                                                            representacionPolaca.add("BI");
+                                                                            representacionPolaca.add("_L" + representacionPolaca.size());
+                                                                        }
                             |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                             ;
 
@@ -418,7 +428,6 @@ inicio_for                  :   FOR {$$.ival = ((Token) $1.obj).getNumeroDeLinea
                             ;
 
 asignacion_enteros          :   identificador ASIGNACION constante_entera { representacionPolaca.add(((Token) $2.obj).getLexema());
-                                                                            System.out.println(listaIdentificadores);
                                                                             // Si la variable empieza con x, y, z, s puede ser que este siendo declarada al usarse, hay que chequear y agregarla a la tabla de simbolos de ser necesario.
                                                                             String identificador = $1.sval;
                                                                             char primerCaracter = identificador.charAt(0);
@@ -455,7 +464,9 @@ termino                     :   termino MULTIPLICACION factor { listaExpresiones
 		                    |   factor { $$.sval = $1.sval; }
 		                    ;
 
-factor                      :   identificador { String ambitoEncontrado = estaAlAlcance($1.sval);
+factor                      :   identificador {
+                                                representacionPolaca.remove(representacionPolaca.size() - 1);
+                                                String ambitoEncontrado = estaAlAlcance($1.sval);
                                                 if (ambitoEncontrado != null) {
                                                     $$.sval = TablaSimbolos.getTipo($1.sval + ambitoEncontrado);
                                                 } else {
