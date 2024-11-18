@@ -393,7 +393,7 @@ sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUN
 sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Parser.agregarEstructuraDetectadas($1.ival, "FOR");
                                                                             representacionPolaca.add(aux.pop());
                                                                             representacionPolaca.add(aux.pop());
-                                                                            System.out.println("jiji" + bfs.peek());  //ACAAAA
+                                                                            representacionPolaca.add(aux.pop());
                                                                             if (dobleCondicion.pop()){
                                                                                 representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2));
                                                                             }
@@ -424,7 +424,9 @@ encabezado_for              :   encabezado_for_obligatorio PUNTO_Y_COMA PARENTES
                             |   encabezado_for_obligatorio PUNTO_Y_COMA PARENTESIS_L condicion { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ambos parentesis izquierdos del encabezado del FOR"); }
                             ;
 
-encabezado_for_obligatorio  :   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion { $$.ival = $1.ival ;
+encabezado_for_obligatorio  :   inicio_for PARENTESIS_L asignacion_enteros PUNTO_Y_COMA condicion PUNTO_Y_COMA accion {
+                                                                                                                        $$.ival = $1.ival;
+                                                                                                                        aux.push($3.sval);
                                                                                                                         representacionPolaca.remove(representacionPolaca.size()-1); /* Se borra el ultimo elemento ya que se registra en la polaca la constante de la accion aunque se vaya a insertar luego  */
                                                                                                                         representacionPolaca.add("");
                                                                                                                         bfs.push(representacionPolaca.size()-1);
@@ -458,6 +460,7 @@ asignacion_enteros          :   identificador ASIGNACION constante_entera {
                                                                             }
                                                                             representacionPolaca.add("_L" + representacionPolaca.size());
                                                                             bfs.push(representacionPolaca.size()-1);
+                                                                            $$.sval = $1.sval;
                                                                             }
                             ;
 
@@ -498,8 +501,8 @@ factor                      :   identificador {
 		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
 		                    ;
 
-constante_entera            :   CONSTANTE_DECIMAL { $$.sval = ((Token) $1.obj).getLexema(); listaExpresiones.add(((Token) $1.obj).getLexema());}
-                            |   CONSTANTE_OCTAL { $$.sval = ((Token) $1.obj).getLexema(); listaExpresiones.add(((Token) $1.obj).getLexema());}
+constante_entera            :   CONSTANTE_DECIMAL { $$.sval = ((Token) $1.obj).getLexema(); agregarUsoAIdentificador(((Token) $1.obj).getLexema(), "constante"); listaExpresiones.add(((Token) $1.obj).getLexema());}
+                            |   CONSTANTE_OCTAL { $$.sval = ((Token) $1.obj).getLexema(); agregarUsoAIdentificador(((Token) $1.obj).getLexema(), "constante"); listaExpresiones.add(((Token) $1.obj).getLexema());}
                             ;
 
 constante                   :   constante_entera { $$.sval = $1.sval;}
