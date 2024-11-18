@@ -1,7 +1,7 @@
 pruebaASM
 
 begin
-    ulongint a;
-    a := 5;
-    outf(a+10);
+    single a;
+    a := 5.0s3;
+    outf(a);
 end

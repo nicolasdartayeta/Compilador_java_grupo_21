@@ -71,30 +71,51 @@ public class GeneradorAssembler {
 
     private void generarData() throws IOException {
         data.append(".data\n");
-        List<String> usosAAgregar = List.of("nombre de variable");
+        List<String> usosAAgregar = List.of("nombre de variable", "string", "constante");
 
-        for (String uso : usosAAgregar) {
-            List<String> lexemas = TablaSimbolos.getEntradasPorUso(uso);
+        for (String usoAAgregar : usosAAgregar) {
+            List<String> lexemas = TablaSimbolos.getEntradasPorUso(usoAAgregar);
             System.out.println(lexemas);
             for (String lexema : lexemas) {
                 String tipo = TablaSimbolos.getTipo(lexema);
-                lexema = formatearOperando(lexema);
-                switch (tipo) {
-                    case TablaSimbolos.SINGLE:
-                        data.append("\t").append(lexema).append(" dw 0\n");
-                        break;
-                    case TablaSimbolos.ULONGINT:
-                        data.append("\t").append(lexema).append(" dd 0\n");
-                        break;
-                    case TablaToken.INLINE_STRING:
-                        data.append("\t").append(lexema).append(" db \"").append(lexema).append("\", 0\n");
-                        break;
-                    default:
-                        break;
+                String uso = TablaSimbolos.getUso(lexema);
+                String lexemaViejo = lexema;
+
+
+                if (uso.equals("constante")) {
+                    switch (tipo){
+                        case TablaSimbolos.SINGLE:
+                            data.append("\t").append(formatearLexemaSingle(lexema)).append(" REAL4 ").append(lexema.replace('s', 'e')).append("\n");
+                            break;
+                        case TablaSimbolos.ULONGINT:
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    lexema = formatearOperando(lexema);
+                    switch (tipo) {
+                        case TablaSimbolos.SINGLE:
+                            data.append("\t").append(lexema).append(" REAL4 0.0\n");
+                            break;
+                        case TablaSimbolos.ULONGINT:
+                            data.append("\t").append(lexema).append(" dd 0\n");
+                            break;
+                        case TablaToken.INLINE_STRING:
+                            data.append("\t").append(lexema).append(" db \"").append(lexemaViejo).append("\", 0\n");
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
     }
+
+    private String formatearLexemaSingle(String lexema) {
+        return "_"+lexema.replace(".","f").replace("-", "m").replace("+", "");
+    }
+
 
     private void generarCodigo() throws IOException {
         code.append(".code\n");
@@ -125,7 +146,7 @@ public class GeneradorAssembler {
                     multiplicacion();
                     break;
                 case "BI":
-                    code.append("JMP ").append(formatearOperando(pila.pop())).append("\n");
+                    code.append("JMP ").append(pila.pop()).append("\n");
                     break;
                 case "BF":
                     break;
@@ -165,14 +186,24 @@ public class GeneradorAssembler {
         String op1 = pila.pop();
         String op2 = pila.pop();
 
-        String tipoOperando = TablaSimbolos.getTipo(op1);
+        String tipoOperandoOP1 = TablaSimbolos.getTipo(op1);
+        String usoOperandoOP1 = TablaSimbolos.getUso(op1);
+        String usoOperandoOP2 = TablaSimbolos.getUso(op2);
 
-        op1 = formatearOperando(op1);
-        op2 = formatearOperando(op2);
+        if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP1.equals("constante")){
+            op1 = formatearLexemaSingle(op1);
+        } else {
+            op1 = formatearOperando(op1);
+        }
+        if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP2.equals("constante")){
+            op2 = formatearLexemaSingle(op2);
+        } else {
+            op2 = formatearOperando(op2);
+        }
 
-        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+        if (tipoOperandoOP1 != null && tipoOperandoOP1.equals(TablaSimbolos.SINGLE)){
             operacionSumaFlotante(op1, op2);
-        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+        } else if (tipoOperandoOP1 != null && tipoOperandoOP1.equals(TablaSimbolos.ULONGINT)) {
             operacionSumaEntera(op1, op2);
         }
     }
@@ -181,14 +212,24 @@ public class GeneradorAssembler {
         String op1 = pila.pop();
         String op2 = pila.pop();
 
-        String tipoOperando = TablaSimbolos.getTipo(op1);
+        String tipoOperandoOP1 = TablaSimbolos.getTipo(op1);
+        String usoOperandoOP1 = TablaSimbolos.getUso(op1);
+        String usoOperandoOP2 = TablaSimbolos.getUso(op2);
 
-        op1 = formatearOperando(op1);
-        op2 = formatearOperando(op2);
+        if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP1.equals("constante")){
+            op1 = formatearLexemaSingle(op1);
+        } else {
+            op1 = formatearOperando(op1);
+        }
+        if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP2.equals("constante")){
+            op2 = formatearLexemaSingle(op2);
+        } else {
+            op2 = formatearOperando(op2);
+        }
 
-        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+        if (tipoOperandoOP1 != null && tipoOperandoOP1.equals(TablaSimbolos.SINGLE)){
             operacionRestaFlotante(op1, op2);
-        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+        } else if (tipoOperandoOP1 != null && tipoOperandoOP1.equals(TablaSimbolos.ULONGINT)) {
             operacionRestaFlotante(op1, op2);
         }
     }
@@ -199,20 +240,23 @@ public class GeneradorAssembler {
 
         String tipoVaribale = TablaSimbolos.getTipo(variableAsignada);
 
-        valorAAsignar = formatearOperando(valorAAsignar);
         variableAsignada = formatearOperando(variableAsignada);
+        System.out.println(tipoVaribale + TablaSimbolos.getUso(valorAAsignar));
+        if (tipoVaribale.equals(TablaSimbolos.SINGLE) && TablaSimbolos.getUso(valorAAsignar).equals("constante")){
+            valorAAsignar = formatearLexemaSingle(valorAAsignar);
+        } else {
+            valorAAsignar = formatearOperando(valorAAsignar);
+        }
 
-        if (tipoVaribale != null){
-            switch (tipoVaribale){
-                case TablaSimbolos.SINGLE:
-                    asignacionFlotante(valorAAsignar, variableAsignada);
-                    break;
-                case TablaSimbolos.ULONGINT:
-                    asignacionEntera(valorAAsignar, variableAsignada);
-                    break;
-                default:
-                    break;
-            }
+        switch (tipoVaribale) {
+            case TablaSimbolos.SINGLE:
+                asignacionFlotante(valorAAsignar, variableAsignada);
+                break;
+            case TablaSimbolos.ULONGINT:
+                asignacionEntera(valorAAsignar, variableAsignada);
+                break;
+            default:
+                break;
         }
     }
 
@@ -321,12 +365,12 @@ public class GeneradorAssembler {
         } else if (tipo.equals(TablaSimbolos.ULONGINT)) {
             code.append("invoke printf, cfm$(\"%u\\n\"), ").append(op1).append("\n");
         } else if (tipo.equals("INLINE_STRING")){
-            code.append("invoke printf, ADDR").append("\n");
+            code.append("invoke printf, ADDR ").append(op1).append("\n");
         }
     }
     private String formatearOperando(String op) {
         String opFormateado = op;
-        if ((!TablaSimbolos.getUso(opFormateado).equals("constante")) && (opFormateado.charAt(0) != '@')){
+        if ((opFormateado.charAt(0) != '@')){
             opFormateado= "_" + opFormateado;
             opFormateado = opFormateado.replace(':','_');
         }
