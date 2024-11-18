@@ -174,14 +174,24 @@ public class GeneradorAssembler {
         String op1 = pila.pop();
         String op2 = pila.pop();
 
-        String tipoOperando = TablaSimbolos.getTipo(op1);
+        String tipoOperandoOP1 = TablaSimbolos.getTipo(op1);
+        String usoOperandoOP1 = TablaSimbolos.getUso(op1);
+        String usoOperandoOP2 = TablaSimbolos.getUso(op2);
 
-        op1 = formatearOperando(op1);
-        op2 = formatearOperando(op2);
+        if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP1.equals("constante")){
+            op1 = formatearLexemaSingle(op1);
+        } else {
+            op1 = formatearOperando(op1);
+        }
+        if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP2.equals("constante")){
+            op2 = formatearLexemaSingle(op2);
+        } else {
+            op2 = formatearOperando(op2);
+        }
 
-        if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.SINGLE)){
+        if (tipoOperandoOP1 != null && tipoOperandoOP1.equals(TablaSimbolos.SINGLE)){
             operacionMultiplicacionFlotante(op1, op2);
-        } else if (tipoOperando != null && tipoOperando.equals(TablaSimbolos.ULONGINT)) {
+        } else if (tipoOperandoOP1 != null && tipoOperandoOP1.equals(TablaSimbolos.ULONGINT)) {
             operacionMultiplicacionEntera(op1, op2);
         }
     }

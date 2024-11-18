@@ -2,6 +2,6 @@ pruebaASM
 
 begin
     single a;
-    a := 5.0s3;
+    a := 5.0s3 * 3.0s1;
     outf(a);
 end
