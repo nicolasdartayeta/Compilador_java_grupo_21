@@ -8,32 +8,38 @@ includelib \masm32\lib\masm32.lib
 dll_dllcrt0 PROTO C
 printf PROTO C : VARARG
 .data
-	@f64printVariable REAL8 0.0
-	_a_main REAL4 0.0
+	_x_main dd 0
+	_a_main dd 0
+	_z_main dd 0
 	@aux2 REAL4 0.0
-	@aux1 REAL4 0.0
-	_5f0s1 REAL4 5.0e1
-	_3f0s1 REAL4 3.0e1
-	_1f0s3 REAL4 1.0e3
+	@aux1 dd 0
+	_3f14 REAL4 3.14
 .code
 start:
-	FLD _1f0s3
-	FSTP _a_main
-	FLD _a_main
-	FMUL _3f0s1
-	FSTP @aux1
-	FLD @aux1
-	FSTP _a_main
+	MOV EAX, _1
+	MOV _x_main,  EAX
+	MOV EAX, _1
+	ADD EAX, _a_main
+	MOV @aux1, EAX
+	MOV EAX, @aux1
+	MOV _a_main,  EAX
 	JMP Label21
 Label15:
 	FLD _a_main
-	FMUL _5f0s1
+	FSUB _1
 	FSTP @aux2
-	FLD @aux2
-	FSTP _a_main
+	MOV EAX, @aux2
+	MOV _a_main,  EAX
 Label21:
-	FLD _a_main
-	FSTP @f64printVariable
-	invoke printf, cfm$("%.20Lf\n"), @f64printVariable
+	MOV EAX, _3.14
+	MOV _z_main,  EAX
+	JMP Label41
+Label37:
+	MOV EAX, _20
+	MOV _a_main,  EAX
+Label41:
+	JMP Label45
+Label44:
+Label45:
 invoke ExitProcess, 0
 end start
