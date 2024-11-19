@@ -2,13 +2,6 @@ pruebaASM
 
 begin
     single a;
-    a := 1.0s3;
-
-    if (a < 5) then
-        a := a * 3.0s1;
-    else
-        a := a * 5.0s1;
-    end_if;
-
+    a := 4.0s30 * 4.0s20;
     outf(a);
 end
