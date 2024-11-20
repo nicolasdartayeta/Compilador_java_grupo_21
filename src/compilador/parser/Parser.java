@@ -1100,7 +1100,7 @@ public static void main(String[] args) {
 
     if (!lexingConErrores && !parsingConErrores && !codIntermedioConErrores) {
         GeneradorAssembler gen = new GeneradorAssembler(representacionPolaca, "out.asm");
-        gen.generarCodigoAssembler();
+        //gen.generarCodigoAssembler();
     }
 }
 
