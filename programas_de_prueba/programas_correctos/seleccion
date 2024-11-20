@@ -2,6 +2,7 @@ programa_if
 
 begin
 ulongint a;
+/# Variable con tipo embebido, no hace falta declararla #/
 x := 1;
 if (x < 5) then
    a := a+1;
@@ -11,8 +12,9 @@ end_if;
 
 
 if (a=1) then
+
     if (x != 10) then
-        z:=3.14;
+        d:=3;
     else
         a := 20;
     end_if;
