@@ -16,6 +16,7 @@ public class CampoTablaSimbolos {
     Integer cantidadDeParametros;
     String tipoRetorno;
     String tipoParametro;
+    String nombreParametro;
     public ArrayList<Campo> campos;
     String uso;
 
@@ -29,6 +30,7 @@ public class CampoTablaSimbolos {
         this.tipoRetorno = null;
         this.campos = null;
         this.uso = null;
+        this.nombreParametro = null;
     }
 
     public String getAmbito() {return ambito;}
@@ -108,5 +110,13 @@ public class CampoTablaSimbolos {
 
     public void setUso(String uso) {
         this.uso = uso;
+    }
+
+    public String getNombreParametro() {
+        return nombreParametro;
+    }
+
+    public void setNombreParametro(String nombreParametro) {
+        this.nombreParametro = nombreParametro;
     }
 }

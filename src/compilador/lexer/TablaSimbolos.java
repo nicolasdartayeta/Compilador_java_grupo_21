@@ -95,7 +95,7 @@ public class TablaSimbolos {
         System.out.println("-----------------");
         System.out.println("Tabla de simbolos");
         System.out.println("-----------------------------------------------------------------------------");
-        System.out.printf("%-20s %-25s %-20s %-10s %-15s %-7s %-15s %-15s %-40s\n", "Simbolo", "Ambito", "Uso", "Es Tipo", "Tipo", "Usos", "T. retorno", "T. parametro", "Campos");
+        System.out.printf("%-20s %-25s %-20s %-10s %-15s %-7s %-15s %-15s %-15s %-40s\n", "Simbolo", "Ambito", "Uso", "Es Tipo", "Tipo", "Usos", "T. retorno", "N. parametro",  "T. parametro", "Campos");
         System.out.println("-----------------------------------------------------------------------------");
 
         // Iterar sobre la tabla e imprimir cada entrada
@@ -103,7 +103,7 @@ public class TablaSimbolos {
             String simbolo = entry.getKey();
             CampoTablaSimbolos campos = entry.getValue();
 
-            System.out.printf("%-20s %-25s %-20s %-10s %-15s %-7d %-15s %-15s %-40s\n",
+            System.out.printf("%-20s %-25s %-20s %-10s %-15s %-7d %-15s %-15s %-15s %-40s\n",
                     simbolo,
                     campos.getAmbito(),
                     campos.getUso(),
@@ -111,6 +111,7 @@ public class TablaSimbolos {
                     campos.getTipo(),
                     campos.getUsos(),
                     campos.getTipoRetorno(),
+                    campos.getNombreParametro(),
                     campos.getTipoParametro(),
                     campos.getCampos()
             );
@@ -279,5 +280,16 @@ public class TablaSimbolos {
             }
         }
         return entradasPorTipo;
+    }
+
+    public static String getNombreParametro(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+
+        return campoTablaSimbolos.getNombreParametro();
+    }
+    public static void setNombreParametro(String lexema, String nombreParametro) {
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+
+        campoTablaSimbolos.setNombreParametro(nombreParametro);
     }
 }

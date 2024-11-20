@@ -71,7 +71,7 @@ public class GeneradorAssembler {
 
     private void generarData() throws IOException {
         data.append(".data\n");
-        List<String> usosAAgregar = List.of("nombre de variable", "string", "constante");
+        List<String> usosAAgregar = List.of("nombre de variable", "string", "constante", "nombre de parametro");
 
         for (String usoAAgregar : usosAAgregar) {
             List<String> lexemas = TablaSimbolos.getEntradasPorUso(usoAAgregar);
@@ -145,9 +145,9 @@ public class GeneradorAssembler {
     }
 
     private void procesarToken(String token, int indice){
-        String ambito = estaAlAlcance(token);
-        if (ambito != null){
-            pila.push(token + ambito);
+        String ambitoDeLaVariable = estaAlAlcance(token);
+        if (ambitoDeLaVariable != null) {
+            pila.push(token + ambitoDeLaVariable);
         } else {
             switch (token) {
                 case "+":
@@ -183,18 +183,32 @@ public class GeneradorAssembler {
                 case "outf":
                     generarSalida(pila.pop());
                     break;
+                case "CALL":
+                    invocacionFuncion(pila.pop());
+                    break;
                 case "ret":
+                    retorno(pila.pop());
                     break;
                 default:
-                    if (token.startsWith("_L")){
-                        String label = "Label" + token.substring(2) + ":";
-                        code.append(label).append("\n");
+                    if (token.startsWith("_")){
+                        if (token.startsWith("_L")) {
+                            String label = "Label" + token.substring(2) + ":";
+                            code.append(label).append("\n");
+                        } else if (token.startsWith("_fin")) {
+                            this.ambito.pop();
+                        } else if (token.startsWith("_inicio")) {
+                            this.ambito.push(":" + pila.pop());
+                        }
                     } else {
                         pila.push(token);
                     }
                     break;
             }
         }
+    }
+
+    private void invocacionFuncion(String label) {
+        code.append("\tCALL ").append(label).append("\n");
     }
 
     private void accionControl(String token, String op1, String op2) {
@@ -460,9 +474,10 @@ public class GeneradorAssembler {
             System.out.println("La conversion debe ser de un tipo ULONGINT a un tipo SINGLE");
         }
     }
-    private void generarSalto(){
-
+    private void retorno(String label) {
+        code.append("\tRET\n");
     }
+
     private String crearVariableAux (String tipo){
         String varAux = "@aux" + (++contadorAux);
         CampoTablaSimbolos campoVarAux = new CampoTablaSimbolos(false, tipo);
@@ -473,19 +488,19 @@ public class GeneradorAssembler {
     private void generarSalida(String op1){
         String tipo = TablaSimbolos.getTipo(op1);
         op1 = formatearOperando(op1);
-        if (tipo.equals(TablaSimbolos.SINGLE)){
-            if (!TablaSimbolos.existeLexema(f64printVariable)){
-                CampoTablaSimbolos campoVarAux = new CampoTablaSimbolos(false, "DOUBLE");
-                campoVarAux.setUso("nombre de variable");
-                TablaSimbolos.agregarLexema(f64printVariable, campoVarAux);
+        switch (tipo) {
+            case TablaSimbolos.SINGLE -> {
+                if (!TablaSimbolos.existeLexema(f64printVariable)) {
+                    CampoTablaSimbolos campoVarAux = new CampoTablaSimbolos(false, "DOUBLE");
+                    campoVarAux.setUso("nombre de variable");
+                    TablaSimbolos.agregarLexema(f64printVariable, campoVarAux);
+                }
+                code.append("\tFLD ").append(op1).append("\n");
+                code.append("\tFSTP ").append(f64printVariable).append("\n");
+                code.append("\tinvoke printf, cfm$(\"%.20Lf\\n\"), ").append(f64printVariable).append("\n");
             }
-            code.append("\tFLD ").append(op1).append("\n");
-            code.append("\tFSTP ").append(f64printVariable).append("\n");
-            code.append("\tinvoke printf, cfm$(\"%.20Lf\\n\"), ").append(f64printVariable).append("\n");
-        } else if (tipo.equals(TablaSimbolos.ULONGINT)) {
-            code.append("\tinvoke printf, cfm$(\"%u\\n\"), ").append(op1).append("\n");
-        } else if (tipo.equals("INLINE_STRING")){
-            code.append("\tinvoke printf, ADDR ").append(op1).append("\n");
+            case TablaSimbolos.ULONGINT -> code.append("\tinvoke printf, cfm$(\"%u\\n\"), ").append(op1).append("\n");
+            case TablaToken.INLINE_STRING -> code.append("\tinvoke printf, ADDR ").append(op1).append("\n");
         }
     }
     private String formatearOperando(String op) {

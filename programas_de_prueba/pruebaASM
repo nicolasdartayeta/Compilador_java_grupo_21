@@ -2,6 +2,13 @@ pruebaASM
 
 begin
     ulongint a;
-    a := 5 + 10;
+    a := 5;
+
+    ulongint fun myFunction (ulongint p)
+    begin
+        ret(10);
+    end
+
+    a := myFunction(5);
     outf(a);
 end

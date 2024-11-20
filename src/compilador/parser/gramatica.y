@@ -149,8 +149,10 @@ funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
                                                                                 }
                                                                                 returnEncontrado = false;
                                                                                 ambito.pop();
-                                                                                representacionPolaca.add("Fin " + aux.pop());
+                                                                                representacionPolaca.add(aux.pop());
+                                                                                representacionPolaca.add("_fin");
                                                                                 representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()));
+                                                                                representacionPolaca.add("_L" + representacionPolaca.size());
                                                                              }
                             ;
 
@@ -177,10 +179,13 @@ encabezado_funcion          :   nombre_funcion PARENTESIS_L parametro PARENTESIS
                                                                                         bfs.push(representacionPolaca.size()-1);
                                                                                         representacionPolaca.add("BI");
                                                                                         representacionPolaca.add(nombreFuncion);
+                                                                                        representacionPolaca.add("_inicio");
                                                                                         aux.push(nombreFuncion);
                                                                                         String ambitoActual = getAmbitoActual();
-                                                                                        TablaSimbolos.setTipoParametro(nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':')), $3.sval);
-                                                                                        TablaSimbolos.setCantidadDeParametros(nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':')), 1);
+                                                                                        String nombreFuncionPadre = nombreFuncion + ambitoActual.substring(0, ambitoActual.lastIndexOf(':'));
+                                                                                        TablaSimbolos.setNombreParametro(nombreFuncionPadre, $3.sval);
+                                                                                        TablaSimbolos.setTipoParametro(nombreFuncionPadre, TablaSimbolos.getTipo($3.sval));
+                                                                                        TablaSimbolos.setCantidadDeParametros(nombreFuncionPadre, 1);
                                                                                         agregarAmbitoAIdentificador(lexemaParametro);
                                                                                         TablaSimbolos.cambiarLexema(lexemaParametro, lexemaParametro + getAmbitoActual());
                                                                                     }
@@ -558,13 +563,13 @@ invocacion_a_funcion        :   IDENTIFICADOR_GENERICO PARENTESIS_L expresion_ar
                                                                                                         String ambitoFuncion = estaAlAlcance(lexemaFuncion);
                                                                                                         if (ambitoFuncion != null) {
                                                                                                             String lexemaFuncionConAmbito = lexemaFuncion + ambitoFuncion;
-                                                                                                            String tipoParametroFormal = TablaSimbolos.getTipoRetorno(lexemaFuncionConAmbito);
-                                                                                                            $$.sval = tipoParametroFormal;
+                                                                                                            String tipoParametroFormal = TablaSimbolos.getTipoParametro(lexemaFuncionConAmbito);
+                                                                                                            $$.sval = TablaSimbolos.getTipoRetorno(lexemaFuncionConAmbito);
                                                                                                             String tipoParametroReal = $3.sval;
                                                                                                             if (!tipoParametroFormal.equals(tipoParametroReal)) {
                                                                                                                 agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Parametro real: " + tipoParametroReal +". Parametro formal: " + tipoParametroFormal + ".");}
                                                                                                             listaExpresiones.add(lexemaFuncion);
-                                                                                                            listaExpresiones.add("BI");
+                                                                                                            listaExpresiones.add("CALL");
                                                                                                         } else {
                                                                                                             agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Funcion " + lexemaFuncion +" no esta el alcance");
                                                                                                         }
