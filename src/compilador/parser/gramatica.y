@@ -190,7 +190,16 @@ encabezado_funcion          :   nombre_funcion PARENTESIS_L parametro PARENTESIS
                                                                              }
                             ;
 
-parametro                   :   tipo identificador { $$.sval = $1.sval; TablaSimbolos.imprimirTabla();TablaSimbolos.cambiarTipo($2.sval, $1.sval); agregarUsoAIdentificador($2.sval, "nombre de parametro"); }
+parametro                   :   tipo IDENTIFICADOR_GENERICO {
+                                                                String nombreParametro = ((Token) $2.obj).getLexema();
+                                                                $$.sval = nombreParametro;
+
+                                                                representacionPolaca.add(nombreParametro);
+
+                                                                TablaSimbolos.imprimirTabla();
+                                                                TablaSimbolos.cambiarTipo(nombreParametro, $1.sval);
+                                                                agregarUsoAIdentificador(nombreParametro, "nombre de parametro");
+                                                            }
                             |   identificador { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el tipo del parametro de la funcion"); }
                             |   tipo { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el identificador del parametro de la funcion"); }
                             |   tipo identificador error {agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": La funcion no puede tener mas de un parametro");}
@@ -496,7 +505,7 @@ factor                      :   identificador {
                                                 listaExpresiones.add($1.sval);
                                                 }
                             |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
-                            |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "single"; }
+                            |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "SINGLE"; listaExpresiones.add(((Token) $1.obj).getLexema()); }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
 		                    ;
@@ -775,8 +784,8 @@ public static void main(String[] args) {
     Parser parser = new Parser(true);
     parser.run();
 
-    System.out.println(Parser.VERDE + "TOKENS RECIBIDOS DEL ANALIZADOR LEXICO" + Parser.RESET);
-    Parser.imprimirLista(tokensRecibidos);
+    //System.out.println(Parser.VERDE + "TOKENS RECIBIDOS DEL ANALIZADOR LEXICO" + Parser.RESET);
+    //Parser.imprimirLista(tokensRecibidos);
 
     if (Parser.lexingConErrores){
         System.out.println(Parser.ROJO + "SE ENCONTRARON ERRORES LEXICOS" + Parser.RESET);
@@ -799,7 +808,7 @@ public static void main(String[] args) {
             System.out.println(Parser.VERDE + "NO SE ENCONTRARON ERRORES SEMANTICOS" + Parser.RESET);
         }
 
-    Parser.imprimirLista(estructurasDetectadas);
+    //Parser.imprimirLista(estructurasDetectadas);
 
     TablaSimbolos.imprimirTabla();
 

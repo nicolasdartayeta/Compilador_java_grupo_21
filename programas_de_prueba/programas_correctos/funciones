@@ -7,7 +7,7 @@ begin
     ulongint fun myFunction (ulongint p)
     begin
         ulongint o;
-        d:=5.0;
+        d := 5.0;
         x := 2;
 
         ulongint fun mySubFunction(ulongint g)
@@ -29,7 +29,6 @@ begin
     ulongint fun myFunction2 (single d)
     begin
         ulongint r;
-        r:= 60;
         ret(r);
     end
 
