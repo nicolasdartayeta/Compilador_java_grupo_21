@@ -11,9 +11,34 @@ begin
     if (p<5) then
         aux:= aux-tos(10);
     end_if;
+
+    ulongint fun myfunc2 (ulongint myAux)
+    begin
+        /# Utiliza aux declarada en el padre #/
+        aux := aux - tos(50);
+
+        /# Declara otra variable aux, pero al ser diferente ambito no hay error #/
+        ulongint aux;
+        aux := 5;
+
+        myAux := myAux + 500;
+        ret (myAux);
+    end
+
+    x := myfunc2(20);
+    aux:= aux - tos(x);
     ret (aux);
 end
 
+/# Variable que no esta al alcance #/
+aux:= 5.0;
 
+s := myfunc(5);
 
+ulongint resultado;
+
+/# Funcion que no esta al alcance #/
+resultado := myfunc2(p);
+
+single p;
 end
