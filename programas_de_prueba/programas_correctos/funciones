@@ -2,15 +2,12 @@ funciones
 
 begin
     single d;
-    /# Deberia tirar error por variable sin declarar #/
-    e:=2;
 
     /# funcion que calcula 2^p #/
     ulongint fun myFunction (ulongint p)
     begin
         ulongint o;
-        d:=5.0;
-        h:= 10;
+        d := 5.0;
         x := 2;
 
         ulongint fun mySubFunction(ulongint g)
@@ -32,7 +29,6 @@ begin
     ulongint fun myFunction2 (single d)
     begin
         ulongint r;
-        r:= mySubFunction(20);
         ret(r);
     end
 
@@ -41,7 +37,6 @@ begin
         ret(3.14);
     end
 
-    o := 50;
     d:= 20.1;
     x := 4;
     outf( {Programa terminado } );

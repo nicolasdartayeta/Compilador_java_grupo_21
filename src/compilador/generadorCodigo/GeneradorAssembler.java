@@ -8,7 +8,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -62,7 +61,6 @@ public class GeneradorAssembler {
             generarHeader();
             generarCodigo();
             generarData();
-            TablaSimbolos.imprimirTabla();
             writer.write(data.toString());
             writer.write(code.toString());
             writer.close();
@@ -86,9 +84,10 @@ public class GeneradorAssembler {
                 if (uso.equals("constante")) {
                     switch (tipo){
                         case TablaSimbolos.SINGLE:
-                            data.append("\t").append(formatearLexemaSingle(lexema)).append(" REAL4 ").append(lexema.replace('s', 'e')).append("\n");
+                            data.append("\t").append(formatearLexemaConstante(lexema)).append(" REAL4 ").append(lexema.replace('s', 'e')).append("\n");
                             break;
                         case TablaSimbolos.ULONGINT:
+                            data.append("\t").append(formatearLexemaConstante(lexema)).append(" dd ").append(lexema).append("\n");
                             break;
                         default:
                             break;
@@ -118,7 +117,7 @@ public class GeneradorAssembler {
         data.append("\terrorOverflowTxt db \"Error: La multiplicacion se va de rango\", 0\n");
     }
 
-    private String formatearLexemaSingle(String lexema) {
+    private String formatearLexemaConstante(String lexema) {
         return "_"+lexema.replace(".","f").replace("-", "m").replace("+", "");
     }
 
@@ -272,12 +271,12 @@ public class GeneradorAssembler {
         String usoOperandoOP2 = TablaSimbolos.getUso(op2);
 
         if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP1.equals("constante")){
-            op1 = formatearLexemaSingle(op1);
+            op1 = formatearLexemaConstante(op1);
         } else {
             op1 = formatearOperando(op1);
         }
         if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP2.equals("constante")){
-            op2 = formatearLexemaSingle(op2);
+            op2 = formatearLexemaConstante(op2);
         } else {
             op2 = formatearOperando(op2);
         }
@@ -295,12 +294,12 @@ public class GeneradorAssembler {
         String usoOperandoOP2 = TablaSimbolos.getUso(op2);
 
         if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP1.equals("constante")){
-            op1 = formatearLexemaSingle(op1);
+            op1 = formatearLexemaConstante(op1);
         } else {
             op1 = formatearOperando(op1);
         }
         if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP2.equals("constante")){
-            op2 = formatearLexemaSingle(op2);
+            op2 = formatearLexemaConstante(op2);
         } else {
             op2 = formatearOperando(op2);
         }
@@ -318,12 +317,12 @@ public class GeneradorAssembler {
         String usoOperandoOP2 = TablaSimbolos.getUso(op2);
 
         if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP1.equals("constante")){
-            op1 = formatearLexemaSingle(op1);
+            op1 = formatearLexemaConstante(op1);
         } else {
             op1 = formatearOperando(op1);
         }
         if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP2.equals("constante")){
-            op2 = formatearLexemaSingle(op2);
+            op2 = formatearLexemaConstante(op2);
         } else {
             op2 = formatearOperando(op2);
         }
@@ -341,12 +340,12 @@ public class GeneradorAssembler {
         String usoOperandoOP2 = TablaSimbolos.getUso(op2);
 
         if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP1.equals("constante")){
-            op1 = formatearLexemaSingle(op1);
+            op1 = formatearLexemaConstante(op1);
         } else {
             op1 = formatearOperando(op1);
         }
         if (tipoOperandoOP1.equals(TablaSimbolos.SINGLE) && usoOperandoOP2.equals("constante")){
-            op2 = formatearLexemaSingle(op2);
+            op2 = formatearLexemaConstante(op2);
         } else {
             op2 = formatearOperando(op2);
         }
@@ -408,7 +407,8 @@ public class GeneradorAssembler {
         String auxLow = crearVariableAux(TablaSimbolos.ULONGINT);   // Parte baja (32 bits)
         String auxHigh = crearVariableAux(TablaSimbolos.ULONGINT); // Parte alta (32 bits)
         code.append("\tMOV EAX, ").append(op1).append("\n");
-        code.append("\tMUL ").append(op2).append("\n");
+        code.append("\tMOV EBX, ").append(op2).append("\n");
+        code.append("\tMUL EBX\n");
         code.append("\tMOV ").append(auxLow).append(", EAX\n"); //Chequear si esta bien
         code.append("\tMOV ").append(auxHigh).append(", EDX\n");
         pila.push(auxLow);
@@ -416,7 +416,8 @@ public class GeneradorAssembler {
     private void operacionMultiplicacionFlotante(String op2, String op1){
         String aux = crearVariableAux(TablaSimbolos.SINGLE);
         code.append("\tFLD ").append(op1).append("\n");
-        code.append("\tFMUL ").append(op2).append("\n");
+        code.append("\tFLD ").append(op2).append("\n");
+        code.append("\tFMUL\n");
         code.append("\tFSTSW AX\n");
         code.append("\tSAHF\n");
         code.append("\tJO _errorOverflow\n");
@@ -490,8 +491,8 @@ public class GeneradorAssembler {
     private String formatearOperando(String op) {
         String opFormateado = op;
         String tipoVaribale = TablaSimbolos.getTipo(op);
-        if (tipoVaribale.equals(TablaSimbolos.SINGLE) && TablaSimbolos.getUso(op).equals("constante")) {
-            opFormateado = formatearLexemaSingle(opFormateado);
+        if (TablaSimbolos.getUso(op).equals("constante")) {
+            opFormateado = formatearLexemaConstante(opFormateado);
         } else if (!TablaSimbolos.getUso(op).equals("constante") && opFormateado.charAt(0) != '@'){
             opFormateado= "_" + opFormateado;
             opFormateado = opFormateado.replace(':','_');
