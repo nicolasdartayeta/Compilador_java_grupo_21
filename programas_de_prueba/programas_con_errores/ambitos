@@ -1,0 +1,19 @@
+ambitos
+
+begin
+
+ulongint p;
+
+single fun myfunc (ulongint o)
+begin
+    single aux;
+    aux:= tos(o) + 3.14s3;
+    if (p<5) then
+        aux:= aux-tos(10);
+    end_if;
+    ret (aux);
+end
+
+
+
+end

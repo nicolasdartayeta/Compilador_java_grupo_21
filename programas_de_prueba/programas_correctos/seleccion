@@ -10,11 +10,16 @@ else
     a:=a-1;
 end_if;
 
+typedef Struct <ulongint, single> [
+    d,
+    e
+] myStructB;
+
+myStructB r;
 
 if (a=1) then
-
     if (x != 10) then
-        d:=3;
+        r.e := 5.0;
     else
         a := 20;
     end_if;
