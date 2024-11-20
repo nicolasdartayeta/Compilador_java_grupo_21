@@ -9,6 +9,7 @@ begin
     single b;
 
     b := 3.2s-4;
+    /# Variable con tipo embebido, no hace falta declararla #/
     z := 3;
     e, f := 6, z;
 
