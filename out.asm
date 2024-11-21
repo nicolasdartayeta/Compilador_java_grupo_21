@@ -8,99 +8,132 @@ includelib \masm32\lib\masm32.lib
 dll_dllcrt0 PROTO C
 printf PROTO C : VARARG
 .data
-	@aux6 dd 0
-	@aux5 REAL4 0.0
-	@aux4 REAL4 0.0
-	_c_main REAL4 0.0
+	@aux5 dd 0
+	@aux4 dd 0
+	_y_main dd 0
 	@retValSingle REAL4 0.0
-	_j_main dd 0
+	_d_main REAL4 0.0
+	_x_main_myFunction2 dd 0
+	_r_main_myFunction2 dd 0
+	_x_main_myFunction dd 0
 	_x_main dd 0
 	@retValUlongint dd 0
 	@aux3 dd 0
 	@aux2 dd 0
 	@aux1 dd 0
-	@_Programa_terminado db "Programa terminado", 0
+	_z_main_myFunction2 dd 0
+	_o_main_myFunction dd 0
+	_z_main dd 0
+	@_Programa_terminado_ db "Programa terminado ", 0
+	_20f1 REAL4 20.1
+	_30 dd 30
 	_0 dd 0
 	_1 dd 1
-	_100 dd 100
 	_2 dd 2
 	_3 dd 3
+	_3f2s3 REAL4 3.2e3
+	_4 dd 4
 	_5 dd 5
-	_6 dd 6
-	_30 dd 30
-	_10 dd 10
+	_5f0 REAL4 5.0
+	_d_main_myFunction2 REAL4 0.0
+	_p_main_myFunction dd 0
+	_g_main_myFunction_mySubFunction dd 0
 	funcionActual dd 0
 	errorNegativoTxt db "Error: La resta da un resultado menor que 0", 0
 	errorOverflowTxt db "Error: La multiplicacion se va de rango", 0
 	errorRecursion db "Error: No se permite la recursion", 0
 .code
 start:
-	MOV EAX, _10
-	MOV _x_main,  EAX
-Label3:
-	MOV EAX, _x_main
+	JMP Label40
+myFunction_main:
+	FLD _5f0
+	FSTP _d_main
+	MOV EAX, _2
+	MOV _x_main_myFunction,  EAX
+	JMP Label18
+mySubFunction_main_myFunction:
+	MOV EAX, _3
+	MOV @retValUlongint,  EAX
+	RET  
+Label18:
+	MOV EAX, _p_main_myFunction
 	MOV EBX, _0
 	CMP EAX, EBX
-	JB Label39
-	MOV EAX, _5
-	MOV _j_main,  EAX
-Label12:
-	MOV EAX, _j_main
-	MOV EBX, _0
-	CMP EAX, EBX
-	JBE Label33
-	MOV EAX, _x_main
-	MOV EBX, _30
-	CMP EAX, EBX
-	JE Label33
-	MOV EAX, _1
-	ADD EAX, _x_main
-	MOV @aux1, EAX
-	MOV EAX, @aux1
-	MOV _x_main,  EAX
-	MOV EAX, _j_main
-	SUB EAX, _2
-	JC _errorNegativo
-	MOV @aux2, EAX
-	MOV EAX, @aux2
-	MOV _j_main,  EAX
-	JMP Label12
-Label33:
-	MOV EAX, _x_main
+	JNE Label28
+	MOV EAX, _2
+	MOV @retValUlongint,  EAX
+	RET  
+	JMP Label37
+Label28:
+	MOV EAX, _p_main_myFunction
 	SUB EAX, _1
 	JC _errorNegativo
-	MOV @aux3, EAX
-	MOV EAX, @aux3
-	MOV _x_main,  EAX
-	JMP Label3
-Label39:
-	MOV EAX, _10
-	MOV _x_main,  EAX
-Label43:
-	MOV EAX, _x_main
+	MOV @aux1, EAX
+	MOV EAX, @aux1
+	MOV _p_main_myFunction,  EAX
+	CMP funcionActual, 1
+	JE _errorRecursion
+	MOV funcionActual, 1
+	CALL myFunction_main
+	MOV funcionActual, 0
+	MOV EAX, _2
+	MOV EBX, @retValUlongint
+	MUL EBX
+	MOV @aux2, EAX
+	MOV @aux3, EDX
+	MOV EAX, @aux2
+	MOV @retValUlongint,  EAX
+	RET  
+Label37:
+Label40:
+	MOV EAX, _4
+	MOV _z_main,  EAX
+	MOV EAX, _5
+	MOV _p_main_myFunction,  EAX
+	CMP funcionActual, 1
+	JE _errorRecursion
+	MOV funcionActual, 1
+	CALL myFunction_main
+	MOV funcionActual, 0
+	MOV EAX, @retValUlongint
+	MOV _y_main,  EAX
+	FLD _3f2s3
+	FSTP _d_main
+	JMP Label85
+myFunction2_main:
+	MOV EAX, _5
+	MOV _x_main_myFunction2,  EAX
+Label59:
+	MOV EAX, _x_main_myFunction2
 	MOV EBX, _0
 	CMP EAX, EBX
-	JBE Label66
-	MOV EAX, _x_main
-	MOV EBX, _100
+	JBE Label80
+	MOV EAX, _z_main_myFunction2
+	MOV EBX, _30
 	CMP EAX, EBX
-	JAE Label66
-	FLD _6
-	FDIV _3
-	FSTP @aux4
-	FLD _x_main
-	FSUB @aux4
-	FSTP @aux5
+	JE Label80
+	MOV EAX, _1
+	ADD EAX, _z_main_myFunction2
+	MOV @aux4, EAX
+	MOV EAX, @aux4
+	MOV _z_main_myFunction2,  EAX
+	MOV EAX, _x_main_myFunction2
+	SUB EAX, _2
+	JC _errorNegativo
+	MOV @aux5, EAX
 	MOV EAX, @aux5
+	MOV _x_main_myFunction2,  EAX
+	JMP Label59
+Label80:
+	MOV EAX, _r_main_myFunction2
+	MOV @retValUlongint,  EAX
+	RET  
+Label85:
+	FLD _20f1
+	FSTP _d_main
+	MOV EAX, _4
 	MOV _x_main,  EAX
-	MOV EAX, _2
-	ADD EAX, _x_main
-	MOV @aux6, EAX
-	MOV EAX, @aux6
-	MOV _x_main,  EAX
-	JMP Label43
-Label66:
-	invoke printf, ADDR @_Programa_terminado
+	invoke printf, ADDR @_Programa_terminado_
 	JMP _quit
 _errorNegativo:
 	invoke printf, ADDR errorNegativoTxt 

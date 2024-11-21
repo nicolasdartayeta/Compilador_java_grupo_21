@@ -246,21 +246,26 @@ sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { 
                                         |   sentencia_retorno { Parser.agregarEstructuraDetectadas($1.ival, "RET"); returnEncontrado = true; }
                                         ;
 
-sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion { $$.ival = $1.ival;
-                                                                                                  Parser.agregarEstructuraDetectadas($1.ival, "FOR");
-                                                                                                  if (aux.size() >= 3) {
-                                                                                                      representacionPolaca.add(aux.pop());
-                                                                                                      representacionPolaca.add(aux.pop());
-                                                                                                      representacionPolaca.add(aux.pop());
-                                                                                                  }
-                                                                                                  if (bfs.size()>=2){
-                                                                                                    representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
-                                                                                                    representacionPolaca.add(String.valueOf(bfs.pop()));
-                                                                                                  }
+sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion {   $$.ival = $1.ival;
+                                                                                                    Parser.agregarEstructuraDetectadas($1.ival, "FOR");
+                                                                                                    if (aux.size() >= 3){
+                                                                                                        representacionPolaca.add(aux.pop());
+                                                                                                        representacionPolaca.add(aux.pop());
+                                                                                                        representacionPolaca.add(aux.pop());
+                                                                                                    }
 
-                                                                                                  representacionPolaca.add("BI");
-                                                                                                  representacionPolaca.add("_L" + representacionPolaca.size());
-                                                                                              }
+                                                                                                    if (!dobleCondicion.isEmpty()){
+                                                                                                        if (dobleCondicion.pop()){
+                                                                                                            representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2));
+                                                                                                        }
+                                                                                                    }
+                                                                                                    if (bfs.size() >= 2){
+                                                                                                        representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
+                                                                                                        representacionPolaca.add(String.valueOf(bfs.pop()));
+                                                                                                    }
+                                                                                                    representacionPolaca.add("BI");
+                                                                                                    representacionPolaca.add("_L" + representacionPolaca.size());
+                                                                                                }
                                        |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                                        ;
 
