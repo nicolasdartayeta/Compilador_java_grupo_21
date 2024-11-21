@@ -1,0 +1,10 @@
+negativos
+
+begin
+    ulongint aux;
+    aux:= 10;
+    x:= 20;
+
+    aux := aux - x;
+
+end

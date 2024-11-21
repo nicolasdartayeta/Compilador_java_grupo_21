@@ -16,8 +16,4 @@ begin
 
     /# Conversion incorrecta #/
     tos(x) := 5.0;
-
-    ulongint m;
-    /# Se quiere restar un ulongint y un string #/
-    m:= 10 - {5};
 end
