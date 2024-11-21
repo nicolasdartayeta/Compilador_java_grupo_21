@@ -17,6 +17,28 @@ typedef Struct <ulongint, single> [
 myStruct r;
 single r;
 
-x:= p + 50;
+x := p + 50;
+
+single fun funcionFlotante (single h)
+begin
+    if (h < 5.0) then
+    begin
+        h:= tos(50) * h;
+        outf ({h incrementada});
+    end;
+    end_if;
+
+    /# variables redeclaradas en el mismo ambito#/
+    ulongint h;
+
+    ret (h);
+end
+
+/# funcion redeclarada en el mismo ambito#/
+ulongint fun funcionFlotante (ulongint aux)
+begin
+    aux := aux + x;
+    ret (5.0);
+end
 
 end
