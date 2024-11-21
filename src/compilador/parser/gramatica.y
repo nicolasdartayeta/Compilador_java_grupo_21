@@ -155,10 +155,17 @@ funcion                     :    encabezado_funcion BEGIN cuerpo_funcion END {
                                                                                     agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta un return en la funcion");
                                                                                 }
                                                                                 returnEncontrado = false;
-                                                                                ambito.pop();
-                                                                                representacionPolaca.add(aux.pop());
+                                                                                if (!ambito.isEmpty()){
+                                                                                    ambito.pop();
+                                                                                }
+
+                                                                                if (!aux.isEmpty()){
+                                                                                    representacionPolaca.add(aux.pop());
+                                                                                }
                                                                                 representacionPolaca.add("_fin");
-                                                                                representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()));
+                                                                                if (!bfs.isEmpty()){
+                                                                                    representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()));
+                                                                                }
                                                                                 representacionPolaca.add("_L" + representacionPolaca.size());
                                                                              }
                             ;
