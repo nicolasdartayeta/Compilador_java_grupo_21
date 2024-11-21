@@ -167,10 +167,16 @@ nombre_funcion              :   tipo FUN IDENTIFICADOR_GENERICO {
                                                                     $$.ival = $1.ival;
                                                                     String nombreFuncion = ((Token) $3.obj).getLexema();
                                                                     $$.sval = nombreFuncion;
+
+                                                                    if (TablaSimbolos.existeLexema(nombreFuncion + getAmbitoActual())){
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": Funcion ya declarada en el mismo ambito");
+                                                                    }
                                                                     TablaSimbolos.cambiarTipo(nombreFuncion, TablaSimbolos.FUN);
                                                                     agregarAmbitoAIdentificador(nombreFuncion);
                                                                     agregarUsoAIdentificador(nombreFuncion, "nombre de funcion");
                                                                     TablaSimbolos.setTipoRetorno(nombreFuncion, $1.sval);
+                                                                    TablaSimbolos.setIdFuncion(nombreFuncion, String.valueOf(idFuncion));
+                                                                    idFuncion++;
                                                                     String ambitoDeLaFuncion = getAmbitoActual();
                                                                     TablaSimbolos.cambiarLexema(nombreFuncion, nombreFuncion + ambitoDeLaFuncion);
                                                                     ambito.push(":" + nombreFuncion);
@@ -326,7 +332,6 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                             } else {
                                                                                                 agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": No coincide la cantidad de variables con la cantidad de valores a asignar.");
                                                                                             }
-
                                                                                             for (int i = 0; i < listaIdentificadores.size(); i++) {
                                                                                                 String ambito = estaAlAlcance(listaIdentificadores.get(i));
                                                                                                 String identificador = listaIdentificadores.get(i);
@@ -583,6 +588,7 @@ invocacion_a_funcion        :   IDENTIFICADOR_GENERICO PARENTESIS_L expresion_ar
                             ;
 
 %%
+private static int idFuncion = 1;
 private static int cantidadIdEnListaId = 0;
 private static Lexer lex;
 private static ArrayList<String> representacionPolaca;

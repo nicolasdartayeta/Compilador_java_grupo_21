@@ -292,4 +292,15 @@ public class TablaSimbolos {
 
         campoTablaSimbolos.setNombreParametro(nombreParametro);
     }
+
+    public static String getIdFuncion(String lexema) {
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+
+        return campoTablaSimbolos.getIdFuncion();
+    }
+    public static void setIdFuncion(String lexema, String idFuncion) {
+        CampoTablaSimbolos campoTablaSimbolos = getCampoTablaSimbolos(lexema);
+
+        campoTablaSimbolos.setIdFuncion(idFuncion);
+    }
 }
