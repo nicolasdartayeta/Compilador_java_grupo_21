@@ -418,15 +418,21 @@ sentencia_salida            :   OUTF PARENTESIS_L INLINE_STRING PARENTESIS_R PUN
 		                    ;
 
 sentencia_control           :   encabezado_for bloque_de_sent_ejecutables { Parser.agregarEstructuraDetectadas($1.ival, "FOR");
-                                                                            representacionPolaca.add(aux.pop());
-                                                                            representacionPolaca.add(aux.pop());
-                                                                            representacionPolaca.add(aux.pop());
-                                                                            if (dobleCondicion.pop()){
-                                                                                representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2));
+                                                                            if (aux.size() >= 3){
+                                                                                representacionPolaca.add(aux.pop());
+                                                                                representacionPolaca.add(aux.pop());
+                                                                                representacionPolaca.add(aux.pop());
                                                                             }
-                                                                            representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
 
-                                                                            representacionPolaca.add(String.valueOf(bfs.pop()));
+                                                                            if (!dobleCondicion.isEmpty()){
+                                                                                if (dobleCondicion.pop()){
+                                                                                    representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2));
+                                                                                }
+                                                                            }
+                                                                            if (bfs.size() >= 2){
+                                                                                representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
+                                                                                representacionPolaca.add(String.valueOf(bfs.pop()));
+                                                                            }
                                                                             representacionPolaca.add("BI");
                                                                             representacionPolaca.add("_L" + representacionPolaca.size());
                                                                         }

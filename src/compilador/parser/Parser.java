@@ -857,7 +857,7 @@ final static String yyrule[] = {
 "invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica error PARENTESIS_R",
 };
 
-//#line 609 "gramatica.y"
+//#line 615 "gramatica.y"
 private static int idFuncion = 1;
 private static int cantidadIdEnListaId = 0;
 private static Lexer lex;
@@ -1922,25 +1922,31 @@ break;
 case 140:
 //#line 420 "gramatica.y"
 { Parser.agregarEstructuraDetectadas(val_peek(1).ival, "FOR");
-                                                                            representacionPolaca.add(aux.pop());
-                                                                            representacionPolaca.add(aux.pop());
-                                                                            representacionPolaca.add(aux.pop());
-                                                                            if (dobleCondicion.pop()){
-                                                                                representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2));
+                                                                            if (aux.size() >= 3){
+                                                                                representacionPolaca.add(aux.pop());
+                                                                                representacionPolaca.add(aux.pop());
+                                                                                representacionPolaca.add(aux.pop());
                                                                             }
-                                                                            representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
 
-                                                                            representacionPolaca.add(String.valueOf(bfs.pop()));
+                                                                            if (!dobleCondicion.isEmpty()){
+                                                                                if (dobleCondicion.pop()){
+                                                                                    representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2));
+                                                                                }
+                                                                            }
+                                                                            if (bfs.size() >= 2){
+                                                                                representacionPolaca.set(bfs.pop(),String.valueOf(representacionPolaca.size()+2)); /* Se suma dos debido a los siguientes dos campos que se agregan en la polaca*/
+                                                                                representacionPolaca.add(String.valueOf(bfs.pop()));
+                                                                            }
                                                                             representacionPolaca.add("BI");
                                                                             representacionPolaca.add("_L" + representacionPolaca.size());
                                                                         }
 break;
 case 141:
-//#line 433 "gramatica.y"
+//#line 439 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(1).ival + ": Falta el cuerpo del FOR"); }
 break;
 case 142:
-//#line 436 "gramatica.y"
+//#line 442 "gramatica.y"
 {
                                                                                                                             dobleCondicion.push(true);
                                                                                                                             yyval.ival = val_peek(5).ival;
@@ -1950,34 +1956,34 @@ case 142:
                                                                                                                         }
 break;
 case 143:
-//#line 443 "gramatica.y"
+//#line 449 "gramatica.y"
 {
                                                                             dobleCondicion.push(false);
                                                                             yyval.ival = val_peek(1).ival;
                                                                         }
 break;
 case 144:
-//#line 447 "gramatica.y"
+//#line 453 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(0).ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
 break;
 case 145:
-//#line 448 "gramatica.y"
+//#line 454 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(4).ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
 break;
 case 146:
-//#line 449 "gramatica.y"
+//#line 455 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(4).ival + ": Falta un ';' en el encabezado del FOR"); }
 break;
 case 147:
-//#line 450 "gramatica.y"
+//#line 456 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(4).ival + ": Falta el parentesis derecho en la segunda condicion del encabezado del FOR"); }
 break;
 case 148:
-//#line 451 "gramatica.y"
+//#line 457 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(3).ival + ": Falta ambos parentesis izquierdos del encabezado del FOR"); }
 break;
 case 149:
-//#line 454 "gramatica.y"
+//#line 460 "gramatica.y"
 {
                                                                                                                         yyval.ival = val_peek(6).ival;
                                                                                                                         aux.push(val_peek(4).sval);
@@ -1988,27 +1994,27 @@ case 149:
                                                                                                                         }
 break;
 case 150:
-//#line 462 "gramatica.y"
+//#line 468 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(5).ival + ": Falta el parentesis derecho en el encabezado del FOR"); }
 break;
 case 151:
-//#line 463 "gramatica.y"
+//#line 469 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(5).ival + ": Falta la acción en el encabezado del FOR"); }
 break;
 case 152:
-//#line 464 "gramatica.y"
+//#line 470 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(5).ival + ": Falta un ';' en el encabezado del FOR"); }
 break;
 case 153:
-//#line 465 "gramatica.y"
+//#line 471 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ val_peek(5).ival + ": Falta un ';' en el encabezado del FOR"); }
 break;
 case 154:
-//#line 468 "gramatica.y"
+//#line 474 "gramatica.y"
 {yyval.ival = ((Token) val_peek(0).obj).getNumeroDeLinea();}
 break;
 case 155:
-//#line 471 "gramatica.y"
+//#line 477 "gramatica.y"
 {
                                                                             representacionPolaca.add(listaExpresiones.get(0));
                                                                             listaExpresiones.clear();
@@ -2032,27 +2038,27 @@ case 155:
                                                                             }
 break;
 case 156:
-//#line 494 "gramatica.y"
+//#line 500 "gramatica.y"
 { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); aux.push("UP"); aux.push(((Token) val_peek(0).obj).getLexema()); }
 break;
 case 157:
-//#line 495 "gramatica.y"
+//#line 501 "gramatica.y"
 { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); aux.push("DOWN"); aux.push(((Token) val_peek(0).obj).getLexema()); }
 break;
 case 158:
-//#line 496 "gramatica.y"
+//#line 502 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(0).obj).getNumeroDeLinea() + ": Falta palabra reservada en la acción del encabezado FOR"); }
 break;
 case 159:
-//#line 499 "gramatica.y"
+//#line 505 "gramatica.y"
 { listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); listaTipoExpresiones.add(val_peek(0).sval); }
 break;
 case 160:
-//#line 500 "gramatica.y"
+//#line 506 "gramatica.y"
 { listaExpresiones.add(","); listaTipoExpresiones.add(val_peek(0).sval); }
 break;
 case 161:
-//#line 503 "gramatica.y"
+//#line 509 "gramatica.y"
 {
                                                                     listaExpresiones.add(((Token) val_peek(1).obj).getLexema());
                                                                     yyval.sval = val_peek(2).sval;
@@ -2062,7 +2068,7 @@ case 161:
                                                                    }
 break;
 case 162:
-//#line 510 "gramatica.y"
+//#line 516 "gramatica.y"
 {
                                                                     listaExpresiones.add(((Token) val_peek(1).obj).getLexema());
                                                                     yyval.sval = val_peek(2).sval;
@@ -2072,27 +2078,27 @@ case 162:
                                                                    }
 break;
 case 163:
-//#line 517 "gramatica.y"
-{ yyval.sval = val_peek(0).sval; }
-break;
-case 164:
-//#line 518 "gramatica.y"
-{ agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
-break;
-case 165:
-//#line 521 "gramatica.y"
-{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;  if (!(val_peek(2).sval).equals(val_peek(0).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);};}
-break;
-case 166:
-//#line 522 "gramatica.y"
-{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;  if (!(val_peek(2).sval).equals(val_peek(0).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);};}
-break;
-case 167:
 //#line 523 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
+case 164:
+//#line 524 "gramatica.y"
+{ agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
+break;
+case 165:
+//#line 527 "gramatica.y"
+{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;  if (!(val_peek(2).sval).equals(val_peek(0).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);};}
+break;
+case 166:
+//#line 528 "gramatica.y"
+{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;  if (!(val_peek(2).sval).equals(val_peek(0).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);};}
+break;
+case 167:
+//#line 529 "gramatica.y"
+{ yyval.sval = val_peek(0).sval; }
+break;
 case 168:
-//#line 526 "gramatica.y"
+//#line 532 "gramatica.y"
 {
                                                 representacionPolaca.remove(representacionPolaca.size() - 1);
                                                 String ambitoEncontrado = estaAlAlcance(val_peek(0).sval);
@@ -2108,47 +2114,47 @@ case 168:
                                                 }
 break;
 case 169:
-//#line 539 "gramatica.y"
+//#line 545 "gramatica.y"
 { TablaSimbolos.imprimirTabla(); yyval.sval = TablaSimbolos.getTipo(val_peek(0).sval); agregarUsoAIdentificador(val_peek(0).sval, "constante");}
 break;
 case 170:
-//#line 540 "gramatica.y"
+//#line 546 "gramatica.y"
 {yyval.ival = ((Token) val_peek(3).obj).getNumeroDeLinea();  yyval.sval = "SINGLE"; listaExpresiones.add(((Token) val_peek(3).obj).getLexema()); }
 break;
 case 171:
-//#line 541 "gramatica.y"
+//#line 547 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea() + ": Falta la expresión"); }
 break;
 case 172:
-//#line 542 "gramatica.y"
+//#line 548 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
 case 173:
-//#line 545 "gramatica.y"
+//#line 551 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarUsoAIdentificador(((Token) val_peek(0).obj).getLexema(), "constante"); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 174:
-//#line 546 "gramatica.y"
+//#line 552 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarUsoAIdentificador(((Token) val_peek(0).obj).getLexema(), "constante"); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 175:
-//#line 549 "gramatica.y"
+//#line 555 "gramatica.y"
 { yyval.sval = val_peek(0).sval;}
 break;
 case 176:
-//#line 550 "gramatica.y"
+//#line 556 "gramatica.y"
 { yyval.sval = ((Token) val_peek(1).obj).getLexema() + val_peek(0).sval; agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes enteras negativas."); }
 break;
 case 177:
-//#line 551 "gramatica.y"
+//#line 557 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 178:
-//#line 552 "gramatica.y"
+//#line 558 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(0).obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
 break;
 case 179:
-//#line 553 "gramatica.y"
+//#line 559 "gramatica.y"
 {
                                                             System.out.println(((Token) val_peek(1).obj).getLexema() + ((Token) val_peek(0).obj).getLexema());
                                                             yyval.sval = ((Token) val_peek(1).obj).getLexema() + ((Token) val_peek(0).obj).getLexema();
@@ -2182,11 +2188,11 @@ case 179:
                                                         }
 break;
 case 180:
-//#line 584 "gramatica.y"
+//#line 590 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
 break;
 case 181:
-//#line 587 "gramatica.y"
+//#line 593 "gramatica.y"
 {
                                                                                                         String lexemaFuncion = ((Token) val_peek(3).obj).getLexema();
                                                                                                         TablaSimbolos.eliminarLexema(lexemaFuncion);
@@ -2201,19 +2207,19 @@ case 181:
                                                                                                             listaExpresiones.add(lexemaFuncion);
                                                                                                             listaExpresiones.add("CALL");
                                                                                                         } else {
-                                                                                                            agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) val_peek(3).obj).getNumeroDeLinea() + ": Funcion " + lexemaFuncion +" no esta el alcance");
+                                                                                                            agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) val_peek(3).obj).getNumeroDeLinea() + ": Funcion " + lexemaFuncion +" no esta declarada o no esta al alcance");
                                                                                                         }
                                                                                                        }
 break;
 case 182:
-//#line 604 "gramatica.y"
+//#line 610 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
 break;
 case 183:
-//#line 605 "gramatica.y"
+//#line 611 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(4).obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
 break;
-//#line 2139 "Parser.java"
+//#line 2145 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####
