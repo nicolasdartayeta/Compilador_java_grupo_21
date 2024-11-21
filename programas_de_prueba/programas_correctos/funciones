@@ -30,6 +30,10 @@ begin
     ulongint fun myFunction2 (single d)
     begin
         ulongint r;
+        for (x:=5; x > 0; down 2; (z != 30))
+        begin
+            z:=z+1;
+        end;
         ret(r);
     end
     d:= 20.1;
