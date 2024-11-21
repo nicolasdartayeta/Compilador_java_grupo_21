@@ -1,16 +1,9 @@
 pruebaASM
 
 begin
-    ulongint a;
-    a := 0456;
+    single b;
 
-    ulongint fun myFunction (ulongint p)
-    begin
-        ret(p+5);
-    end
-    ulongint b;
-    b:= myFunction(5);
-    a := myFunction(10);
+    b := 3.402823466s38 * 1.1;
+
     outf(b);
-    outf(a);
 end

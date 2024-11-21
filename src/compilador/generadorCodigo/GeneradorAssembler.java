@@ -487,8 +487,8 @@ public class GeneradorAssembler {
         code.append("\tFLD ").append(op2).append("\n");
         code.append("\tFMUL\n");
         code.append("\tFSTSW AX\n");
-        code.append("\tSAHF\n");
-        code.append("\tJO _errorOverflow\n");
+        code.append("\tTEST AX, 0800h\n");
+        code.append("\tJNZ  _errorOverflow\n");
         code.append("\tFSTP ").append(aux).append("\n");
         pila.push(aux);
     }
@@ -562,7 +562,7 @@ public class GeneradorAssembler {
                 opFormateado = formatearLexemaConstante(opFormateado);
             } else {
                 opFormateado = "_" + opFormateado;
-                opFormateado = opFormateado.replace(':', '_');
+                opFormateado = opFormateado.replace(':', '_').replace('.','_');
             }
         }
 
