@@ -46,22 +46,29 @@ sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                 System.out.println(getAmbitoActual());
                                                                                 Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
-                                                                                agregarTipoAIdentificadores($1.sval);
-                                                                                agregarAmbitoAIdentificadores(listaIdentificadores);
-                                                                                agregarUsoAIdentificadores(listaIdentificadores, "nombre de variable");
+                                                                                TablaSimbolos.imprimirTabla();
+                                                                                System.out.println(listaIdentificadores);
 
                                                                                 for (int i = 0; i < listaIdentificadores.size(); i++) {
-                                                                                   System.out.println((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())));
-                                                                                   if ((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
+                                                                                    if (TablaSimbolos.existeLexema(listaIdentificadores.get(i))) {
+                                                                                        agregarTipoAIdentificador(listaIdentificadores.get(i), $1.sval);
+                                                                                        agregarAmbitoAIdentificador(listaIdentificadores.get(i));
+                                                                                        agregarUsoAIdentificador(listaIdentificadores.get(i), "nombre de variable");
+
+                                                                                       System.out.println((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())));
+                                                                                       if ((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
+                                                                                            agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + listaIdentificadores.get(i) +" ya declarada en el mismo ambito");
+                                                                                       } else {
+                                                                                            TablaSimbolos.cambiarLexema(listaIdentificadores.get(i), listaIdentificadores.get(i) + getAmbitoActual());
+                                                                                            if (TablaSimbolos.esUnTipo($1.sval) && TablaSimbolos.getTipo($1.sval).equals("STRUCT")) {
+                                                                                                for(String identificador: listaIdentificadores) {
+                                                                                                    crearCampo($1.sval, identificador);
+                                                                                                }
+                                                                                            };
+                                                                                       };
+                                                                                    } else {
                                                                                         agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + listaIdentificadores.get(i) +" ya declarada en el mismo ambito");
-                                                                                   } else {
-                                                                                        TablaSimbolos.cambiarLexema(listaIdentificadores.get(i), listaIdentificadores.get(i) + getAmbitoActual());
-                                                                                        if (TablaSimbolos.esUnTipo($1.sval) && TablaSimbolos.getTipo($1.sval).equals("STRUCT")) {
-                                                                                            for(String identificador: listaIdentificadores) {
-                                                                                                crearCampo($1.sval, identificador);
-                                                                                            }
-                                                                                        };
-                                                                                     };
+                                                                                    }
                                                                                 };
                                                                                 listaIdentificadores.clear();
                                                                             }
@@ -293,6 +300,7 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones {
                                                                                             $$.ival = $1.ival;
                                                                                             imprimirPolaca(representacionPolaca);
+
                                                                                             eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
                                                                                             imprimirPolaca(representacionPolaca);
                                                                                             List<List<String>> expresiones = formatearLista(listaExpresiones);
@@ -683,6 +691,10 @@ public static void agregarTipoAIdentificadores(String tipo) {
         System.out.println(lexema + " es tipo " + tipo);
         TablaSimbolos.cambiarTipo(lexema, tipo);
     }
+}
+
+public static void agregarTipoAIdentificador(String lexema, String tipo) {
+    TablaSimbolos.cambiarTipo(lexema, tipo);
 }
 
 // Agregar error a la lista de errores

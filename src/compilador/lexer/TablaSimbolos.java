@@ -103,7 +103,7 @@ public class TablaSimbolos {
             String simbolo = entry.getKey();
             CampoTablaSimbolos campos = entry.getValue();
 
-            System.out.printf("%-20s %-25s %-20s %-10s %-15s %-7d %-15s %-15s %-15s %-40s\n",
+            System.out.printf("%-20s %-25s %-20s %-15s %-10s %-7d %-15s %-15s %-15s %-40s\n",
                     simbolo,
                     campos.getAmbito(),
                     campos.getUso(),

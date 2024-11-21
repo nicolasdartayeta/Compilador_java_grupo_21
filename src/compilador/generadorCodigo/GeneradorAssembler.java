@@ -147,8 +147,6 @@ public class GeneradorAssembler {
     }
 
     private void procesarToken(String token, int indice){
-        System.out.println("Procesando: " + token);
-        System.out.println("ambito actual: " + getAmbitoActual());
         String ambitoDeLaVariable = estaAlAlcance(token);
         if (ambitoDeLaVariable != null) {
             pila.push(token + ambitoDeLaVariable);
@@ -214,7 +212,6 @@ public class GeneradorAssembler {
                     break;
             }
         }
-        System.out.println("Fin -> " + pila);
     }
 
     private void invocacionFuncion(String funcion, String parametroReal) {
