@@ -607,7 +607,7 @@ invocacion_a_funcion        :   IDENTIFICADOR_GENERICO PARENTESIS_L expresion_ar
                                                                                                             listaExpresiones.add(lexemaFuncion);
                                                                                                             listaExpresiones.add("CALL");
                                                                                                         } else {
-                                                                                                            agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Funcion " + lexemaFuncion +" no esta el alcance");
+                                                                                                            agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Funcion " + lexemaFuncion +" no esta declarada o no esta al alcance");
                                                                                                         }
                                                                                                        }
                             |   IDENTIFICADOR_GENERICO PARENTESIS_L  PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
