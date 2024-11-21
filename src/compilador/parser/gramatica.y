@@ -337,10 +337,9 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                                 } else {
                                                                                                     TablaSimbolos.aumentarUso(identificador + ambito);
                                                                                                     TablaSimbolos.eliminarLexema(identificador);
+                                                                                                    if (!(TablaSimbolos.getTipo(identificador+ambito)).equals(listaTipoExpresiones.get(i))){
+                                                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);}
                                                                                                 }
-
-                                                                                                 if (!(TablaSimbolos.getTipo(identificador+getAmbitoActual())).equals(listaTipoExpresiones.get(i))){
-                                                                                                    agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);}
                                                                                             }
 
                                                                                             listaExpresiones.clear();
