@@ -11,6 +11,7 @@ printf PROTO C : VARARG
 	_a_main dd 0
 	_b_main dd 0
 	@aux1 dd 0
+	_302 dd 302
 	_5 dd 5
 	_10 dd 10
 	_p_main_myFunction dd 0
@@ -20,7 +21,7 @@ printf PROTO C : VARARG
 	@retValSingle REAL4 0.0
 .code
 start:
-	MOV EAX, _5
+	MOV EAX, _302
 	MOV _a_main,  EAX
 	JMP Label13
 myFunction_main:
