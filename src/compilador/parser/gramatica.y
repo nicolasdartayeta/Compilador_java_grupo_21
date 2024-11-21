@@ -251,7 +251,18 @@ sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecuta
                                        |   encabezado_for error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el cuerpo del FOR"); }
                                        ;
 
-sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA { listaExpresiones.forEach((n) -> representacionPolaca.add(n)); listaExpresiones.clear(); $$.ival = ((Token) $1.obj).getNumeroDeLinea(); representacionPolaca.add(((Token) $1.obj).getLexema()); }
+sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R PUNTO_Y_COMA {
+                                                                                                    listaExpresiones.forEach((n) -> representacionPolaca.add(n));
+                                                                                                    listaExpresiones.clear(); $$.ival = ((Token) $1.obj).getNumeroDeLinea();
+                                                                                                    representacionPolaca.add(((Token) $1.obj).getLexema());
+                                                                                                    String funcion = ambito.peek().substring(1);
+                                                                                                    if (!funcion.equals("main")) {
+                                                                                                        funcion = funcion + estaAlAlcance(funcion);
+                                                                                                        if (!$3.sval.equals(TablaSimbolos.getTipoRetorno(funcion))) {
+                                                                                                            agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": El tipo del retorno no coincide con el tipo de retorno de la funcion");
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R error PUNTO_Y_COMA { $$.ival = ((Token) $1.obj).getNumeroDeLinea(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R  error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             ;
