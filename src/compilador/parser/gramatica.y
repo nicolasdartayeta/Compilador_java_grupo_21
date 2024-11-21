@@ -305,10 +305,12 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones {
                                                                                             $$.ival = $1.ival;
+                                                                                            imprimirPolaca(representacionPolaca);
 
                                                                                             eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
+                                                                                            imprimirPolaca(representacionPolaca);
                                                                                             List<List<String>> expresiones = formatearLista(listaExpresiones);
-                                                                                            System.out.println("listaIdentificadores    " + listaIdentificadores);
+
                                                                                             if (listaIdentificadores.size() == expresiones.size()) {
                                                                                                 for (int i = 0; i < listaIdentificadores.size(); i++){
                                                                                                     String identificador = listaIdentificadores.get(i);
@@ -340,6 +342,8 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                                 } else {
                                                                                                     TablaSimbolos.aumentarUso(identificador + ambito);
                                                                                                     TablaSimbolos.eliminarLexema(identificador);
+                                                                                                    if (!(TablaSimbolos.getTipo(identificador+ambito)).equals(listaTipoExpresiones.get(i))){
+                                                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);}
                                                                                                 }
                                                                                             }
 
