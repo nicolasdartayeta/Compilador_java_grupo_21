@@ -246,7 +246,7 @@ sentencia_ejecutable_en_funcion         :   sentencia_asignacion PUNTO_Y_COMA { 
                                         |   sentencia_retorno { Parser.agregarEstructuraDetectadas($1.ival, "RET"); returnEncontrado = true; }
                                         ;
 
-sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion {
+sentencia_control_en_funcion           :   encabezado_for bloque_de_sent_ejecutables_en_funcion {   $$.ival = $1.ival;
                                                                                                     Parser.agregarEstructuraDetectadas($1.ival, "FOR");
                                                                                                     if (aux.size() >= 3){
                                                                                                         representacionPolaca.add(aux.pop());
@@ -285,7 +285,7 @@ sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS
                             |   RET PARENTESIS_L expresion_aritmetica PARENTESIS_R  error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta ';' al final de la sentencia"); }
                             ;
 
-sentencia_seleccion_en_funcion  :   inicio_seleccion cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); representacionPolaca.add("_L" + representacionPolaca.size()); }
+sentencia_seleccion_en_funcion  :   inicio_seleccion cuerpo_if_en_funcion END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); if (!bfs.isEmpty()) {representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()));}; representacionPolaca.add("_L" + representacionPolaca.size()); }
                                 |   inicio_seleccion cuerpo_if_en_funcion END_IF error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia de selección");}
                                 |   inicio_seleccion cuerpo_if_en_funcion END_IF error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
                                 |   inicio_seleccion cuerpo_if_en_funcion PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el END_IF en la sentencia de selección"); }
@@ -302,7 +302,9 @@ cuerpo_if_en_funcion        :   THEN cuerpo_then_en_funcion cuerpo_else_en_funci
                             ;
 
 cuerpo_then_en_funcion      : bloque_de_sent_ejecutables_en_funcion {$$.ival = $1.ival;
-                                                        representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
+                                                        if (!bfs.isEmpty()){
+                                                            representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
+                                                        };
                                                         representacionPolaca.add("");bfs.push(representacionPolaca.size()-1);
                                                         representacionPolaca.add("BI");
                                                         representacionPolaca.add("_L" + representacionPolaca.size());
@@ -382,7 +384,7 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                          }
                             ;
 
-sentencia_seleccion         :   inicio_seleccion cuerpo_if END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size())); representacionPolaca.add("_L" + representacionPolaca.size()); }
+sentencia_seleccion         :   inicio_seleccion cuerpo_if END_IF PUNTO_Y_COMA { $$.ival = $1.ival; Parser.agregarEstructuraDetectadas($1.ival, "IF"); if (!bfs.isEmpty()) {representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()));}; representacionPolaca.add("_L" + representacionPolaca.size()); }
                             |   inicio_seleccion cuerpo_if END_IF error PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia de selección");}
                             |   inicio_seleccion cuerpo_if END_IF error END { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta ';' al final de la sentencia"); }
                             |   inicio_seleccion cuerpo_if PUNTO_Y_COMA { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ $1.ival + ": Falta el END_IF en la sentencia de selección"); }
@@ -402,7 +404,9 @@ cuerpo_if                   :   THEN cuerpo_then cuerpo_else
 		                    ;
 
 cuerpo_then                 : bloque_de_sent_ejecutables {$$.ival = $1.ival;
-                                                            representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
+                                                            if (!bfs.isEmpty()) {
+                                                                representacionPolaca.set(bfs.pop(), String.valueOf(representacionPolaca.size()+2));
+                                                            }
                                                             representacionPolaca.add("");bfs.push(representacionPolaca.size()-1);
                                                             representacionPolaca.add("BI");
                                                             representacionPolaca.add("_L" + representacionPolaca.size());}
