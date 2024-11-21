@@ -115,8 +115,6 @@ public class GeneradorAssembler {
         }
         data.append("\terrorNegativoTxt db \"Error: La resta da un resultado menor que 0\", 0\n");
         data.append("\terrorOverflowTxt db \"Error: La multiplicacion se va de rango\", 0\n");
-        data.append("\t@retValUlongint dd 0\n");
-        data.append("\t@retValSingle REAL4 0.0\n");
     }
 
     private String formatearLexemaConstante(String lexema) {
@@ -125,6 +123,16 @@ public class GeneradorAssembler {
 
 
     private void generarCodigo() throws IOException {
+        CampoTablaSimbolos campoUlongInt = new CampoTablaSimbolos(false, TablaSimbolos.ULONGINT);
+        campoUlongInt.setUso("nombre de variable");
+        campoUlongInt.setAmbito(":main");
+        TablaSimbolos.agregarLexema("@retValUlongint", campoUlongInt);
+
+        CampoTablaSimbolos campoSingle = new CampoTablaSimbolos(false, TablaSimbolos.SINGLE);
+        campoSingle.setUso("nombre de variable");
+        campoSingle.setAmbito(":main");
+        TablaSimbolos.agregarLexema("@retValSingle", campoSingle);
+
         code.append(".code\n");
         code.append("start:\n");
         for (int i = 0; i < polaca.size(); i++) {
@@ -215,8 +223,15 @@ public class GeneradorAssembler {
     }
 
     private void invocacionFuncion(String funcion, String parametroReal) {
+        String variableAAsignar;
+        String ultimoAmbito = ambito.peek().substring(1);
+        if (ultimoAmbito.equals(funcion.substring(0, funcion.indexOf(":")))){
+            variableAAsignar = TablaSimbolos.getNombreParametro(funcion) + getAmbitoActual();
+        } else {
+            variableAAsignar = TablaSimbolos.getNombreParametro(funcion) + getAmbitoActual() + ":" + funcion.substring(0, funcion.indexOf(":"));
+        }
         // Cambiar el ambito al entrar a la funcion
-        asignacion(parametroReal, TablaSimbolos.getNombreParametro(funcion) + getAmbitoActual() + ":" + funcion.substring(0, funcion.indexOf(":")));
+        asignacion(parametroReal, variableAAsignar);
         code.append("\tCALL ").append(funcion.replace(":", "_")).append("\n");
         String tipoRetorno = TablaSimbolos.getTipoRetorno(funcion);
         if (tipoRetorno.equals(TablaSimbolos.SINGLE)) {

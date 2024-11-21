@@ -14,6 +14,7 @@ begin
         begin
             ret(3);
         end
+
         if (p = 0) then
             ret(2);
         else
