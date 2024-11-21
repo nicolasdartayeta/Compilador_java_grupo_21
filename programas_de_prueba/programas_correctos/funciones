@@ -32,11 +32,6 @@ begin
         ret(r);
     end
 
-    single fun myFunction2 (ulongint ñ)
-    begin
-        ret(3.14);
-    end
-
     d:= 20.1;
     x := 4;
     outf( {Programa terminado } );

@@ -1,0 +1,23 @@
+tipos
+
+begin
+    ulongint aux;
+    single aux2;
+
+    aux2:= 5.0;
+
+    /# Se quiere sumar un ulongint y un single sin realizar conversion explicita#/
+    aux:= aux + aux2;
+    /# Se quiere asignar un single a un ulongint sin realizar conversion explicita#/
+    x:= 3.14s3;
+
+    /# Conversion correcta #/
+    s:= tos(3);
+
+    /# Conversion incorrecta #/
+    tos(x) := 5.0;
+
+    ulongint m;
+    /# Se quiere restar un ulongint y un string #/
+    m:= 10 - {5};
+end
