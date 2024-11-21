@@ -17,18 +17,17 @@ public class AS7 implements AccionSemantica {
 
         try {
             float nro = Float.parseFloat(posibleFloat);
+            int tokenSingle = TablaToken.getTokenID(TablaToken.CONSTANTE_SINGLE);
+
+            if (!TablaSimbolos.existeLexema(lexema.toString())) {
+                TablaSimbolos.agregarLexema(lexema.toString(), new CampoTablaSimbolos(false, TablaSimbolos.SINGLE));
+            } else {
+                TablaSimbolos.aumentarUso(lexema.toString());
+            }
 
             if (nro == Float.POSITIVE_INFINITY || nro == Float.NEGATIVE_INFINITY || nro == -0.0f) {
                 return new TokenError(TablaToken.getTokenID(TablaToken.TOKERROR), lexema.toString(), numeroDeLinea, "Linea "+ numeroDeLinea +": La constante se pasa de rango");
             } else {
-                int tokenSingle = TablaToken.getTokenID(TablaToken.CONSTANTE_SINGLE);
-
-                if (TablaSimbolos.existeLexema(lexema.toString()) == false) {
-                    TablaSimbolos.agregarLexema(lexema.toString(), new CampoTablaSimbolos(false, TablaSimbolos.SINGLE));
-                } else {
-                    TablaSimbolos.aumentarUso(lexema.toString());
-                }
-
                 return new Token(tokenSingle, lexema.toString(), numeroDeLinea);
             }
         } catch (NumberFormatException e) {

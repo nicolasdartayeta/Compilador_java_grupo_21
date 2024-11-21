@@ -105,7 +105,7 @@ public class GeneradorAssembler {
                             data.append("\t").append(lexema).append(" dd 0\n");
                             break;
                         case TablaToken.INLINE_STRING:
-                            data.append("\t").append(lexema).append(" db \"").append(lexemaViejo).append("\", 0\n");
+                            data.append("\t@").append(lexema.replace(' ', '_')).append(" db \"").append(lexemaViejo).append("\", 0\n");
                             break;
                         default:
                             break;
@@ -113,8 +113,10 @@ public class GeneradorAssembler {
                 }
             }
         }
+        data.append("\tfuncionActual dd 0\n");
         data.append("\terrorNegativoTxt db \"Error: La resta da un resultado menor que 0\", 0\n");
         data.append("\terrorOverflowTxt db \"Error: La multiplicacion se va de rango\", 0\n");
+        data.append("\terrorRecursion db \"Error: No se permite la recursion\", 0\n");
     }
 
     private String formatearLexemaConstante(String lexema) {
@@ -151,6 +153,9 @@ public class GeneradorAssembler {
         code.append("\tJMP _quit\n");
         code.append("_errorOverflow:\n");
         code.append("\tinvoke printf, ADDR errorOverflowTxt \n");
+        code.append("\tJMP _quit\n");
+        code.append("_errorRecursion:\n");
+        code.append("\tinvoke printf, ADDR errorRecursion \n");
         code.append("\tJMP _quit\n");
     }
 
@@ -232,7 +237,15 @@ public class GeneradorAssembler {
         }
         // Cambiar el ambito al entrar a la funcion
         asignacion(parametroReal, variableAAsignar);
+
+        // chequear que no se este entrando a la funcion en la que ya se esta
+        code.append("\tCMP funcionActual, ").append(TablaSimbolos.getIdFuncion(funcion)).append("\n");
+        code.append("\tJE _errorRecursion\n");
+
+        // set en que funcion se esta entrando
+        code.append("\tMOV funcionActual, ").append(TablaSimbolos.getIdFuncion(funcion)).append("\n");
         code.append("\tCALL ").append(funcion.replace(":", "_")).append("\n");
+        code.append("\tMOV funcionActual, 0\n");
         String tipoRetorno = TablaSimbolos.getTipoRetorno(funcion);
         if (tipoRetorno.equals(TablaSimbolos.SINGLE)) {
             pila.push("@retValSingle");
@@ -243,9 +256,9 @@ public class GeneradorAssembler {
 
     private void retorno(String returnValue) {
         if (TablaSimbolos.getTipo(returnValue).equals(TablaSimbolos.SINGLE)) {
-            asignacionFlotante(returnValue, "@retValSingle");
+            asignacionFlotante(formatearOperando(returnValue), "@retValSingle");
         } else if (TablaSimbolos.getTipo(returnValue).equals(TablaSimbolos.ULONGINT)) {
-            asignacionEntera(returnValue, "@retValUlongint");
+            asignacionEntera(formatearOperando(returnValue), "@retValUlongint");
         }
         code.append("\tRET ").append(" \n");
     }
@@ -310,6 +323,9 @@ public class GeneradorAssembler {
                     break;
                 case "!=":
                     code.append("\tJE ");
+                    break;
+                case "=":
+                    code.append("\tJNE ");
                     break;
             }
         }
@@ -535,7 +551,7 @@ public class GeneradorAssembler {
                 code.append("\tinvoke printf, cfm$(\"%.20Lf\\n\"), ").append(f64printVariable).append("\n");
             }
             case TablaSimbolos.ULONGINT -> code.append("\tinvoke printf, cfm$(\"%u\\n\"), ").append(op1).append("\n");
-            case TablaToken.INLINE_STRING -> code.append("\tinvoke printf, ADDR ").append(op1).append("\n");
+            case TablaToken.INLINE_STRING -> code.append("\tinvoke printf, ADDR @").append(op1.replace(' ', '_')).append("\n");
         }
     }
     private String formatearOperando(String op) {

@@ -167,10 +167,16 @@ nombre_funcion              :   tipo FUN IDENTIFICADOR_GENERICO {
                                                                     $$.ival = $1.ival;
                                                                     String nombreFuncion = ((Token) $3.obj).getLexema();
                                                                     $$.sval = nombreFuncion;
+
+                                                                    if (TablaSimbolos.existeLexema(nombreFuncion + getAmbitoActual())){
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": Funcion ya declarada en el mismo ambito");
+                                                                    }
                                                                     TablaSimbolos.cambiarTipo(nombreFuncion, TablaSimbolos.FUN);
                                                                     agregarAmbitoAIdentificador(nombreFuncion);
                                                                     agregarUsoAIdentificador(nombreFuncion, "nombre de funcion");
                                                                     TablaSimbolos.setTipoRetorno(nombreFuncion, $1.sval);
+                                                                    TablaSimbolos.setIdFuncion(nombreFuncion, String.valueOf(idFuncion));
+                                                                    idFuncion++;
                                                                     String ambitoDeLaFuncion = getAmbitoActual();
                                                                     TablaSimbolos.cambiarLexema(nombreFuncion, nombreFuncion + ambitoDeLaFuncion);
                                                                     ambito.push(":" + nombreFuncion);
@@ -328,7 +334,6 @@ sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_exp
                                                                                             } else {
                                                                                                 agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $2.obj).getNumeroDeLinea() + ": No coincide la cantidad de variables con la cantidad de valores a asignar.");
                                                                                             }
-
                                                                                             for (int i = 0; i < listaIdentificadores.size(); i++) {
                                                                                                 String ambito = estaAlAlcance(listaIdentificadores.get(i));
                                                                                                 String identificador = listaIdentificadores.get(i);
@@ -517,7 +522,7 @@ factor                      :   identificador {
                                                 };
                                                 listaExpresiones.add($1.sval);
                                                 }
-                            |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
+                            |   constante { TablaSimbolos.imprimirTabla(); $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
                             |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "SINGLE"; listaExpresiones.add(((Token) $1.obj).getLexema()); }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
@@ -562,7 +567,7 @@ constante                   :   constante_entera { $$.sval = $1.sval;}
                                                                 listaExpresiones.add("-"+ ((Token) $2.obj).getLexema());
                                                             }
                                                         }
-                            |   RESTA TOKERROR { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
+                            |   RESTA TOKERROR { $$.sval = ((Token) $2.obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
                             ;
 
 invocacion_a_funcion        :   IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica PARENTESIS_R {
@@ -587,6 +592,7 @@ invocacion_a_funcion        :   IDENTIFICADOR_GENERICO PARENTESIS_L expresion_ar
                             ;
 
 %%
+private static int idFuncion = 1;
 private static int cantidadIdEnListaId = 0;
 private static Lexer lex;
 private static ArrayList<String> representacionPolaca;

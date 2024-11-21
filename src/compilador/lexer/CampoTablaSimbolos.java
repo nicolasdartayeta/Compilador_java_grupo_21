@@ -12,6 +12,7 @@ public class CampoTablaSimbolos {
     String ambito;
     boolean esTipo;
     String tipo;
+    String idFuncion;
     Integer usos;
     Integer cantidadDeParametros;
     String tipoRetorno;
@@ -24,6 +25,7 @@ public class CampoTablaSimbolos {
         this.ambito = null;
         this.esTipo = esTipo;
         this.tipo = tipo;
+        this.idFuncion = null;
         this.usos = 1;
         this.cantidadDeParametros = null;
         this.tipoParametro = null;
@@ -118,5 +120,13 @@ public class CampoTablaSimbolos {
 
     public void setNombreParametro(String nombreParametro) {
         this.nombreParametro = nombreParametro;
+    }
+
+    public String getIdFuncion() {
+        return idFuncion;
+    }
+
+    public void setIdFuncion(String idFuncion) {
+        this.idFuncion = idFuncion;
     }
 }
