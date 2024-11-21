@@ -1,0 +1,22 @@
+redeclaraciones_y_nodeclaraciones
+
+begin
+
+/# variables no declarada #/
+aux:= 10;
+
+/# variables redeclarada (x tiene tipo embebido)#/
+ulongint x;
+
+typedef Struct <ulongint, single> [
+    a,
+    b
+] myStruct;
+
+/# variables redeclaradas en el mismo ambito#/
+myStruct r;
+single r;
+
+x:= p + 50;
+
+end

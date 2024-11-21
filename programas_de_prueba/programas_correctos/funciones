@@ -32,7 +32,6 @@ begin
         ulongint r;
         ret(r);
     end
-
     d:= 20.1;
     x := 4;
     outf( {Programa terminado } );
