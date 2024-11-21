@@ -1,0 +1,11 @@
+overflow
+
+begin
+    single r;
+    r := 1.0s38;
+    single o;
+    o := 4.0s4;
+
+    single aux;
+    aux := r * o;
+end
