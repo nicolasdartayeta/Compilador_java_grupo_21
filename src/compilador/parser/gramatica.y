@@ -522,7 +522,7 @@ factor                      :   identificador {
                                                 };
                                                 listaExpresiones.add($1.sval);
                                                 }
-                            |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
+                            |   constante { TablaSimbolos.imprimirTabla(); $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
                             |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "SINGLE"; listaExpresiones.add(((Token) $1.obj).getLexema()); }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
@@ -567,7 +567,7 @@ constante                   :   constante_entera { $$.sval = $1.sval;}
                                                                 listaExpresiones.add("-"+ ((Token) $2.obj).getLexema());
                                                             }
                                                         }
-                            |   RESTA TOKERROR { $$.obj = ((Token) $1.obj); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
+                            |   RESTA TOKERROR { $$.sval = ((Token) $2.obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
                             ;
 
 invocacion_a_funcion        :   IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica PARENTESIS_R {

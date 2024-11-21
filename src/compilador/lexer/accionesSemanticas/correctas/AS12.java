@@ -14,16 +14,18 @@ public class AS12 implements AccionSemantica {
     public Token ejecutar(StringCharacterIterator input, StringBuilder lexema, int numeroDeLinea) {
         input.previous();
 
+        if (TablaSimbolos.existeLexema(lexema.toString()) == false) {
+            TablaSimbolos.agregarLexema(lexema.toString(), new CampoTablaSimbolos(false, TablaSimbolos.ULONGINT));
+        } else {
+            TablaSimbolos.aumentarUso(lexema.toString());
+        }
+
         try {
             long decimal = Integer.parseUnsignedInt(lexema.toString());
 
             int tokenDecimal = TablaToken.getTokenID(TablaToken.CONSTANTE_DECIMAL);
 
-            if (TablaSimbolos.existeLexema(lexema.toString()) == false) {
-                TablaSimbolos.agregarLexema(lexema.toString(), new CampoTablaSimbolos(false, TablaSimbolos.ULONGINT));
-            } else {
-                TablaSimbolos.aumentarUso(lexema.toString());
-            }
+
 
             return new Token(tokenDecimal, lexema.toString(), numeroDeLinea);
         } catch (NumberFormatException e) {
