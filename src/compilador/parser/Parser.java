@@ -857,7 +857,7 @@ final static String yyrule[] = {
 "invocacion_a_funcion : IDENTIFICADOR_GENERICO PARENTESIS_L expresion_aritmetica error PARENTESIS_R",
 };
 
-//#line 595 "gramatica.y"
+//#line 611 "gramatica.y"
 private static int idFuncion = 1;
 private static int cantidadIdEnListaId = 0;
 private static Lexer lex;
@@ -2053,34 +2053,50 @@ case 160:
 break;
 case 161:
 //#line 503 "gramatica.y"
-{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;  if (!(val_peek(2).sval).equals(val_peek(0).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);};}
+{
+                                                                    listaExpresiones.add(((Token) val_peek(1).obj).getLexema());
+                                                                    yyval.sval = val_peek(2).sval;
+                                                                    if (val_peek(2).sval == null || val_peek(1).sval == null) {
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Posible variable sin declarar");
+                                                                    } else if (!(val_peek(2).sval).equals(val_peek(0).sval)) {
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);
+                                                                    };
+                                                                   }
 break;
 case 162:
-//#line 504 "gramatica.y"
-{ listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;  if (!(val_peek(2).sval).equals(val_peek(0).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);};}
+//#line 512 "gramatica.y"
+{
+                                                                    listaExpresiones.add(((Token) val_peek(1).obj).getLexema());
+                                                                    yyval.sval = val_peek(2).sval;
+                                                                    if (val_peek(2).sval == null || val_peek(1).sval == null) {
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Posible variable sin declarar");
+                                                                    } else if (!(val_peek(2).sval).equals(val_peek(0).sval)) {
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);
+                                                                     };
+                                                                   }
 break;
 case 163:
-//#line 505 "gramatica.y"
+//#line 521 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
 case 164:
-//#line 506 "gramatica.y"
+//#line 522 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
 break;
 case 165:
-//#line 509 "gramatica.y"
+//#line 525 "gramatica.y"
 { listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;  if (!(val_peek(2).sval).equals(val_peek(0).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);};}
 break;
 case 166:
-//#line 510 "gramatica.y"
+//#line 526 "gramatica.y"
 { listaExpresiones.add(((Token) val_peek(1).obj).getLexema()); yyval.sval = val_peek(2).sval;  if (!(val_peek(2).sval).equals(val_peek(0).sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + val_peek(2).sval + ((Token) val_peek(1).obj).getLexema() +val_peek(0).sval);};}
 break;
 case 167:
-//#line 511 "gramatica.y"
+//#line 527 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
 case 168:
-//#line 514 "gramatica.y"
+//#line 530 "gramatica.y"
 {
                                                 representacionPolaca.remove(representacionPolaca.size() - 1);
                                                 String ambitoEncontrado = estaAlAlcance(val_peek(0).sval);
@@ -2094,47 +2110,47 @@ case 168:
                                                 }
 break;
 case 169:
-//#line 525 "gramatica.y"
+//#line 541 "gramatica.y"
 { TablaSimbolos.imprimirTabla(); yyval.sval = TablaSimbolos.getTipo(val_peek(0).sval); agregarUsoAIdentificador(val_peek(0).sval, "constante");}
 break;
 case 170:
-//#line 526 "gramatica.y"
+//#line 542 "gramatica.y"
 {yyval.ival = ((Token) val_peek(3).obj).getNumeroDeLinea();  yyval.sval = "SINGLE"; listaExpresiones.add(((Token) val_peek(3).obj).getLexema()); }
 break;
 case 171:
-//#line 527 "gramatica.y"
+//#line 543 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea() + ": Falta la expresión"); }
 break;
 case 172:
-//#line 528 "gramatica.y"
+//#line 544 "gramatica.y"
 { yyval.sval = val_peek(0).sval; }
 break;
 case 173:
-//#line 531 "gramatica.y"
+//#line 547 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarUsoAIdentificador(((Token) val_peek(0).obj).getLexema(), "constante"); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 174:
-//#line 532 "gramatica.y"
+//#line 548 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarUsoAIdentificador(((Token) val_peek(0).obj).getLexema(), "constante"); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 175:
-//#line 535 "gramatica.y"
+//#line 551 "gramatica.y"
 { yyval.sval = val_peek(0).sval;}
 break;
 case 176:
-//#line 536 "gramatica.y"
+//#line 552 "gramatica.y"
 { yyval.sval = ((Token) val_peek(1).obj).getLexema() + val_peek(0).sval; agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea()  + ": la constante se va de rango. No se permiten constantes enteras negativas."); }
 break;
 case 177:
-//#line 537 "gramatica.y"
+//#line 553 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); listaExpresiones.add(((Token) val_peek(0).obj).getLexema());}
 break;
 case 178:
-//#line 538 "gramatica.y"
+//#line 554 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(0).obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
 break;
 case 179:
-//#line 539 "gramatica.y"
+//#line 555 "gramatica.y"
 {
                                                             System.out.println(((Token) val_peek(1).obj).getLexema() + ((Token) val_peek(0).obj).getLexema());
                                                             yyval.sval = ((Token) val_peek(1).obj).getLexema() + ((Token) val_peek(0).obj).getLexema();
@@ -2168,11 +2184,11 @@ case 179:
                                                         }
 break;
 case 180:
-//#line 570 "gramatica.y"
+//#line 586 "gramatica.y"
 { yyval.sval = ((Token) val_peek(0).obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(1).obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
 break;
 case 181:
-//#line 573 "gramatica.y"
+//#line 589 "gramatica.y"
 {
                                                                                                         String lexemaFuncion = ((Token) val_peek(3).obj).getLexema();
                                                                                                         TablaSimbolos.eliminarLexema(lexemaFuncion);
@@ -2192,14 +2208,14 @@ case 181:
                                                                                                        }
 break;
 case 182:
-//#line 590 "gramatica.y"
+//#line 606 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(2).obj).getNumeroDeLinea()  + ": Falta el parametro en la invocación a la función"); }
 break;
 case 183:
-//#line 591 "gramatica.y"
+//#line 607 "gramatica.y"
 { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(4).obj).getNumeroDeLinea() + ": Se excede la cantidad de parametros posibles"); }
 break;
-//#line 2125 "Parser.java"
+//#line 2141 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

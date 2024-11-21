@@ -17,6 +17,6 @@ typedef Struct <ulongint, single> [
 myStruct r;
 single r;
 
-x:= p + 50;
+x, l := p + 50, l + 1;
 
 end

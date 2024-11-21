@@ -500,8 +500,24 @@ lista_de_expresiones        :   lista_de_expresiones COMA expresion_aritmetica {
 		                    |   expresion_aritmetica { listaExpresiones.add(","); listaTipoExpresiones.add($1.sval); }
 		                    ;
 
-expresion_aritmetica        :   expresion_aritmetica SUMA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;  if (!($1.sval).equals($3.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);};}
-		                    |   expresion_aritmetica RESTA termino { listaExpresiones.add(((Token) $2.obj).getLexema()); $$.sval = $1.sval;  if (!($1.sval).equals($3.sval)){agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);};}
+expresion_aritmetica        :   expresion_aritmetica SUMA termino {
+                                                                    listaExpresiones.add(((Token) $2.obj).getLexema());
+                                                                    $$.sval = $1.sval;
+                                                                    if ($1.sval == null || $2.sval == null) {
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Posible variable sin declarar");
+                                                                    } else if (!($1.sval).equals($3.sval)) {
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);
+                                                                    };
+                                                                   }
+		                    |   expresion_aritmetica RESTA termino {
+                                                                    listaExpresiones.add(((Token) $2.obj).getLexema());
+                                                                    $$.sval = $1.sval;
+                                                                    if ($1.sval == null || $2.sval == null) {
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Posible variable sin declarar");
+                                                                    } else if (!($1.sval).equals($3.sval)) {
+                                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": incompatibilidad de tipos. " + $1.sval + ((Token) $2.obj).getLexema() +$3.sval);
+                                                                     };
+                                                                   }
 		                    |   termino { $$.sval = $1.sval; }
 		                    |   error { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ Parser.lex.getNumeroDeLinea() + ": Falta operador, operandos, o coma entre expresiones"); }
 		                    ;
