@@ -62,7 +62,7 @@ begin
 
     /# Falta de contenido en bloque ELSE. #/
     if (x > 0) then
-        x := x * -1;
+        x := x * 1;
     else
 
     end_if;
