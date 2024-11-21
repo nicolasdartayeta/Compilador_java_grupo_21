@@ -6,9 +6,11 @@ begin
 
     ulongint fun myFunction (ulongint p)
     begin
-        ret(10);
+        ret(p+5);
     end
-
-    a := myFunction(5);
+    ulongint b;
+    b:= myFunction(5);
+    a := myFunction(10);
+    outf(b);
     outf(a);
 end

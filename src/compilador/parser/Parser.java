@@ -1100,7 +1100,7 @@ public static void main(String[] args) {
 
     if (!lexingConErrores && !parsingConErrores && !codIntermedioConErrores) {
         GeneradorAssembler gen = new GeneradorAssembler(representacionPolaca, "out.asm");
-        //gen.generarCodigoAssembler();
+        gen.generarCodigoAssembler();
     }
 }
 
@@ -2161,8 +2161,8 @@ case 181:
                                                                                                         String ambitoFuncion = estaAlAlcance(lexemaFuncion);
                                                                                                         if (ambitoFuncion != null) {
                                                                                                             String lexemaFuncionConAmbito = lexemaFuncion + ambitoFuncion;
-                                                                                                            String tipoParametroFormal = TablaSimbolos.getTipoRetorno(lexemaFuncionConAmbito);
-                                                                                                            yyval.sval = tipoParametroFormal;
+                                                                                                            String tipoParametroFormal = TablaSimbolos.getTipoParametro(lexemaFuncionConAmbito);
+                                                                                                            yyval.sval = TablaSimbolos.getTipoRetorno(lexemaFuncionConAmbito);
                                                                                                             String tipoParametroReal = val_peek(1).sval;
                                                                                                             if (!tipoParametroFormal.equals(tipoParametroReal)) {
                                                                                                                 agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) val_peek(3).obj).getNumeroDeLinea()  + ": Parametro real: " + tipoParametroReal +". Parametro formal: " + tipoParametroFormal + ".");}

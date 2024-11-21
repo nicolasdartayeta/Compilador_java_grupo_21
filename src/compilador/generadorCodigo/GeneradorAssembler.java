@@ -115,6 +115,8 @@ public class GeneradorAssembler {
         }
         data.append("\terrorNegativoTxt db \"Error: La resta da un resultado menor que 0\", 0\n");
         data.append("\terrorOverflowTxt db \"Error: La multiplicacion se va de rango\", 0\n");
+        data.append("\t@retValUlongint dd 0\n");
+        data.append("\t@retValSingle REAL4 0.0\n");
     }
 
     private String formatearLexemaConstante(String lexema) {
@@ -145,6 +147,8 @@ public class GeneradorAssembler {
     }
 
     private void procesarToken(String token, int indice){
+        System.out.println("Procesando: " + token);
+        System.out.println("ambito actual: " + getAmbitoActual());
         String ambitoDeLaVariable = estaAlAlcance(token);
         if (ambitoDeLaVariable != null) {
             pila.push(token + ambitoDeLaVariable);
@@ -154,7 +158,9 @@ public class GeneradorAssembler {
                     suma(pila.pop(), pila.pop());
                     break;
                 case ":=":
-                    asignacion(pila.pop(), pila.pop());
+                    String v1 = pila.pop();
+                    String v2 = pila.pop();
+                    asignacion(v1, v2);
                     break;
                 case "-":
                     resta(pila.pop(), pila.pop());
@@ -184,7 +190,7 @@ public class GeneradorAssembler {
                     generarSalida(pila.pop());
                     break;
                 case "CALL":
-                    invocacionFuncion(pila.pop());
+                    invocacionFuncion(pila.pop(), pila.pop());
                     break;
                 case "ret":
                     retorno(pila.pop());
@@ -195,9 +201,12 @@ public class GeneradorAssembler {
                             String label = "Label" + token.substring(2) + ":";
                             code.append(label).append("\n");
                         } else if (token.startsWith("_fin")) {
-                            this.ambito.pop();
+                            String funcion = pila.pop();
+                            ambito.pop();
                         } else if (token.startsWith("_inicio")) {
-                            this.ambito.push(":" + pila.pop());
+                            String funcion = pila.pop();
+                            ambito.push(":" + funcion.substring(0, funcion.indexOf(":")));
+                            code.append(funcion.replace(":", "_")).append(":\n");
                         }
                     } else {
                         pila.push(token);
@@ -205,10 +214,28 @@ public class GeneradorAssembler {
                     break;
             }
         }
+        System.out.println("Fin -> " + pila);
     }
 
-    private void invocacionFuncion(String label) {
-        code.append("\tCALL ").append(label).append("\n");
+    private void invocacionFuncion(String funcion, String parametroReal) {
+        // Cambiar el ambito al entrar a la funcion
+        asignacion(parametroReal, TablaSimbolos.getNombreParametro(funcion) + getAmbitoActual() + ":" + funcion.substring(0, funcion.indexOf(":")));
+        code.append("\tCALL ").append(funcion.replace(":", "_")).append("\n");
+        String tipoRetorno = TablaSimbolos.getTipoRetorno(funcion);
+        if (tipoRetorno.equals(TablaSimbolos.SINGLE)) {
+            pila.push("@retValSingle");
+        } else if (tipoRetorno.equals(TablaSimbolos.ULONGINT)) {
+            pila.push("@retValUlongint");
+        }
+    }
+
+    private void retorno(String returnValue) {
+        if (TablaSimbolos.getTipo(returnValue).equals(TablaSimbolos.SINGLE)) {
+            asignacionFlotante(returnValue, "@retValSingle");
+        } else if (TablaSimbolos.getTipo(returnValue).equals(TablaSimbolos.ULONGINT)) {
+            asignacionEntera(returnValue, "@retValUlongint");
+        }
+        code.append("\tRET ").append(" \n");
     }
 
     private void accionControl(String token, String op1, String op2) {
@@ -222,7 +249,6 @@ public class GeneradorAssembler {
     }
 
     private void bifurcacionFalso() {
-        System.out.println(pila);
         String direccionSalto = pila.pop();
         String operadorComparacion = pila.pop();
         String opDerecha = pila.pop();
@@ -474,9 +500,6 @@ public class GeneradorAssembler {
             System.out.println("La conversion debe ser de un tipo ULONGINT a un tipo SINGLE");
         }
     }
-    private void retorno(String label) {
-        code.append("\tRET\n");
-    }
 
     private String crearVariableAux (String tipo){
         String varAux = "@aux" + (++contadorAux);
@@ -505,13 +528,16 @@ public class GeneradorAssembler {
     }
     private String formatearOperando(String op) {
         String opFormateado = op;
-        String tipoVaribale = TablaSimbolos.getTipo(op);
-        if (TablaSimbolos.getUso(op).equals("constante")) {
-            opFormateado = formatearLexemaConstante(opFormateado);
-        } else if (!TablaSimbolos.getUso(op).equals("constante") && opFormateado.charAt(0) != '@'){
-            opFormateado= "_" + opFormateado;
-            opFormateado = opFormateado.replace(':','_');
+
+        if (opFormateado.charAt(0) != '@') {
+            if (TablaSimbolos.getUso(op).equals("constante")) {
+                opFormateado = formatearLexemaConstante(opFormateado);
+            } else {
+                opFormateado = "_" + opFormateado;
+                opFormateado = opFormateado.replace(':', '_');
+            }
         }
+
         return opFormateado;
     }
     private void generarHeader() throws IOException{
