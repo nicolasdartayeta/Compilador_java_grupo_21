@@ -1,9 +1,9 @@
 pruebaASM
 
 begin
-    single b;
+    ulongint b;
 
-    b := 3.402823466s38 * 1.1;
+    b := 5 + 4;
 
     outf(b);
 end
