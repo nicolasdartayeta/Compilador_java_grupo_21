@@ -1,7 +1,7 @@
 programa_for
 
 begin
-    ulongint j;
+    single j;
     ulongint contador;
     contador:=0;
 

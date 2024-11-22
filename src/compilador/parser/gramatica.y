@@ -518,6 +518,14 @@ asignacion_enteros          :   identificador ASIGNACION constante_entera {
 
                                                                                 TablaSimbolos.eliminarLexema(identificador);
                                                                             }
+
+                                                                            String ambito = estaAlAlcance(identificador);
+                                                                            if (ambito == null) {
+                                                                                agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + identificador +" no declarada o no esta al alcance");
+                                                                            } else if (!TablaSimbolos.getTipo(identificador + ambito).equals(TablaSimbolos.ULONGINT)) {
+                                                                                agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": No se puede operar con variables que no sean ULONGINT");
+                                                                            }
+
                                                                             representacionPolaca.add("_L" + representacionPolaca.size());
                                                                             bfs.push(representacionPolaca.size()-1);
                                                                             $$.sval = $1.sval;
