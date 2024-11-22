@@ -13,5 +13,7 @@ begin
     z := 3;
     e, f := 6, z;
 
+    outf (tos(a+z+e+f)+b);
+
     outf( { Programa terminado } );
 end
