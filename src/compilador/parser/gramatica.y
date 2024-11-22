@@ -43,11 +43,8 @@ sentencia                   :   sentencia_declarativa
                             ;
 
 sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
-                                                                                System.out.println(getAmbitoActual());
                                                                                 Parser.agregarEstructuraDetectadas($1.ival, "VARIABLE/S");
                                                                                 eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
-                                                                                TablaSimbolos.imprimirTabla();
-                                                                                System.out.println(listaIdentificadores);
 
                                                                                 for (int i = 0; i < listaIdentificadores.size(); i++) {
                                                                                     if (TablaSimbolos.existeLexema(listaIdentificadores.get(i))) {
@@ -55,7 +52,6 @@ sentencia_declarativa       :   tipo lista_de_identificadores PUNTO_Y_COMA  {
                                                                                         agregarAmbitoAIdentificador(listaIdentificadores.get(i));
                                                                                         agregarUsoAIdentificador(listaIdentificadores.get(i), "nombre de variable");
 
-                                                                                       System.out.println((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())));
                                                                                        if ((TablaSimbolos.existeLexema(listaIdentificadores.get(i) + getAmbitoActual())) || listaIdentificadores.get(i).charAt(0) == 'x' || listaIdentificadores.get(i).charAt(0) == 'y' || listaIdentificadores.get(i).charAt(0) == 'z' || listaIdentificadores.get(i).charAt(0) == 's'){
                                                                                             agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ $1.ival + ": Variable " + listaIdentificadores.get(i) +" ya declarada en el mismo ambito");
                                                                                        } else {
@@ -127,7 +123,7 @@ identificador               :   identificador_simple {
                                                            TablaSimbolos.deleteEntrada(idActual);
                                                         };
                                                      }
-                            |   identificador_compuesto { $$.ival = $1.ival; $$.sval = $1.sval; System.out.println("ID COMPUESTO: " + $1.sval); representacionPolaca.add($1.sval);
+                            |   identificador_compuesto { $$.ival = $1.ival; $$.sval = $1.sval; representacionPolaca.add($1.sval);
                                                          String idActual = $1.sval;
                                                          ArrayList<String> idSimples = new ArrayList<>(Arrays.asList(idActual.split("\\.")));
                                                          for (String idSimple : idSimples) {
@@ -221,7 +217,6 @@ parametro                   :   tipo IDENTIFICADOR_GENERICO {
 
                                                                 representacionPolaca.add(nombreParametro);
 
-                                                                TablaSimbolos.imprimirTabla();
                                                                 TablaSimbolos.cambiarTipo(nombreParametro, $1.sval);
                                                                 agregarUsoAIdentificador(nombreParametro, "nombre de parametro");
                                                             }
@@ -336,10 +331,9 @@ sentencia_ejecutable        :   sentencia_asignacion PUNTO_Y_COMA { $$.ival = $1
 
 sentencia_asignacion        :   lista_de_identificadores ASIGNACION lista_de_expresiones {
                                                                                             $$.ival = $1.ival;
-                                                                                            imprimirPolaca(representacionPolaca);
 
                                                                                             eliminarUltimosElementos(representacionPolaca, listaIdentificadores.size());
-                                                                                            imprimirPolaca(representacionPolaca);
+
                                                                                             List<List<String>> expresiones = formatearLista(listaExpresiones);
 
                                                                                             if (listaIdentificadores.size() == expresiones.size()) {
@@ -579,7 +573,7 @@ factor                      :   identificador {
                                                 };
                                                 listaExpresiones.add($1.sval);
                                                 }
-                            |   constante { TablaSimbolos.imprimirTabla(); $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
+                            |   constante { $$.sval = TablaSimbolos.getTipo($1.sval); agregarUsoAIdentificador($1.sval, "constante");}
                             |   TOS PARENTESIS_L expresion_aritmetica PARENTESIS_R {$$.ival = ((Token) $1.obj).getNumeroDeLinea();  $$.sval = "SINGLE"; listaExpresiones.add(((Token) $1.obj).getLexema()); }
                             |   TOS PARENTESIS_L PARENTESIS_R { agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": Falta la expresión"); }
 		                    |   invocacion_a_funcion { $$.sval = $1.sval; }
@@ -594,7 +588,6 @@ constante                   :   constante_entera { $$.sval = $1.sval;}
                             |   CONSTANTE_SINGLE { $$.sval = ((Token) $1.obj).getLexema(); listaExpresiones.add(((Token) $1.obj).getLexema());}
                             |   TOKERROR { $$.sval = ((Token) $1.obj).getLexema(); agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea()  + ": Posible constante fuera de rango (ERROR LEXICO)"); }
                             |   RESTA CONSTANTE_SINGLE {
-                                                            System.out.println(((Token) $1.obj).getLexema() + ((Token) $2.obj).getLexema());
                                                             $$.sval = ((Token) $1.obj).getLexema() + ((Token) $2.obj).getLexema();
                                                             String lexema = ((Token) $2.obj).getLexema();
                                                             int cantidadDeUsos = TablaSimbolos.getCantidadDeUsos(lexema);
@@ -611,7 +604,6 @@ constante                   :   constante_entera { $$.sval = $1.sval;}
 
                                                             float numero = Float.parseFloat(lexemaNegativo.replace('s','e'));
                                                             if (numero == Float.POSITIVE_INFINITY || numero == Float.NEGATIVE_INFINITY || numero == -0.0f) {
-                                                                System.out.println(numero);
                                                                 agregarError(erroresSintacticos, ERROR_SINTACTICO, "Linea " + ((Token) $2.obj).getNumeroDeLinea() + ": la constante se va de rango");
                                                             } else {
                                                                 // Hay que fijarse si ya esta la negativa en la tabla, sino agregarla como negativa.
