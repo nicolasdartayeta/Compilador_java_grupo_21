@@ -2,18 +2,24 @@ programa_for
 
 begin
     ulongint j;
+    ulongint contador;
+    contador:=0;
+
     /# Variable X con tipo embebido, no hace falta declararla #/
-    for(x := 10; x >= 0; down 1)
+    for(x := 10; x > 0; down 1)
     begin
-        for (j:=5; j > 0; down 2; (x != 30))
+        for (j:=5; j > 0; down 1; (x != 30))
         begin
-            x := x + 1;
+            contador:=contador+1;
+            outf(contador);
         end;
+        outf ({for con j terminado});
     end;
     single c;
     for(x := 10; x > 0; up 2; (x < 100))
     begin
-        x := x - 6 / 3;
+        contador:=contador+2;
+        outf(contador);
     end;
 
     outf( {Programa terminado} );
