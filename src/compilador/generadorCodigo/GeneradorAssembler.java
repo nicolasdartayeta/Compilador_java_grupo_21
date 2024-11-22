@@ -209,6 +209,7 @@ public class GeneradorAssembler {
                 default:
                     if (token.startsWith("_")){
                         if (token.startsWith("_L")) {
+                            // Etiqueta de saltos
                             String label = "Label" + token.substring(2) + ":";
                             code.append(label).append("\n");
                         } else if (token.startsWith("_fin")) {
@@ -217,6 +218,7 @@ public class GeneradorAssembler {
                         } else if (token.startsWith("_inicio")) {
                             String funcion = pila.pop();
                             ambito.push(":" + funcion.substring(0, funcion.indexOf(":")));
+                            // Agregar etiqueta del inicio de una funcion
                             code.append(funcion.replace(":", "_")).append(":\n");
                         }
                     } else {
@@ -245,7 +247,11 @@ public class GeneradorAssembler {
         // set en que funcion se esta entrando
         code.append("\tMOV funcionActual, ").append(TablaSimbolos.getIdFuncion(funcion)).append("\n");
         code.append("\tCALL ").append(funcion.replace(":", "_")).append("\n");
-        code.append("\tMOV funcionActual, 0\n");
+        if (ultimoAmbito.equals("main")) {
+            code.append("\tMOV funcionActual, 0\n");
+        } else {
+            code.append("\tMOV funcionActual, ").append(TablaSimbolos.getIdFuncion(ultimoAmbito + estaAlAlcance(ultimoAmbito))).append("\n");
+        }
         String tipoRetorno = TablaSimbolos.getTipoRetorno(funcion);
         if (tipoRetorno.equals(TablaSimbolos.SINGLE)) {
             pila.push("@retValSingle");

@@ -277,7 +277,7 @@ sentencia_retorno           :   RET PARENTESIS_L expresion_aritmetica PARENTESIS
                                                                                                     if (!funcion.equals("main")) {
                                                                                                         funcion = funcion + estaAlAlcance(funcion);
                                                                                                         if (!$3.sval.equals(TablaSimbolos.getTipoRetorno(funcion))) {
-                                                                                                            agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea "+ ((Token) $1.obj).getNumeroDeLinea() + ": El tipo del retorno no coincide con el tipo de retorno de la funcion");
+                                                                                                            05+ ": El tipo del retorno no coincide con el tipo de retorno de la funcion");
                                                                                                         }
                                                                                                     }
                                                                                                 }
