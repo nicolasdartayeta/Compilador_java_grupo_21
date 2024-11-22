@@ -565,11 +565,15 @@ termino                     :   termino MULTIPLICACION factor { listaExpresiones
 factor                      :   identificador {
                                                 representacionPolaca.remove(representacionPolaca.size() - 1);
                                                 String ambitoEncontrado = estaAlAlcance($1.sval);
+
                                                 if (ambitoEncontrado != null) {
-                                                    System.out.println("JUJU" + $1.sval);
-                                                    $$.sval = TablaSimbolos.getTipo($1.sval + ambitoEncontrado);
+                                                    String tipoIdentificador = TablaSimbolos.getTipo($1.sval + ambitoEncontrado);
+                                                    $$.sval =  tipoIdentificador;
+
+                                                    if (!tipoIdentificador.equals(TablaSimbolos.ULONGINT) && !tipoIdentificador.equals(TablaSimbolos.SINGLE)) {
+                                                        agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": No se puede operar con variables que no sean ULONGINT o SINGLE");
+                                                    }
                                                 } else {
-                                                System.out.println("JIJI" + $1.sval);
                                                     agregarError(erroresSemanticos, ERROR_SEMANTICO, "Linea " + $1.ival + ": Variable " + $1.sval + " no declarada");
                                                     $$.sval = null;  // O cualquier valor predeterminado que necesites
                                                 };

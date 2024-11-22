@@ -8,9 +8,10 @@ includelib \masm32\lib\masm32.lib
 dll_dllcrt0 PROTO C
 printf PROTO C : VARARG
 .data
+	@aux4 dd 0
 	@retValSingle REAL4 0.0
-	_r.d_main dd 0
-	_r.e_main REAL4 0.0
+	_r_d_main dd 0
+	_r_e_main REAL4 0.0
 	_x_main dd 0
 	_a_main dd 0
 	@retValUlongint dd 0
@@ -21,7 +22,6 @@ printf PROTO C : VARARG
 	_5 dd 5
 	_5f0 REAL4 5.0
 	_50 dd 50
-	_30 dd 30
 	_20 dd 20
 	_10 dd 10
 	funcionActual dd 0
@@ -59,7 +59,7 @@ Label21:
 	CMP EAX, EBX
 	JE Label37
 	FLD _5f0
-	FSTP _r.e_main
+	FSTP _r_e_main
 	JMP Label41
 Label37:
 	MOV EAX, _20
@@ -68,7 +68,7 @@ Label41:
 	JMP Label45
 Label44:
 Label45:
-	MOV EAX, _30
+	MOV EAX, _50
 	MOV _x_main,  EAX
 	MOV EAX, _x_main
 	MOV EBX, _50
@@ -78,9 +78,14 @@ Label45:
 	ADD EAX, _x_main
 	MOV @aux3, EAX
 	invoke printf, cfm$("%u\n"), @aux3
-	JMP Label61
+	JMP Label65
 Label60:
-Label61:
+	MOV EAX, _x_main
+	SUB EAX, _10
+	JC _errorNegativo
+	MOV @aux4, EAX
+	invoke printf, cfm$("%u\n"), @aux4
+Label65:
 	JMP _quit
 _errorNegativo:
 	invoke printf, ADDR errorNegativoTxt 

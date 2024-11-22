@@ -25,9 +25,11 @@ if (a=1) then
     end_if;
 end_if;
 
-x:=30;
+x:=50;
 
 if (x < 50) then
     outf(x+5);
+else
+    outf(x-10);
 end_if;
 end
